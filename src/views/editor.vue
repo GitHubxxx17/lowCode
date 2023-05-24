@@ -1,5 +1,5 @@
 <script setup lang="ts">
-
+import EditorLeft from '../components/editor/EditorLeft.vue';
 </script>
 
 <template>
@@ -9,7 +9,7 @@
                 <span class="editor-header-left-exit">
                     <i class="icon iconfont icon-fanhui"></i>
                 </span>
-                <h2>CodeFlow</h2>
+                <h2>codeFlow</h2>
             </div>
             <div class="editor-header-mid">
                 <div class="editor-header-mid-title">新项目</div>
@@ -21,12 +21,14 @@
                 <div class="editor-header-right-btn">预览</div>
                 <div class="editor-header-right-btn">导出</div>
                 <div class="editor-header-right-avatar">
-                    <img src="@/assets/user.jpg" alt="">
+                    <img src="@/assets/user.jpg" alt="user">
                 </div>
             </div>
         </header>
         <section class="editor-body">
-            <div class="editor-body-left"></div>
+            <div class="editor-body-left">
+                <EditorLeft></EditorLeft>
+            </div>
             <div class="editor-body-container">
                 <div class="editor-body-container-top"></div>
                 <div class="editor-body-container-content">
@@ -40,7 +42,6 @@
 
 <style lang="scss" scoped>
 .editor {
-
     width: 100vw;
     height: 100vh;
     display: flex;
@@ -88,6 +89,13 @@
 
                 &:active {
                     background: #d5d6d8;
+                }
+            }
+            h2 {
+                cursor: pointer;
+                transition: all .3s;
+                &:hover {
+                    color: #2468f2;
                 }
             }
         }
@@ -162,7 +170,6 @@
         &-left {
             z-index: 100;
             width: 310px;
-            min-width: 310px;
             height: 100%;
             background-color: #ffffff;
             box-shadow: 2px 0 20px 0 rgba(0, 0, 0, .1);
