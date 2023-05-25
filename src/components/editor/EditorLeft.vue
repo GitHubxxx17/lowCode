@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {reactive} from 'vue'
+import ElComponent from './ElComponent';
 interface btn {
     label: String,
     icon: String,
@@ -35,7 +36,7 @@ const onClickBtn = (index: number) => {
             </ul>
         </div>
         <div class="EditorLeft-content">
-          
+            <ElComponent v-if="bottons[0].active"></ElComponent>
         </div>
     </div>
 </template>
