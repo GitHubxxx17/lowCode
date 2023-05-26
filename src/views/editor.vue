@@ -1,6 +1,12 @@
 <script setup lang="ts">
+import { provide, reactive } from 'vue';
+import data from '../data.json'
 import EditorLeft from '../components/editor/EditorLeft.vue';
 import EditorRight from '../components/editor/EditorRight.vue';
+import EditorContainer from '../components/editor/EditorContainer'
+import { editorConfig } from '../utils/editor-config';
+provide('editorConfig',editorConfig);
+const EditorData = reactive(data)
 </script>
 
 <template>
@@ -33,7 +39,9 @@ import EditorRight from '../components/editor/EditorRight.vue';
             <div class="editor-body-container">
                 <div class="editor-body-container-top"></div>
                 <div class="editor-body-container-content">
-                    <div class="editor-body-container-content_inner"></div>
+                    <div class="editor-body-container-content_inner">
+                        <EditorContainer :EditorData="EditorData"></EditorContainer>
+                    </div>
                 </div>
             </div>
             <div class="editor-body-right">

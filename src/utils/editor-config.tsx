@@ -1,15 +1,36 @@
 //列表区显示所有物料
 //key对应组件的映射关系
-import componentsConfig from './componentsConfig.json'
 
-console.log(componentsConfig);
+import { ElButton, ElInput, ElSelect } from "element-plus"
 
+const componentsConfig = [
+    {
+        label: "文字", icon: "icon iconfont icon-font", key: "text", render(props:any) {
+            return <span>{props.text ? props.text : '渲染文字'}</span>
+        }
+    },
+    {
+        label: "按钮", icon: "icon iconfont icon-anniu", key: "button", render(props:any) {
+            return <ElButton>{props.text ? props.text : '渲染按钮'}</ElButton>
+        }
+    },
+    {
+        label: "输入框", icon: "icon iconfont icon-input", key: "input", render(props:any) {
+            return <ElInput></ElInput>
+        }
+    },
+    {
+        label: "下拉框", icon: "icon iconfont icon-m-xialacaidan", key: "select", render(props:any) {
+            return <ElSelect></ElSelect>
+        }
+    }
+]
 
 interface componentConfig {
     label: String,
     key: string,
     preview: () => any,
-    render: () => any,
+    render: (props:any) => any,
 }
 
 class createEditorConfig {
@@ -30,36 +51,14 @@ class createEditorConfig {
 
 export const editorConfig = new createEditorConfig();
 
-
-
-editorConfig.register({
-    label: '文本',
-    preview: () => <span>
-                    <i class="icon iconfont icon-font"></i>
-                    <label>文字</label>
-                </span>,
-    render: () => <div></div>,
-    key: 'text',
-})
-
-// editorConfig.register({
-//     label: '按钮',
-//     preview: () => <div></div>,
-//     render: () => <div></div>,
-//     key: 'button',
-// })
-
-// editorConfig.register({
-//     label: '输入框',
-//     preview: () => <div></div>,
-//     render: () => <div></div>,
-//     key: 'input',
-
-// })
-
-// editorConfig.register({
-//     label: '下拉框',
-//     preview: () => <div></div>,
-//     render: () => <div></div>,
-//     key: 'select'
-// })
+for (let block of componentsConfig) {//遍历声明的组件并注册
+    editorConfig.register({
+        label: block.label,
+        preview: () => <span>
+            <i class={block.icon}></i>
+            <label>{block.label}</label>
+        </span>,
+        render: (props) => block.render(props),
+        key: block.key,
+    })
+}
