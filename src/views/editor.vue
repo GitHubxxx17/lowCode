@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import EditorLeft from '../components/editor/EditorLeft.vue';
+import EditorRight from '../components/editor/EditorRight.vue';
 </script>
 
 <template>
@@ -35,7 +36,9 @@ import EditorLeft from '../components/editor/EditorLeft.vue';
                     <div class="editor-body-container-content_inner"></div>
                 </div>
             </div>
-            <div class="editor-body-right"></div>
+            <div class="editor-body-right">
+                <EditorRight></EditorRight>
+            </div>
         </section>
     </div>
 </template>
