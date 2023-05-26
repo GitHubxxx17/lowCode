@@ -1,8 +1,12 @@
-import { defineComponent, reactive } from 'vue'
+import { defineComponent, reactive ,inject} from 'vue'
 import '@/sass/editor/ElComponent.scss'
+// import { useMenuDragger } from '../../hooks/useMenuDragger';
 export default defineComponent({
 
     setup() {
+        const config:any = inject('editorConfig');//组件配置
+        // const {dragstart,dragend} = useMenuDragger(containerRef,data)
+        
         interface btn {
             label: String,
             active: boolean
@@ -63,22 +67,17 @@ export default defineComponent({
                         <elCollapse v-model={activeName}>
                             <elCollapseItem title="常用组件" name="1" >
                                 <div class="ElComponent-list-item">
-                                    <span>
-                                        <i class="icon iconfont icon-font"></i>
-                                        <label>文字</label>
-                                    </span>
-                                    <span>
-                                        <i class="icon iconfont icon-anniu"></i>
-                                        <label>按钮</label>
-                                    </span>
-                                    <span>
-                                        <i class="icon iconfont icon-input"></i>
-                                        <label>输入框</label>
-                                    </span>
-                                    <span>
-                                        <i class="icon iconfont icon-m-xialacaidan"></i>
-                                        <label>下拉框</label>
-                                    </span>
+                                    {
+                                        config.componentList.map((block:any)=>(
+                                            // <div draggable
+                                            // onDragstart={e => dragstart(e, component)}
+                                            // onDragend={e => dragend(e, component)}
+                                            // >
+                                            //     {block.preview()}
+                                            // </div>
+                                            block.preview()
+                                        ))
+                                    }
                                 </div>
                             </elCollapseItem>
                             <elCollapseItem title="表单" name="2">
