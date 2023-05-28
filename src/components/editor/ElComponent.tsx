@@ -1,12 +1,14 @@
-import { defineComponent, reactive ,inject} from 'vue'
+import { defineComponent, reactive, inject } from 'vue'
 import '@/sass/editor/ElComponent.scss'
-// import { useMenuDragger } from '../../hooks/useMenuDragger';
+import { useMenudragger } from '../../hooks/useMenuDragger';
 export default defineComponent({
-
+    props: {
+        EditorData: Object
+    },
     setup() {
-        const config:any = inject('editorConfig');//组件配置
-        // const {dragstart,dragend} = useMenuDragger(containerRef,data)
-        
+        const config: any = inject('editorConfig');//组件配置
+
+
         interface btn {
             label: String,
             active: boolean
@@ -16,7 +18,7 @@ export default defineComponent({
             inputIsFocus: false,
         })
 
-        let activeName:String[] = reactive(['1','2']);//折叠模板默认展开标识
+        let activeName: String[] = reactive(['1', '2', '3']);//折叠模板默认展开标识
 
         const buttons: Array<btn> = reactive([//标签按钮
             { label: '系统组件', active: true },
@@ -65,23 +67,36 @@ export default defineComponent({
                 {
                     buttons[0].active && <div class="ElComponent-list">
                         <elCollapse v-model={activeName}>
-                            <elCollapseItem title="常用组件" name="1" >
+                            <elCollapseItem title="布局容器" name="1" >
                                 <div class="ElComponent-list-item">
                                     {
-                                        config.componentList.map((block:any)=>(
-                                            // <div draggable
-                                            // onDragstart={e => dragstart(e, component)}
-                                            // onDragend={e => dragend(e, component)}
-                                            // >
-                                            //     {block.preview()}
-                                            // </div>
-                                            block.preview()
+                                        config.componentList.map((component: any) => (
+                                            component.category == 'container' && <div draggable
+                                                onDragstart={_ => useMenudragger.dragstart(component)}
+                                                onDragend={_ => useMenudragger.dragend()}
+                                            >
+                                                {component.preview()}
+                                            </div>
                                         ))
                                     }
                                 </div>
                             </elCollapseItem>
-                            <elCollapseItem title="表单" name="2">
-                            <div class="ElComponent-list-item">
+                            <elCollapseItem title="常用组件" name="2" >
+                                <div class="ElComponent-list-item">
+                                    {
+                                        config.componentList.map((component: any) => (
+                                            component.category == 'common' && <div draggable
+                                                onDragstart={_ => useMenudragger.dragstart(component)}
+                                                onDragend={_ => useMenudragger.dragend()}
+                                            >
+                                                {component.preview()}
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            </elCollapseItem>
+                            <elCollapseItem title="表单" name="3">
+                                <div class="ElComponent-list-item">
                                     <span></span>
                                     <span></span>
                                     <span></span>

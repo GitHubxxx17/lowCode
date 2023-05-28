@@ -6,7 +6,7 @@ import EditorRight from '../components/editor/EditorRight.vue';
 import EditorContainer from '../components/editor/EditorContainer'
 import { editorConfig } from '../utils/editor-config';
 provide('editorConfig',editorConfig);
-const EditorData = reactive(data)
+const EditorData = reactive(data);
 </script>
 
 <template>
@@ -34,7 +34,7 @@ const EditorData = reactive(data)
         </header>
         <section class="editor-body">
             <div class="editor-body-left">
-                <EditorLeft></EditorLeft>
+                <EditorLeft :EditorData="EditorData"></EditorLeft>
             </div>
             <div class="editor-body-container">
                 <div class="editor-body-container-top"></div>
@@ -198,8 +198,10 @@ const EditorData = reactive(data)
             }
 
             &-content {
-                padding: 24px 16px 16px;
-                flex: 1;;
+                width: 100%;
+                height: 100%;
+                padding: 24px 16px 16px 24px;
+                flex: 1;
                 background-color: #efeff1;
 
                 &_inner {
