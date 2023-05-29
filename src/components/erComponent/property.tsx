@@ -53,6 +53,7 @@ export default defineComponent({
 
     return () => {
       return (
+        <div class="property">
         <elCollapse modelValue={activeNames}>
           <elCollapseItem title="基本" name="1">
             {/* 输入框 */}
@@ -113,6 +114,7 @@ export default defineComponent({
             <div class="elCollapseItem">名称</div>
           </elCollapseItem>
         </elCollapse>
+        </div>
       );
     };
   },
