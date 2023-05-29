@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { reactive } from "vue";
+import property from "../erComponent/property";
+import appearance from "../erComponent/appearance";
 interface btn {
   label: String; // 标签
   active: boolean; // 是否被选择了
   isShow: boolean; // 是否显示
 }
-// 切换菜单
+// 切换菜单的按钮
 const buttons: btn[] = reactive([
   { label: "属性", active: true, isShow: true },
   { label: "外观", active: false, isShow: true },
@@ -37,14 +39,12 @@ const selectBtn = (index: number) => {
         {{ button.label }}
       </label>
     </div>
-
-    <!-- {buttons[0].active && <property></property>}
-          {buttons[1].active && <appearance></appearance>}
-          {buttons[2].active && <property></property>} -->
+    <property v-if="buttons[0].active"></property>
+    <appearance v-if="buttons[1].active"></appearance>
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .ErComponent {
   width: 280px;
 

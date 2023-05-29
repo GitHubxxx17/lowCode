@@ -20,10 +20,8 @@
 
 // 选择器
 
-.elCollapseSelect{
-    &-select{
-        
-    }
+.elCollapseSelect {
+    &-select {}
 
     .el-select-dropdown__wrap {
         height: 110px !important;
@@ -44,6 +42,7 @@
         padding: 0 28px 0 15px;
         width: 20px !important;
     }
+
     // 解除一上来就被选中显示图标颜色的情况
     .selected {
         color: #5c5f66 !important;
@@ -51,89 +50,5 @@
 
     .active {
         color: #2468f2 !important;
-    }
-}
-
-// padding
-.elCollapsePad {
-    &-icon {
-        display: grid;
-        width: 72px;
-        height: 72px;
-        background-color: #f7f7f9;
-        grid-template-columns: 1fr 1fr 1fr; // 列宽这样是分成3份
-        grid-template-rows: 1fr 1fr 1fr; // 行宽这样是分成3份
-
-        div {
-            width: 24px;
-            height: 24px;
-            // background-color: #cfcbcb;
-            // border: 1px solid #2468f2;
-        }
-
-        .common {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            div {
-                width: 16px;
-                height: 16px;
-                position: absolute;
-            }
-        }
-
-        .top {
-            border-top: 2px solid #5c5f66;
-            border-bottom: 2px solid #d4d6d9;
-            border-left: 2px solid #d4d6d9;
-            border-right: 2px solid #d4d6d9;
-        }
-
-        .bottom {
-            border-top: 2px solid #d4d6d9;
-            border-bottom: 2px solid #5c5f66;
-            border-left: 2px solid #d4d6d9;
-            border-right: 2px solid #d4d6d9;
-        }
-
-        .left {
-            border-top: 2px solid #d4d6d9;
-            border-bottom: 2px solid #d4d6d9;
-            border-left: 2px solid #5c5f66;
-            border-right: 2px solid #d4d6d9;
-        }
-
-        .right {
-            border-top: 2px solid #d4d6d9;
-            border-bottom: 2px solid #d4d6d9;
-            border-left: 2px solid #d4d6d9;
-            border-right: 2px solid #5c5f66;
-        }
-
-        .middle {
-            border: 2px solid #5c5f66;
-        }
-
-        .active-top {
-            border-top: 2px solid #2468f2;
-        }
-
-        .active-bottom {
-            border-bottom: 2px solid #2468f2;
-        }
-
-        .active-left {
-            border-left: 2px solid #2468f2;
-        }
-
-        .active-right {
-            border-right: 2px solid #2468f2;
-        }
-
-        .active-middle {
-            border: 2px solid #2468f2;
-        }
     }
 }

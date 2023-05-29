@@ -1,4 +1,4 @@
-import "@/sass/editor/ErComponent.scss";
+import "@/sass/erComponent/appearance.scss";
 import { defineComponent, ref } from "vue";
 import { ElInputNumber } from "element-plus";
 export default defineComponent({
