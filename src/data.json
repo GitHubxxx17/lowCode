@@ -31,36 +31,7 @@
                     "children":"(｡･∀･)ﾉﾞ"
                 }
             ]
-        },
-        {
-            "type": "container-ordinary",
-            "style": {
-                "position": "relative",
-                "width": "100%",
-                "zIndex": 1
-            },
-            "children": [
-                {
-                    "type": "button",
-                    "style": {
-                        "position": "relative",
-                        "zIndex": 1,
-                        "width":"100px",
-                        "height":"50px"
-                    },
-                    "children":"我的按钮"
-                },
-                {
-                    "type": "text",
-                    "style": {
-                        "position": "relative",
-                        "fontSize": "20px",
-                        "color": "blue",
-                        "zIndex": 1
-                    },
-                    "children":"(｡･∀･)ﾉﾞ"
-                }
-            ]
         }
+        
     ]
 }

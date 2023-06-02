@@ -2,6 +2,8 @@ import "@/sass/editor/EditorContainer.scss";
 import { defineComponent, inject, onMounted, ref } from "vue";
 import { useMenudragger } from "../../hooks/useMenuDragger";
 import Sortable from "sortablejs";
+import { usesortable } from '../../hooks/useSortable.js';
+
 export default defineComponent({
   props: {
     EditorData: Object
@@ -25,15 +27,7 @@ export default defineComponent({
           let children = renderer(node.children);//利用递归获取子节点
           let nodeprops: nodeProps = { children: children, style: node.style }//配置
           if (node.type.includes('container')) {
-            // nodeprops.ondragenter = (e: any) => {
-            //   useMenudragger.setData(node);
-            //   useMenudragger.setcontainerRef(ref(e.target));
-            // }
-            // nodeprops.ondragleave = () => {
-            //   useMenudragger.setData(props.EditorData);
-            //   useMenudragger.setcontainerRef(containerRef);
-            // }
-            nodeprops.childrenList = node.children
+            nodeprops.childrenList = node.children//如果为容器就将子组件的数据添加进去
           }
           return config.componentMap.get(node.type).render(nodeprops)
         })
@@ -42,13 +36,7 @@ export default defineComponent({
       }
     }
     onMounted(() => {
-      new Sortable(containerRef.value, {
-        group: {
-          name: 'container',
-          put: ['listItem','container']
-        },
-        animation: 150
-      });
+      new Sortable(containerRef.value, usesortable.setContainerOptions(containerRef,props.EditorData.body));
     })
 
     return () => {

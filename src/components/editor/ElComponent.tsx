@@ -3,6 +3,7 @@ import '@/sass/editor/ElComponent.scss'
 // import { useMenudragger } from '../../hooks/useMenuDragger';
 import Sortable from "sortablejs";
 import _appendGhost from './_appendGhost.js'
+import { usesortable } from '../../hooks/useSortable.js';
 
 export default defineComponent({
     props: {
@@ -28,7 +29,7 @@ export default defineComponent({
 
         let listItem = ref([]);
 
-        let setListItemRef = (el:any):void => {
+        let setListItemRef = (el:any):void => {//获取预览组件的父节点数组
             listItem.value.push(el)
         }
 
@@ -51,57 +52,14 @@ export default defineComponent({
         }
 
         onMounted(() => {
-            let ghost = false//是否添加影子
-            let renderer = null//渲染函数
-            let datatype = ''//数据类型
-            const options:Sortable.Options = {//sortable配置项
-                group: {
-                    name: 'listItem',
-                    pull: 'clone',
-                    put: false // 不允许拖拽进这个列表
-                },
-                animation: 150,
-                sort: false, // 设为false，禁止sort
-                ghostClass: "sortable-ghost",
-                dragClass: "sortable-drag",
-                onClone: function (evt) {//当克隆组件时调用
-                    console.log(evt);
-                },
-                onStart: function (evt) {//开始拖拽时调用
-                    ghost = false
-                    datatype = getDatatype(evt.item)
-                    renderer = config.componentMap.get(datatype).render;//通过映射表键值获取渲染函数
-
-                },
-                onMove() {//移动组件时调用
-                    if (!ghost) {
-                        let div = document.querySelector('.sortable-ghost');
-                        div.innerHTML = ''
-                        if(datatype.includes('container')){
-                            render(createVNode(renderer({ children: [] })), div)
-                        }else{
-                            render(createVNode(renderer({ children: '' })), div)
-                        }
-                        ghost = true;
-                    }
-                },
-            }
-            
-            // Sortable.prototype._dragStarted = _appendGhost;
-            // console.log(Sortable.prototype);
-            listItem.value.forEach((item)=> {
-                new Sortable(item, options);
+            listItem.value.forEach((item)=> {//注册sortable拖拽
+                new Sortable(item, usesortable.listItemOptions);
             })
         })
 
         // function getItemProps(item: any) {
         //     return item.__vueParentComponent.props || null;
         // }
-
-        function getDatatype(item: any) {//获取组件对应的键值
-            let value = item.attributes.datatype.nodeValue;
-            return value.replace('datatype="', '').replace('"', '') || '';
-        }
 
         return () => {
             return <div class="ElComponent">
