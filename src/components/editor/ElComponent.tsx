@@ -1,13 +1,16 @@
-import { defineComponent, reactive, inject } from 'vue'
+import { defineComponent, reactive, inject, ref, onMounted, render, createVNode } from 'vue'
 import '@/sass/editor/ElComponent.scss'
-import { useMenudragger } from '../../hooks/useMenuDragger';
+// import { useMenudragger } from '../../hooks/useMenuDragger';
+import Sortable from "sortablejs";
+import _appendGhost from './_appendGhost.js'
+import { usesortable } from '../../hooks/useSortable.js';
+
 export default defineComponent({
     props: {
         EditorData: Object
     },
     setup() {
         const config: any = inject('editorConfig');//组件配置
-
 
         interface btn {
             label: String,
@@ -16,14 +19,19 @@ export default defineComponent({
 
         const state: any = reactive({
             inputIsFocus: false,
+            activeName: reactive(['1', '2', '3'])//折叠模板默认展开标识
         })
-
-        let activeName: String[] = reactive(['1', '2', '3']);//折叠模板默认展开标识
 
         const buttons: Array<btn> = reactive([//标签按钮
             { label: '系统组件', active: true },
             { label: '自定义组件', active: false }
         ])
+
+        let listItem = ref([]);
+
+        let setListItemRef = (el:any):void => {//获取预览组件的父节点数组
+            listItem.value.push(el)
+        }
 
         const onClickBtn = (index: number) => {
             buttons.forEach((item, i) => {
@@ -42,6 +50,16 @@ export default defineComponent({
         const searchBlur = (): void => {//取消input焦点
             state.inputIsFocus = false;
         }
+
+        onMounted(() => {
+            listItem.value.forEach((item)=> {//注册sortable拖拽
+                new Sortable(item, usesortable.listItemOptions);
+            })
+        })
+
+        // function getItemProps(item: any) {
+        //     return item.__vueParentComponent.props || null;
+        // }
 
         return () => {
             return <div class="ElComponent">
@@ -66,31 +84,28 @@ export default defineComponent({
                 </div>
                 {
                     buttons[0].active && <div class="ElComponent-list">
-                        <elCollapse v-model={activeName}>
+                        <elCollapse v-model={state.activeName}>
                             <elCollapseItem title="布局容器" name="1" >
-                                <div class="ElComponent-list-item">
+                                <div class="ElComponent-list-item" ref={setListItemRef}>
                                     {
                                         config.componentList.map((component: any) => (
-                                            component.category == 'container' && <div draggable
-                                                onDragstart={_ => useMenudragger.dragstart(component)}
-                                                onDragend={_ => useMenudragger.dragend()}
-                                            >
-                                                {component.preview()}
-                                            </div>
+                                            component.category == 'container' && component.preview()
+                                            //<div
+                                            //     draggable
+                                            // // onDragstart={_ => useMenudragger.dragstart(component)}
+                                            // // onDragend={_ => useMenudragger.dragend()}
+                                            // >
+                                            //     {component.preview()}
+                                            // </div>
                                         ))
                                     }
                                 </div>
                             </elCollapseItem>
                             <elCollapseItem title="常用组件" name="2" >
-                                <div class="ElComponent-list-item">
+                                <div class="ElComponent-list-item" ref={setListItemRef}>
                                     {
                                         config.componentList.map((component: any) => (
-                                            component.category == 'common' && <div draggable
-                                                onDragstart={_ => useMenudragger.dragstart(component)}
-                                                onDragend={_ => useMenudragger.dragend()}
-                                            >
-                                                {component.preview()}
-                                            </div>
+                                            component.category == 'common' && component.preview()
                                         ))
                                     }
                                 </div>

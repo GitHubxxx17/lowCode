@@ -9,12 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "deepcopy": "^2.1.0",
     "element-plus": "^2.3.5",
     "sass": "^1.62.1",
     "sass-loader": "^13.3.0",
+    "sortablejs": "^1.15.0",
     "vue": "^3.2.47"
   },
   "devDependencies": {
+    "@types/sortablejs": "^1.15.1",
     "@vitejs/plugin-vue": "^4.1.0",
     "@vitejs/plugin-vue-jsx": "^3.0.1",
     "typescript": "^5.0.2",
