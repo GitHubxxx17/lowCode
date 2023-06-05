@@ -1,6 +1,7 @@
 import { render, createVNode } from 'vue'
 import Sortable from "sortablejs";
 import { editorConfig } from '../utils/editor-config';
+import deepcopy from 'deepcopy'
 function useSortable(): any {
     let ghost = false//是否添加影子
     let renderer = null//渲染函数
@@ -16,7 +17,7 @@ function useSortable(): any {
         ghostClass: "sortable-ghost",
         dragClass: "sortable-drag",
         onClone: function (evt) {//当克隆组件时调用
-            console.log(evt);
+
         },
         onStart: function (evt) {//开始拖拽时调用
             ghost = false
@@ -35,6 +36,7 @@ function useSortable(): any {
                 ghost = true;
             }
         },
+        
     }
 
 
@@ -49,8 +51,10 @@ function useSortable(): any {
         }
 
     }
-
+    let clone = true;//是否处于克隆组件
+    let addcomponentData = {};
     function setContainerOptions(containerRef: any, data: any) {
+
         const containerOptions: Sortable.Options = {
             group: {
                 name: 'container',
@@ -58,22 +62,40 @@ function useSortable(): any {
             },
             animation: 150,
             chosenClass: 'sortable-chosen',
+            onStart: function (/**Event*/evt) {
+                clone = false;
+                console.log(evt);
+                addcomponentData = data[evt.oldIndex]
+            },
             onAdd: function (evt) {//添加组件时调用
-                let datatype = getDatatype(evt.item);//获取组件对应的键
-                let componentData = editorConfig.componentMap.get(datatype);//获取组件的数据
-                containerRef.value.removeChild(evt.item)//移出拖拽组件
-                data.splice(evt.newIndex, 0, componentData.defaultData)//修改json数据，将新组件添加进去并重新渲染
+                console.log('onadd');
+                if (clone) {//如果是listItem克隆组件
+                    let datatype = getDatatype(evt.item);//获取组件对应的键
+                    let componentData = editorConfig.componentMap.get(datatype);//获取组件的数据
+                    containerRef.value.removeChild(evt.item)//移出拖拽组件
+                    data.splice(evt.newIndex, 0, deepcopy(componentData.defaultData))//修改json数据，将新组件添加进去并重新渲染
+                } else {
+                    console.log(addcomponentData);
+                    data.splice(evt.newIndex, 0, deepcopy(addcomponentData))//修改json数据，将新组件添加进去并重新渲染
+                    clone = true;
+                }
             },
             onRemove: function (evt) {//移除组件时调用
-                console.log(data.splice(evt.oldIndex, 1));//修改json数据，将新组件移除进去并重新渲染
+                console.log('onRemove');
+                data.splice(evt.oldIndex, 1);//修改json数据，将新组件移除进去并重新渲染
                 console.log(data);
             },
             onUpdate: function (evt) {//更新组件顺序时调用
-                let componentData = data[evt.oldIndex]
+                let componentData = data[evt.oldIndex];
                 if (evt.oldIndex != evt.newIndex) {
                     data.splice(evt.oldIndex, 1)
                     data.splice(evt.newIndex, 0, componentData)
                 }
+                console.log(evt);
+            },
+            onEnd: function (evt) {
+                console.log(evt);
+                clone = true;
             },
         }
         return containerOptions
