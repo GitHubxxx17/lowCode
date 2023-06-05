@@ -19,17 +19,19 @@
 }
 
 // 选择器
+.property {
+    .elCollapseSelect {
+        &-select {}
 
-.elCollapseSelect {
-    &-select {}
-
-    .el-select-dropdown__wrap {
-        height: 110px !important;
-        width: 180px !important;
-        overflow-y: scroll !important;
-        overflow-x: hidden;
+        .el-select-dropdown__wrap {
+            height: 110px !important;
+            width: 180px !important;
+            overflow-y: scroll !important;
+            overflow-x: hidden;
+        }
     }
 }
+
 
 
 

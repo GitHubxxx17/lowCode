@@ -80,4 +80,35 @@
             border: 2px solid #2468f2;
         }
     }
+
+    &-setting {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        margin-left: 16px;
+
+        .lineAndColor {
+            display: flex;
+
+            .color {
+                width: 32px;
+                // margin-left:10px;
+                background-color: #2468f2;
+                height: 32px;
+                box-sizing: border-box;
+            }
+        }
+    }
+}
+
+.appearance {
+    .lineAndColor {
+        margin-top: 8px;
+
+        .el-input__wrapper {
+            width: 110px;
+            margin-right: 10px;
+        }
+    }
 }

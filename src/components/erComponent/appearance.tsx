@@ -12,9 +12,27 @@ export default defineComponent({
       isActive.value = pos;
     };
     const padValue = ref(0); // 记录输入的padding值
+    // 处理padding数值的修改
     const handlePadValueChange = (padValue: number): void => {
       console.log(padValue);
     };
+    //
+    const line = ref("");
+
+    const lineOptions = [
+      {
+        value: "Option1",
+        label: "Option1",
+      },
+      {
+        value: "Option2",
+        label: "Option2",
+      },
+      {
+        value: "Option3",
+        label: "Option3",
+      },
+    ];
 
     return () => {
       return (
@@ -81,7 +99,18 @@ export default defineComponent({
                     modelValue={padValue.value}
                     onChange={handlePadValueChange}
                   ></ElInputNumber>
-                  <div class="lineAndColor"></div>
+                  <div class="lineAndColor">
+                    <el-select v-model={line} class="m-2" placeholder="Select" >
+                      {lineOptions.map((lineOption, index) => (
+                        <el-option
+                          key={lineOption.value}
+                          label={lineOption.label}
+                          value={lineOption.value}
+                        />
+                      ))}
+                    </el-select>
+                    <div class="color"></div>
+                  </div>
                 </div>
               </div>
               {/* {erConfig.componentList.map((component) => component.render())} */}
