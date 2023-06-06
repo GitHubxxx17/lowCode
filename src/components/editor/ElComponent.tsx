@@ -1,4 +1,4 @@
-import { defineComponent, reactive, inject, ref, onMounted, render, createVNode } from 'vue'
+import { defineComponent, reactive, inject, ref, onMounted } from 'vue'
 import '@/sass/editor/ElComponent.scss'
 // import { useMenudragger } from '../../hooks/useMenuDragger';
 import Sortable from "sortablejs";
@@ -90,13 +90,6 @@ export default defineComponent({
                                     {
                                         config.componentList.map((component: any) => (
                                             component.category == 'container' && component.preview()
-                                            //<div
-                                            //     draggable
-                                            // // onDragstart={_ => useMenudragger.dragstart(component)}
-                                            // // onDragend={_ => useMenudragger.dragend()}
-                                            // >
-                                            //     {component.preview()}
-                                            // </div>
                                         ))
                                     }
                                 </div>

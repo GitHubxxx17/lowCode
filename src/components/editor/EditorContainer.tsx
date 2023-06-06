@@ -19,9 +19,10 @@ export default defineComponent({
       childrenList?: Array<Object>,
       ondragenter?: (e: any) => void,
       ondragleave?: () => void,
-    }
+    } 
     //渲染函数
     const renderer = (nodes: any): any => {
+      console.log(nodes);
       if (nodes instanceof Array) {//判断节点是否为数组
         return nodes.map((node) => {
           let children = renderer(node.children);//利用递归获取子节点
