@@ -1,12 +1,12 @@
 import "@/sass/editor/EditorContainer.scss";
 import { defineComponent, inject, onMounted, ref } from "vue";
 import { useMenudragger } from "../../hooks/useMenuDragger";
-import Sortable from "sortablejs";
-import { usesortable } from '../../hooks/useSortable.js';
+// import Sortable from "sortablejs";
+// import { usesortable } from '../../hooks/useSortable.js';
 
 export default defineComponent({
   props: {
-    EditorData: Object
+    EditorData: Object,
   },
   setup(props) {
     const config: any = inject('editorConfig');
@@ -37,7 +37,7 @@ export default defineComponent({
       }
     }
     onMounted(() => {
-      new Sortable(containerRef.value, usesortable.setContainerOptions(containerRef,props.EditorData.body));
+      // new Sortable(containerRef.value, usesortable.setContainerOptions(containerRef,props.EditorData.body));
     })
 
     return () => {

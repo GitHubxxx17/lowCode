@@ -1,7 +1,7 @@
 import "@/sass/editor/EditorContainer.scss";
-import { defineComponent, onMounted, onUpdated, ref } from "vue";
-import Sortable from "sortablejs";
-import { usesortable } from '../../hooks/useSortable.js';
+import { defineComponent, onMounted, ref } from "vue";
+// import Sortable from "sortablejs";
+// import { usesortable } from '../../hooks/useSortable.js';
 
 export default defineComponent({
   props: {
@@ -16,11 +16,7 @@ export default defineComponent({
     let containerRef = ref(null);
     
     onMounted(() => {
-      
-      // Sortable.prototype._appendGhost = null;
-      // console.log(Sortable.prototype);
-      let sort = new Sortable(containerRef.value, usesortable.setContainerOptions(containerRef,props.childrenList));
-      console.log(sort);
+      // new Sortable(containerRef.value, usesortable.setContainerOptions(containerRef,props.childrenList));
       
     })
     return () => {

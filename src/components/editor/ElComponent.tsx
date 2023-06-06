@@ -1,9 +1,8 @@
 import { defineComponent, reactive, inject, ref, onMounted } from 'vue'
 import '@/sass/editor/ElComponent.scss'
 // import { useMenudragger } from '../../hooks/useMenuDragger';
-import Sortable from "sortablejs";
-import _appendGhost from './_appendGhost.js'
-import { usesortable } from '../../hooks/useSortable.js';
+// import Sortable from "sortablejs";
+// import { usesortable } from '../../hooks/useSortable.js';
 
 export default defineComponent({
     props: {
@@ -52,14 +51,10 @@ export default defineComponent({
         }
 
         onMounted(() => {
-            listItem.value.forEach((item)=> {//注册sortable拖拽
-                new Sortable(item, usesortable.listItemOptions);
-            })
+            // listItem.value.forEach((item)=> {//注册sortable拖拽
+            //     new Sortable(item, usesortable.listItemOptions);
+            // })
         })
-
-        // function getItemProps(item: any) {
-        //     return item.__vueParentComponent.props || null;
-        // }
 
         return () => {
             return <div class="ElComponent">

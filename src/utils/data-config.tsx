@@ -30,7 +30,6 @@ class createDataConfig {
 
 export const dataConfig = new createDataConfig();
 
-
 const containerOrdinary: container = {
     type: 'container-ordinary',
     Style: {
