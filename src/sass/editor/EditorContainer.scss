@@ -1,4 +1,4 @@
-.EditorContainer {
+.Editorcontainer {
     width: 100%;
     height: 100%;
     padding: 4px;
@@ -21,13 +21,15 @@
         background: #c9c9c9;
     }
 
-    // .sortable-ghost {
-    //     background-color: rgb(112, 112, 112) !important;
-    // }
+}
+//选中的容器
+.chosen-container {
+    border: 2px solid rgb(116, 144, 254) !important;
 }
 
-.sortable-chosen {
-    background-color: lightblue !important;
+//克隆渲染节点样式
+.renderEl {
+    pointer-events: none;
 }
 
 
