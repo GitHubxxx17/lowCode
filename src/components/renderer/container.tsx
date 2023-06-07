@@ -1,5 +1,6 @@
 import "@/sass/editor/EditorContainer.scss";
 import { defineComponent, onMounted, ref } from "vue";
+import { usedragger } from '../../hooks/useDragger';
 // import Sortable from "sortablejs";
 // import { usesortable } from '../../hooks/useSortable.js';
 
@@ -14,10 +15,10 @@ export default defineComponent({
   setup(props) {
 
     let containerRef = ref(null);
-    
+
     onMounted(() => {
       // new Sortable(containerRef.value, usesortable.setContainerOptions(containerRef,props.childrenList));
-      
+
     })
     return () => {
       return (
@@ -25,6 +26,8 @@ export default defineComponent({
           style={props.style}
           ref={containerRef}
           datatype={props.class}
+          onMouseenter={e => usedragger.mouseenter(e)}
+          onMouseleave={e => usedragger.mouseleave(e)}
         >
           {props.children.length != 0 ? props.children : <span class="nochild">{props.text}</span>}
         </div>

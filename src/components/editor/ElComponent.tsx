@@ -1,6 +1,7 @@
 import { defineComponent, reactive, inject, ref, onMounted } from 'vue'
 import '@/sass/editor/ElComponent.scss'
-// import { useMenudragger } from '../../hooks/useMenuDragger';
+import { useMenudragger } from '../../hooks/useMenuDragger';
+import { usedragger } from '../../hooks/useDragger'; 
 // import Sortable from "sortablejs";
 // import { usesortable } from '../../hooks/useSortable.js';
 
@@ -54,6 +55,7 @@ export default defineComponent({
             // listItem.value.forEach((item)=> {//注册sortable拖拽
             //     new Sortable(item, usesortable.listItemOptions);
             // })
+            
         })
 
         return () => {
@@ -84,7 +86,16 @@ export default defineComponent({
                                 <div class="ElComponent-list-item" ref={setListItemRef}>
                                     {
                                         config.componentList.map((component: any) => (
-                                            component.category == 'container' && component.preview()
+                                            component.category == 'container' && <div 
+                                            // draggable
+                                            // onDragstart={_=>useMenudragger.dragstart(component)}
+                                            // onDragend={_=>useMenudragger.dragend()}
+                                            onMousedown={e=>usedragger.mousedown(component,e)}
+                                            >
+                                                {
+                                                    component.preview()
+                                                }
+                                            </div>
                                         ))
                                     }
                                 </div>
@@ -93,7 +104,13 @@ export default defineComponent({
                                 <div class="ElComponent-list-item" ref={setListItemRef}>
                                     {
                                         config.componentList.map((component: any) => (
-                                            component.category == 'common' && component.preview()
+                                            component.category == 'common' && <div 
+                                            onMousedown={e=>usedragger.mousedown(component,e)}
+                                            >
+                                                {
+                                                    component.preview()
+                                                }
+                                            </div>
                                         ))
                                     }
                                 </div>

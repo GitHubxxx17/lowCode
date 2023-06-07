@@ -126,8 +126,6 @@
             &:hover {
                 background-color: rgb(229, 229, 229);
             }
-
-
         }
 
         &::-webkit-scrollbar {
@@ -145,4 +143,41 @@
 
 .el-collapse-item__header {
     padding-left: 15px;
+}
+
+
+.ghostDrag {
+    z-index: 100;
+    opacity: .8;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    span {
+        width: 70px;
+        height: 70px;
+        background-color: #f7f7f7;
+        margin: 4px;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 5px;
+        user-select: none;
+        cursor: pointer;
+        transition: all .3s ease-in-out;
+
+        .icon {
+            font-size: 24px;
+        }
+
+        label {
+            margin-top: -8px;
+            font-size: 14px;
+        }
+
+        &:hover {
+            background-color: rgb(229, 229, 229);
+        }
+    }
 }

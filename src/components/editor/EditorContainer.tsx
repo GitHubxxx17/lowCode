@@ -1,6 +1,7 @@
 import "@/sass/editor/EditorContainer.scss";
 import { defineComponent, inject, onMounted, ref } from "vue";
 import { useMenudragger } from "../../hooks/useMenuDragger";
+import { usedragger,setJsonData } from '../../hooks/useDragger'; 
 // import Sortable from "sortablejs";
 // import { usesortable } from '../../hooks/useSortable.js';
 
@@ -37,12 +38,17 @@ export default defineComponent({
       }
     }
     onMounted(() => {
+      setJsonData(props.EditorData.body);
       // new Sortable(containerRef.value, usesortable.setContainerOptions(containerRef,props.EditorData.body));
     })
 
     return () => {
       return (
-        <div class="EditorContainer" ref={containerRef}>
+        <div 
+        class="Editorcontainer" 
+        ref={containerRef}
+        onMouseenter={e=>usedragger.mouseenter(e)}
+        >
           {
             renderer(props.EditorData.body)
           }
