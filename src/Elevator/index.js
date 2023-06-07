@@ -8,7 +8,10 @@ let selected = false;
 let startPosition = -1;
 let endPosition = -1;
 
+let timer = null;
+
 document.querySelector("aside > ul").addEventListener("mousedown", (e) => {
+  clearTimeout(timer);
   const target = e.target;
   //getBoundingClientRect方法返回元素的大小及其相对于视口的位置
   const { top, left } = target.getBoundingClientRect();
@@ -20,13 +23,13 @@ document.querySelector("aside > ul").addEventListener("mousedown", (e) => {
   }
 
   // 获取鼠标按下的位置
-  mouseDownX = e.clientX;
+  // mouseDownX = e.clientX;
   mouseDownY = e.clientY;
   console.log("mouseDownY:" + mouseDownY);
 
   // 获取当前滑块的开始坐标
   sliderStartY = top;
-  sliderStartX = left;
+  // sliderStartX = left;
   console.log("sliderStartY:" + sliderStartY);
 
   selectedElement = target;
@@ -51,10 +54,10 @@ window.addEventListener("mousemove", (e) => {
   console.log(2);
 
   // 对滑块定位
-  sliderElement.style.setProperty(
-    "left",
-    `${sliderStartX + e.clientX - mouseDownX}px`
-  );
+  // sliderElement.style.setProperty(
+  //   "left",
+  //   `${sliderStartX + e.clientX - mouseDownX}px`
+  // );
   sliderElement.style.setProperty(
     "top",
     `${sliderStartY + e.clientY - mouseDownY}px`
@@ -125,9 +128,9 @@ const setEndPosition = function (pos) {
 
 const hideSlider = function () {
   sliderElement.classList.add("recovering");
-  sliderElement.style.setProperty("left", `${sliderStartX}px`);
-
+  // sliderElement.style.setProperty("left", `${sliderStartX}px`);
   sliderElement.style.setProperty("top", `${endPosition * 60}px`);
+  timer = setTimeout(() => applyChange(), 300);
 };
 
 const applyChange = function () {
