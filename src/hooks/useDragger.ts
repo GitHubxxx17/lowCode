@@ -55,7 +55,7 @@ function useDragger(): any {
                 let childrenData = findVnodeProps(container);//获取json子数据
                 childrenData.push(deepcopy(dragData.selectedMaterial.defaultData))//修改数据并重新渲染编辑区域
             }
-            if (renderEl) renderEl.remove()
+            if (renderEl) renderEl.remove();
             dragData.isClone = false;
             dragData.selectedMaterial = null;
         }
@@ -67,32 +67,32 @@ function useDragger(): any {
                 container.classList.remove('chosen-container');
                 console.log(oldIndex, newIndex);
 
-                if (isAdd) {
-                    let oldChildrenData = findVnodeProps(oldContainer);//获取json子数据
-                    oldChildrenData.forEach((data: any, i: number) => {
-                        if (data == oldDragData) {
-                            oldChildrenData.splice(i, 1);
-                        }
-                    })
-                    isAdd = false;
-                }
+                // if (isAdd) {
+                //     let oldChildrenData = findVnodeProps(oldContainer);//获取json子数据
+                //     oldChildrenData.forEach((data: any, i: number) => {
+                //         if (data == oldDragData) {
+                //             oldChildrenData.splice(i, 1);
+                //         }
+                //     })
+                //     isAdd = false;
+                // }
 
-                if (isSort) {
-                    if (oldIndex < newIndex)//将交换的节点复原
-                        container.insertBefore(dragEl, container.children[oldIndex]);
-                    if (oldIndex > newIndex)//将交换的节点复原
-                        insertAfter(dragEl, container.children[oldIndex]);
-                    let childrenData = findVnodeProps(container);//获取json子数据
-                    let dragData = oldDragData;
-                    if (oldIndex != childrenData.length - 1) {
-                        childrenData.splice(oldIndex, 1);
-                        childrenData.splice(newIndex, 0, dragData);//修改数据并重新渲染编辑区域
-                    } else {
-                        childrenData.splice(newIndex, 0, deepcopy(dragData));//修改数据并重新渲染编辑区域
-                        childrenData.pop();
-                    }
-                    isSort = false;
-                }
+                // if (isSort) {
+                //     if (oldIndex < newIndex)//将交换的节点复原
+                //         container.insertBefore(dragEl, container.children[oldIndex]);
+                //     if (oldIndex > newIndex)//将交换的节点复原
+                //         insertAfter(dragEl, container.children[oldIndex]);
+                //     let childrenData = findVnodeProps(container);//获取json子数据
+                //     let dragData = oldDragData;
+                //     if (oldIndex != childrenData.length - 1) {
+                //         childrenData.splice(oldIndex, 1);
+                //         childrenData.splice(newIndex, 0, dragData);//修改数据并重新渲染编辑区域
+                //     } else {
+                //         childrenData.splice(newIndex, 0, deepcopy(dragData));//修改数据并重新渲染编辑区域
+                //         childrenData.pop();
+                //     }
+                //     isSort = false;
+                // }
 
 
 
@@ -132,20 +132,20 @@ function useDragger(): any {
             renderEl.classList.add('renderEl');
             container.appendChild((render(dragData.selectedMaterial.render(dragData.selectedMaterial.defaultData), renderEl), renderEl));
         }
-        if (isDraging) {
-            container.classList.remove('chosen-container');
-            let newDragEl = deepcopy(dragEl);//深拷贝拖拽组件
-            dragEl.remove();//将组件移除
-            container = findParentContainer(e.target);//获取当前正在拖拽的容器
-            container.classList.add('chosen-container');
-            container.appendChild(newDragEl);//将复制的组件添加进新容器里面
-            isAdd = oldContainer == container ? false : true;
-            //初始化所有参数
-            dragEl = newDragEl;
-            dragChildList = [...container.children];//获取当前容器所有子组件
-            oldIndex = dragChildList.indexOf(dragEl);//获取拖拽组件在当前容器的位置
-            newIndex = oldIndex;
-        }
+        // if (isDraging) {
+        //     container.classList.remove('chosen-container');
+        //     let newDragEl = deepcopy(dragEl);//深拷贝拖拽组件
+        //     dragEl.remove();//将组件移除
+        //     container = findParentContainer(e.target);//获取当前正在拖拽的容器
+        //     container.classList.add('chosen-container');
+        //     container.appendChild(newDragEl);//将复制的组件添加进新容器里面
+        //     isAdd = oldContainer == container ? false : true;
+        //     //初始化所有参数
+        //     dragEl = newDragEl;
+        //     dragChildList = [...container.children];//获取当前容器所有子组件
+        //     oldIndex = dragChildList.indexOf(dragEl);//获取拖拽组件在当前容器的位置
+        //     newIndex = oldIndex;
+        // }
     }
 
     const mouseleave = (e: any) => {//鼠标移出
@@ -255,18 +255,18 @@ function useDragger(): any {
 
         let enterEl = findDragEl(e.target)
 
-        dragChildList.forEach((dom, i) => {//遍历子节点，将目标节点（不是拖拽节点）与拖拽节点交换位置
-            if (enterEl == dom && i != newIndex) {
-                if (i > newIndex)
-                    container.insertBefore(dragEl, container.children[i + 1]);
-                else
-                    container.insertBefore(dragEl, container.children[i]);
-                dragChildList = [...container.children];//获取当前容器所有子组件
-                newIndex = dragChildList.indexOf(dragEl);//获取拖拽组件在当前容器的位置
-                isSort = true;
-                return;
-            }
-        })
+        // dragChildList.forEach((dom, i) => {//遍历子节点，将目标节点（不是拖拽节点）与拖拽节点交换位置
+        //     if (enterEl == dom && i != newIndex) {
+        //         if (i > newIndex)
+        //             container.insertBefore(dragEl, container.children[i + 1]);
+        //         else
+        //             container.insertBefore(dragEl, container.children[i]);
+        //         dragChildList = [...container.children];//获取当前容器所有子组件
+        //         newIndex = dragChildList.indexOf(dragEl);//获取拖拽组件在当前容器的位置
+        //         isSort = true;
+        //         return;
+        //     }
+        // })
     }
 
 
