@@ -55,7 +55,6 @@ export default defineComponent({
     ];
     let showSelect = ref(false);
     const changeSelectValue = (newValue) => {
-      console.log("11");
       selectInputValue.value = newValue;
     };
     // 取色器
@@ -163,7 +162,7 @@ export default defineComponent({
                       <ul class="select" v-show={showSelect.value}>
                         {selectContent.map((item) => (
                           <li
-                            onClick={() => {
+                            onMousedown={() => {
                               changeSelectValue(item.text);
                             }}
                           >
@@ -226,9 +225,7 @@ export default defineComponent({
                   </div>
                 </div>
               </div>
-              {/* <div class="margin-border-self">
-                <img src="../../assets/margin-border.svg" alt="" />
-              </div> */}
+              <div class="margin-border-self"></div>
               <div class="elCollapseItem title">圆角</div>
               <div class="elCollapseItem elCollapseRadius">
                 <div class="elCollapseRadius-icon">
