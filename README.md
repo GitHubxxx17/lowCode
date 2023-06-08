@@ -3,3 +3,7 @@
 2. 在tsx引入tsx组件时，第一个字母要大写
 3. 渲染函数有问题，每次渲染到的对象是内容是相同的时候就会直接复制那个对象的dom节点，得把对象深拷贝才能解决
 思敏记录：
+1. 结点函数知识点：
++  parentNode.insertBefore(newNode, referenceNode);
+（1）newNode：将要插入的节点
+（2）referenceNode：被参照的节点（即要插在该节点之前）
