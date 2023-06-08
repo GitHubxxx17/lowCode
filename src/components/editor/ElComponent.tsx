@@ -1,9 +1,7 @@
-import { defineComponent, reactive, inject, ref, onMounted } from 'vue'
+import { defineComponent, reactive, inject, ref } from 'vue'
 import '@/sass/editor/ElComponent.scss'
-import { useMenudragger } from '../../hooks/useMenuDragger';
 import { usedragger } from '../../hooks/useDragger'; 
-// import Sortable from "sortablejs";
-// import { usesortable } from '../../hooks/useSortable.js';
+
 
 export default defineComponent({
     props: {
@@ -51,12 +49,7 @@ export default defineComponent({
             state.inputIsFocus = false;
         }
 
-        onMounted(() => {
-            // listItem.value.forEach((item)=> {//注册sortable拖拽
-            //     new Sortable(item, usesortable.listItemOptions);
-            // })
-            
-        })
+        
 
         return () => {
             return <div class="ElComponent">
@@ -87,9 +80,6 @@ export default defineComponent({
                                     {
                                         config.componentList.map((component: any) => (
                                             component.category == 'container' && <div 
-                                            // draggable
-                                            // onDragstart={_=>useMenudragger.dragstart(component)}
-                                            // onDragend={_=>useMenudragger.dragend()}
                                             onMousedown={e=>usedragger.mousedown(component,e)}
                                             >
                                                 {
