@@ -48,6 +48,7 @@ export default defineComponent({
         class="Editorcontainer" 
         ref={containerRef}
         onMouseenter={e=>usedragger.mouseenter(e)}
+        onClick={e=>usedragger.onclickToDrag(e)}
         >
           {
             renderer(props.EditorData.body)
