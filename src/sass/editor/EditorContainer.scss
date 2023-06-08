@@ -5,7 +5,6 @@
     position: relative;
     overflow-y: scroll;
 
-
     &-block {
         position: absolute;
     }
@@ -27,13 +26,42 @@
     border: 2px solid rgb(116, 144, 254) !important;
 }
 
+.chosenEl {
+    cursor: move;
+    border: 2px dotted rgb(116, 167, 254) !important;
+    &::before {
+        pointer-events: none;
+        z-index: 1000000000;
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #a5d6ff63;
+    }
+}
+
 //克隆渲染节点样式
 .renderEl {
     pointer-events: none;
 }
 
 
-
+.cannotPreview {
+    position: relative;
+    display: inline-block;
+    user-select: none;
+    &::after {
+        z-index: 1000000000;
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+}
 
 .container {
 
@@ -46,6 +74,7 @@
         // margin: 4px;
 
         .nochild {
+            user-select: none;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -63,6 +92,14 @@
     &-free {
         min-height: 200px;
     }
+}
 
+.ghostDrag {
+    z-index: 100;
+    opacity: .8;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;
 
 }

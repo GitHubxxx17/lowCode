@@ -15,9 +15,9 @@ const componentsConfig = [
         defaultData: {
             type: 'container-ordinary',
             style: {
-                "position": "relative",
-                "width": "100%",
-                "zIndex": 1
+                position: "relative",
+                width: "100%",
+                zIndex: 1
             },
             children: []
         }
@@ -41,7 +41,7 @@ const componentsConfig = [
     {
         label: "文字", icon: "icon iconfont icon-font", type: "text", category: 'common',
         render(props: any) {
-            return <span style={props.style} datatype="text">{props.children ? props.children : '渲染文字'}</span>
+            return <div class='cannotPreview'><span style={props.style} datatype="text">{props.children ? props.children : '渲染文字'}</span></div> 
         },
         defaultData: {
             type: 'text',
@@ -57,7 +57,7 @@ const componentsConfig = [
     {
         label: "按钮", icon: "icon iconfont icon-anniu", type: "button", category: 'common',
         render(props: any) {
-            return <ElButton style={props.style}>{props.children ? props.children : '渲染按钮'}</ElButton>
+            return <div class='cannotPreview'><ElButton style={props.style}>{props.children ? props.children : '渲染按钮'}</ElButton></div> 
         },
         defaultData: {
             type: 'button',
@@ -73,7 +73,7 @@ const componentsConfig = [
     {
         label: "输入框", icon: "icon iconfont icon-input", type: "input", category: 'common',
         render(props: any) {
-            return <ElInput style={props.style}></ElInput>
+            return <div class='cannotPreview'><ElInput style={props.style}></ElInput></div>
         },
         defaultData: {
             type: 'input',
@@ -87,7 +87,7 @@ const componentsConfig = [
     {
         label: "下拉框", icon: "icon iconfont icon-m-xialacaidan", type: "select", category: 'common',
         render(props: any) {
-            return <ElSelect style={props.style}></ElSelect>
+            return <div class='cannotPreview'><ElSelect style={props.style}></ElSelect></div>
         },
         defaultData: {
             type: 'select',
