@@ -1,0 +1,22 @@
+.addEvents {
+    margin: 10px 15px;
+    height: 32px;
+    border-radius: 5px;
+    border: 1px solid #dcdfe6;
+    font-size: 14px;
+    text-align: center;
+    line-height: 32px;
+    user-select: none;
+    cursor: pointer;
+    transition: all .2s;
+
+    span {
+        width: 100%;
+        height: 100%;
+    }
+
+    &:hover {
+        border: 1px solid #5786fb;
+        color: #5786fb;
+    }
+}

@@ -1,3 +1,9 @@
+github提交规范：
+增加新功能用 feat: xxxx
+改 bug 用 fix: xxxxx
+重构代码用 refactor: xxx
+加单测用 test: xxxx
+改基建用 chore: xxx
 堉琦记录：
 1. ts中map不能使用下标的方式添加内容，需要使用set()
 2. 在tsx引入tsx组件时，第一个字母要大写

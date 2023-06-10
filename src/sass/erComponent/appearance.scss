@@ -1,381 +1,449 @@
-// padding
-
 // 边框
 .elCollapseBorder {
-    &-icon {
-        display: grid;
-        width: 72px;
-        height: 72px;
-        background-color: #f7f7f9;
-        grid-template-columns: 1fr 1fr 1fr; // 列宽这样是分成3份
-        grid-template-rows: 1fr 1fr 1fr; // 行宽这样是分成3份
-        border-radius: 5px;
+  &-icon {
+    display: grid;
+    width: 72px;
+    height: 72px;
+    background-color: #f7f7f9;
+    grid-template-columns: 1fr 1fr 1fr; // 列宽这样是分成3份
+    grid-template-rows: 1fr 1fr 1fr; // 行宽这样是分成3份
+    border-radius: 5px;
 
-        div {
-            width: 24px;
-            height: 24px;
-        }
-
-        .common {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-
-            div {
-                width: 16px;
-                height: 16px;
-                position: absolute;
-            }
-        }
-
-        .top {
-            border-top: 2px solid #5c5f66;
-            border-bottom: 2px solid #d4d6d9;
-            border-left: 2px solid #d4d6d9;
-            border-right: 2px solid #d4d6d9;
-        }
-
-        .bottom {
-            border-top: 2px solid #d4d6d9;
-            border-bottom: 2px solid #5c5f66;
-            border-left: 2px solid #d4d6d9;
-            border-right: 2px solid #d4d6d9;
-        }
-
-        .left {
-            border-top: 2px solid #d4d6d9;
-            border-bottom: 2px solid #d4d6d9;
-            border-left: 2px solid #5c5f66;
-            border-right: 2px solid #d4d6d9;
-        }
-
-        .right {
-            border-top: 2px solid #d4d6d9;
-            border-bottom: 2px solid #d4d6d9;
-            border-left: 2px solid #d4d6d9;
-            border-right: 2px solid #5c5f66;
-        }
-
-        .middle {
-            border: 2px solid #5c5f66;
-        }
-
-        .active-top {
-            border-top: 2px solid #2468f2;
-        }
-
-        .active-bottom {
-            border-bottom: 2px solid #2468f2;
-        }
-
-        .active-left {
-            border-left: 2px solid #2468f2;
-        }
-
-        .active-right {
-            border-right: 2px solid #2468f2;
-        }
-
-        .active-middle {
-            border: 2px solid #2468f2;
-        }
+    div {
+      width: 24px;
+      height: 24px;
     }
 
-    &-setting {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        align-items: center;
-        margin-left: 16px;
+    .common {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
 
-        .lineAndColor {
-            display: flex;
-            margin-top: 8px;
-
-            .line {
-                width: 110px;
-                margin-right: 10px;
-                position: relative;
-
-                .select {
-                    z-index: 2023 !important;
-                    position: absolute;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-around;
-                    align-items: center;
-                    top: 40px;
-                    left: -5px;
-                    width: 120px;
-                    height: 105px;
-                    border-radius: 4px;
-                    box-sizing: border-box;
-                    background-color: #ffffff;
-                    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.12);
-
-                    li {
-                        width: 100%;
-                        height: 35px;
-                        text-align: center;
-                        line-height: 30px;
-                        // user-select: none;
-                    }
-
-                    li:hover {
-                        background-color: #f5f7fa;
-                    }
-                }
-            }
-
-            .color {
-                width: 32px;
-                // margin-left:10px;
-                // background-color: #2468f2;
-                height: 32px;
-                box-sizing: border-box;
-            }
-        }
+      div {
+        width: 16px;
+        height: 16px;
+        position: absolute;
+      }
     }
+
+    .top {
+      border-top: 2px solid #5c5f66;
+      border-bottom: 2px solid #d4d6d9;
+      border-left: 2px solid #d4d6d9;
+      border-right: 2px solid #d4d6d9;
+    }
+
+    .bottom {
+      border-top: 2px solid #d4d6d9;
+      border-bottom: 2px solid #5c5f66;
+      border-left: 2px solid #d4d6d9;
+      border-right: 2px solid #d4d6d9;
+    }
+
+    .left {
+      border-top: 2px solid #d4d6d9;
+      border-bottom: 2px solid #d4d6d9;
+      border-left: 2px solid #5c5f66;
+      border-right: 2px solid #d4d6d9;
+    }
+
+    .right {
+      border-top: 2px solid #d4d6d9;
+      border-bottom: 2px solid #d4d6d9;
+      border-left: 2px solid #d4d6d9;
+      border-right: 2px solid #5c5f66;
+    }
+
+    .middle {
+      border: 2px solid #5c5f66;
+    }
+
+    .active-top {
+      border-top: 2px solid #2468f2;
+    }
+
+    .active-bottom {
+      border-bottom: 2px solid #2468f2;
+    }
+
+    .active-left {
+      border-left: 2px solid #2468f2;
+    }
+
+    .active-right {
+      border-right: 2px solid #2468f2;
+    }
+
+    .active-middle {
+      border: 2px solid #2468f2;
+    }
+  }
+
+  &-setting {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    margin-left: 16px;
+
+    .lineAndColor {
+      display: flex;
+      margin-top: 8px;
+
+      .line {
+        width: 110px;
+        margin-right: 10px;
+        position: relative;
+
+        .select {
+          z-index: 2023 !important;
+          position: absolute;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          align-items: center;
+          top: 40px;
+          left: -5px;
+          width: 120px;
+          height: 105px;
+          border-radius: 4px;
+          box-sizing: border-box;
+          background-color: #ffffff;
+          box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.12);
+
+          li {
+            width: 100%;
+            height: 35px;
+            text-align: center;
+            line-height: 30px;
+            // user-select: none;
+          }
+
+          li:hover {
+            background-color: #f5f7fa;
+          }
+        }
+      }
+
+      .color {
+        width: 32px;
+        // margin-left:10px;
+        // background-color: #2468f2;
+        height: 32px;
+        box-sizing: border-box;
+      }
+    }
+  }
 }
 
 // 边距
 .elCollapseMargin {
+  &-icon {
+    margin-top: -22px;
+    width: 60px;
+    height: 32px;
+    background-color: #f7f7f9;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 5px;
 
-    &-icon {
-        margin-top: -22px;
-        width: 60px;
-        height: 32px;
-        background-color: #f7f7f9;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        border-radius: 5px;
-
-        .common {
-            width: 16px;
-            height: 16px;
-            box-sizing: border-box;
-            cursor: pointer;
-        }
-
-        .all {
-            margin-left: 2px;
-            border: #5c5f66 solid 2px;
-
-            &.active {
-                border-color: #2468f2;
-            }
-        }
-
-        .self {
-            margin-right: 2px;
-            position: relative;
-
-            .zuoshang {
-                height: 16px;
-                left: 50%;
-                position: absolute;
-                top: 50%;
-                transform: translate(-50%, -50%);
-                width: 16px;
-
-                &::before {
-                    background: #5c5f66;
-                    border-radius: 1px;
-                    content: "";
-                    display: block;
-                    height: 2px;
-                    position: absolute;
-                    left: 4px;
-                    top: 0;
-                    width: 8px;
-                }
-
-                &::after {
-                    background: #5c5f66;
-                    border-radius: 1px;
-                    content: "";
-                    display: block;
-                    position: absolute;
-                    width: 2px;
-                    height: 8px;
-                    left: 0;
-                    top: 4px;
-                }
-            }
-
-            .youxia {
-                position: relative;
-                height: 16px;
-                left: 50%;
-                position: absolute;
-                top: 50%;
-                transform: translate(-50%, -50%);
-                width: 16px;
-
-                &::before {
-                    background: #5c5f66;
-                    border-radius: 1px;
-                    content: "";
-                    display: block;
-                    height: 2px;
-                    position: absolute;
-                    bottom: 0;
-                    left: 4px;
-                    width: 8px;
-                }
-
-
-                &::after {
-                    background: #5c5f66;
-                    border-radius: 0.0625rem;
-                    content: "";
-                    display: block;
-                    position: absolute;
-                    width: 2px;
-                    bottom: 4px;
-                    height: 8px;
-                    right: 0;
-                }
-
-                &::after.active,
-                &::before.active {
-                    background-color: #2468f2;
-                }
-            }
-
-            .active {
-
-                &::after,
-                &::before {
-                    background: #2468f2;
-                }
-            }
-        }
+    .common {
+      width: 16px;
+      height: 16px;
+      box-sizing: border-box;
+      cursor: pointer;
     }
 
-    &-setting {
-        margin-left: 16px;
-        display: flex;
-        width: 170px;
+    .all {
+      margin-left: 2px;
+      border: #5c5f66 solid 2px;
 
-        .box {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .right {
-            margin-left: 5px;
-        }
+      &.active {
+        border-color: #2468f2;
+      }
     }
+
+    .self {
+      margin-right: 2px;
+      position: relative;
+
+      .zuoshang {
+        height: 16px;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 16px;
+
+        &::before {
+          background: #5c5f66;
+          border-radius: 1px;
+          content: "";
+          display: block;
+          height: 2px;
+          position: absolute;
+          left: 4px;
+          top: 0;
+          width: 8px;
+        }
+
+        &::after {
+          background: #5c5f66;
+          border-radius: 1px;
+          content: "";
+          display: block;
+          position: absolute;
+          width: 2px;
+          height: 8px;
+          left: 0;
+          top: 4px;
+        }
+      }
+
+      .youxia {
+        position: relative;
+        height: 16px;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 16px;
+
+        &::before {
+          background: #5c5f66;
+          border-radius: 1px;
+          content: "";
+          display: block;
+          height: 2px;
+          position: absolute;
+          bottom: 0;
+          left: 4px;
+          width: 8px;
+        }
+
+        &::after {
+          background: #5c5f66;
+          border-radius: 0.0625rem;
+          content: "";
+          display: block;
+          position: absolute;
+          width: 2px;
+          bottom: 4px;
+          height: 8px;
+          right: 0;
+        }
+
+        &::after.active,
+        &::before.active {
+          background-color: #2468f2;
+        }
+      }
+
+      .active {
+        &::after,
+        &::before {
+          background: #2468f2;
+        }
+      }
+    }
+  }
+
+  &-setting {
+    margin-left: 16px;
+    display: flex;
+    width: 170px;
+
+    .box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .right {
+      margin-left: 5px;
+    }
+  }
 }
 
 // 圆角
 .elCollapseRadius {
-    &-icon {
-        width: 60px;
-        height: 32px;
-        background-color: #f7f7f9;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        border-radius: 5px;
+  &-icon {
+    width: 60px;
+    height: 32px;
+    background-color: #f7f7f9;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 5px;
 
-        .common {
-            width: 16px;
-            height: 16px;
-            box-sizing: border-box;
-            cursor: pointer;
-        }
-
-        .all {
-            margin-left: 2px;
-            border: #5c5f66 solid 2px;
-
-
-            &.active {
-                border-color: #2468f2;
-            }
-        }
-
-        .self {
-            margin-right: 2px;
-            position: relative;
-            height: 16px;
-            width: 16px;
-
-            &::before {
-                border: 2px solid #5c5f66;
-                content: "";
-                height: 12px;
-                width: 12px;
-                display: block;
-                left: 50%;
-                position: absolute;
-                top: 50%;
-                transform: translate(-50%, -50%);
-            }
-
-            &::after {
-                box-sizing: inherit;
-                display: block;
-                left: 52%;
-                position: absolute;
-                top: 35%;
-                transform: translate(-50%, -50%);
-                color: #f7f7f9;
-                content: "＋";
-                font-size: 30px;
-                font-weight: 900;
-            }
-
-        }
-
-        .active {
-
-
-            &::before {
-                border-color: #2468f2;
-            }
-        }
+    .common {
+      width: 16px;
+      height: 16px;
+      box-sizing: border-box;
+      cursor: pointer;
     }
 
-    &-setting {
-        margin-left: 16px;
-        width: 170px;
+    .all {
+      margin-left: 2px;
+      border: #5c5f66 solid 2px;
+
+      &.active {
+        border-color: #2468f2;
+      }
     }
 
-    .radiusSelfInput {
-        margin-left: 2px;
+    .self {
+      margin-right: 2px;
+      position: relative;
+      height: 16px;
+      width: 16px;
+
+      &::before {
+        border: 2px solid #5c5f66;
+        content: "";
+        height: 12px;
+        width: 12px;
+        display: block;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      &::after {
+        box-sizing: inherit;
+        display: block;
+        left: 52%;
+        position: absolute;
+        top: 35%;
+        transform: translate(-50%, -50%);
+        color: #f7f7f9;
+        content: "＋";
+        font-size: 30px;
+        font-weight: 900;
+      }
     }
 
-    .radiusCommon {
-        border: 0 solid #5c5f66;
-        border-radius: 2px;
-        height: 10px;
-        margin: -5px auto;
-        width: 10px;
+    .active {
+      &::before {
+        border-color: #2468f2;
+      }
+    }
+  }
+
+  &-setting {
+    margin-left: 16px;
+    width: 170px;
+  }
+
+  .radiusSelfInput {
+    margin-left: 2px;
+  }
+
+  .radiusCommon {
+    border: 0 solid #5c5f66;
+    border-radius: 2px;
+    height: 10px;
+    margin: -5px auto;
+    width: 10px;
+  }
+
+  .radius-top-left {
+    border-left-width: 2px;
+    border-top-width: 2px;
+  }
+
+  .radius-top-right {
+    border-right-width: 2px;
+    border-top-width: 2px;
+  }
+
+  .radius-bottom-left {
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+  }
+
+  .radius-bottom-right {
+    border-bottom-width: 2px;
+    border-right-width: 2px;
+  }
+}
+
+//编辑样式源码
+.editStyle {
+  margin-bottom: 40px !important;
+}
+.editStyleSource {
+  width: 100%;
+  height: 36px;
+  border-radius: 5px;
+  border: 1px solid #dcdfe6;
+  text-align: center;
+  line-height: 36px;
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  span {
+    margin-left: 6px;
+  }
+
+  i {
+    font-size: 14px;
+  }
+
+  &:hover {
+    border: 1px solid #5786fb;
+    color: #5786fb;
+  }
+}
+
+//背景颜色
+.bgColorPicker {
+  .el-color-picker__trigger {
+    width: 120px;
+  }
+}
+
+//阴影
+.marginAndPadding,
+.shadow {
+  &-setting {
+    margin-top: 5px;
+    display: flex;
+
+    &-item {
+      margin: 0 2px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
-    .radius-top-left {
-        border-left-width: 2px;
-        border-top-width: 2px;
+    &-item:first-child .el-color-picker__trigger {
+      width: 40px;
     }
-    .radius-top-right {
-        border-right-width: 2px;
-        border-top-width: 2px;
+  }
+}
+.marginAndPadding {
+  &-setting {
+    text-align: center;
+    &-link {
+      width: 20px;
+      i {
+        font-size: 20px;
+      }
+
     }
 
-    .radius-bottom-left {
-        border-bottom-width: 2px;
-        border-left-width: 2px;
-    }
-    .radius-bottom-right {
-        border-bottom-width: 2px;
-        border-right-width: 2px;
-    }
+    // &-item {
+    //   .el-input {
+    //     width: 45px;
+    //   }
+    // }
+  }
 }
