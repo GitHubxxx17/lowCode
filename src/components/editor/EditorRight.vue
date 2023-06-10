@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { reactive } from "vue";
-import property from "../erComponent/property";
-import appearance from "../erComponent/appearance";
+import Property from "../erComponent/property";
+import Appearance from "../erComponent/appearance";
+import Events from "../erComponent/events";
 interface btn {
   label: String; // 标签
   active: boolean; // 是否被选择了
@@ -29,24 +30,24 @@ const selectBtn = (index: number) => {
 <template>
   <div class="ErComponent">
     <div class="ErComponent-nav">
-      <label
-        v-for="(button, index) in buttons"
-        v-show="button.isShow"
-        @click="selectBtn(index)"
-        class="ErComponent-nav-btn"
-        :class="{ active: button.active }"
-      >
+      <label v-for="(button, index) in buttons" v-show="button.isShow" @click="selectBtn(index)"
+        class="ErComponent-nav-btn" :class="{ active: button.active }">
         {{ button.label }}
       </label>
     </div>
-    <property v-if="buttons[0].active"></property>
-    <appearance v-if="buttons[1].active"></appearance>
+    <div class="ErComponent-content">
+      <Property v-if="buttons[0].active"></Property>
+      <Appearance v-if="buttons[1].active"></Appearance>
+      <Events v-if="buttons[2].active"></Events>
+    </div>
+
   </div>
 </template>
 
 <style lang="scss">
 .ErComponent {
   width: 280px;
+  height: 100%;
 
   // 导航栏
   &-nav {
@@ -88,6 +89,23 @@ const selectBtn = (index: number) => {
       &::after {
         width: 100%;
       }
+    }
+  }
+
+  &-content {
+    overflow: scroll;
+    width: 100%;
+    height: 100%;
+
+    &::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border: 1px solid #fff;
+      border-radius: 6px;
+      background: #c9c9c9;
     }
   }
 }

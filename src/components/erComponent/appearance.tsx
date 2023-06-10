@@ -65,12 +65,31 @@ export default defineComponent({
     };
 
     // 边距 margin
-    const marginAndPadding = reactive({
-      isMarginAllActive: true,
-      isMarginselfActive: false,
-      marginValue: "", // 记录margin的值
-      paddingValue: "", // 记录padding的值
-    });
+    // const marginAndPadding = reactive({
+    //   isMarginAllActive: true,
+    //   isMarginselfActive: false,
+    //   marginValue: "", // 记录margin的值
+    //   paddingValue: "", // 记录padding的值
+    // });
+    const marginAndPadding = reactive([
+      {
+        label:'外边距(margin)',
+        top: '0px',
+        bottom: '0px',
+        left: '0px',
+        right: '0px',
+        oldValue: "",
+      },
+      {
+        label:'内边距(padding)',
+        top: '0px',
+        bottom: '0px',
+        left: '0px',
+        right: '0px',
+        oldValue: "",
+      }
+    ])
+
 
     // 圆角 radius
     const radius = reactive({
@@ -119,24 +138,25 @@ export default defineComponent({
     const numericalProcessingShadow = (
       newValue: string,
       i: number,
-      key: string
+      key: string,
+      obj:Object
     ) => {
       if (newValue == "") {
-        shadow[i][key] = "0px";
+        obj[i][key] = "0px";
       } else if (/^\d+$/.test(newValue)) {
         //如果为数字
-        shadow[i][key] = `${newValue}px`;
+        obj[i][key] = `${newValue}px`;
       } else if (/^\d+px$/.test(newValue)) {
         //如果为有px单位
-        shadow[i][key] = newValue;
+        obj[i][key] = newValue;
       } else {
         //否则数值不改变
-        shadow[i][key] = shadow[i].oldValue;
+        obj[i][key] = obj[i].oldValue;
       }
     };
-    const shadowOldValue = (oldValue: string, i: number) => {
+    const shadowOldValue = (oldValue: string, i: number,obj:Object) => {
       //保存改变前的数值
-      shadow[i].oldValue = oldValue;
+      obj[i].oldValue = oldValue;
     };
     return () => {
       return (
@@ -249,7 +269,7 @@ export default defineComponent({
                 </div>
               </div>
               <div class="elCollapseItem title">边距</div>
-              <div class="elCollapseItem elCollapseMargin">
+              {/* <div class="elCollapseItem elCollapseMargin">
                 <div class="elCollapseMargin-icon">
                   <div
                     class={[
@@ -292,7 +312,65 @@ export default defineComponent({
                     <span>Padding</span>
                   </div>
                 </div>
-              </div>
+              </div> */}
+              {
+                marginAndPadding.map((item,i)=>(
+                  <div class="elCollapseItem">
+                  <div class="marginAndPadding">
+                    <p>{item.label}</p>
+                    <div class="marginAndPadding-setting">
+                  
+                      <div class="marginAndPadding-setting-item">
+                        <ElInput
+                          v-model={item.top}
+                          onChange={(value) =>
+                            numericalProcessingShadow(value, i, "top",marginAndPadding)
+                          }
+                          onFocus={(_) => shadowOldValue(item.top, i,marginAndPadding)}
+                        />
+                        <label>top</label>
+                      </div>
+                      {/* <div class="marginAndPadding-setting-link">
+                        <i class="icon iconfont icon-ai70"></i>
+                      </div> */}
+                      <div class="marginAndPadding-setting-item">
+                        <ElInput
+                          v-model={item.bottom}
+                          onChange={(value) =>
+                            numericalProcessingShadow(value, i, "bottom",marginAndPadding)
+                          }
+                          onFocus={(_) => shadowOldValue(item.bottom, i,marginAndPadding)}
+                        />
+                        <label>bottom</label>
+                      </div>
+                      <div class="marginAndPadding-setting-item">
+                        <ElInput
+                          v-model={item.left}
+                          onChange={(value) =>
+                            numericalProcessingShadow(value, i, "left",marginAndPadding)
+                          }
+                          onFocus={(_) => shadowOldValue(item.left, i,marginAndPadding)}
+                        />
+                        <label>left</label>
+                      </div>
+                      {/* <div class="marginAndPadding-setting-link">
+                        <i class="icon iconfont icon-ai70"></i>
+                      </div> */}
+                      <div class="marginAndPadding-setting-item">
+                        <ElInput
+                          v-model={item.right}
+                          onChange={(value) =>
+                            numericalProcessingShadow(value, i, "right",marginAndPadding)
+                          }
+                          onFocus={(_) => shadowOldValue(item.right, i,marginAndPadding)}
+                        />
+                        <label>right</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                ))
+              }
               <div class="margin-border-self"></div>
               <div class="elCollapseItem title">圆角</div>
               <div class="elCollapseItem elCollapseRadius">
@@ -372,9 +450,9 @@ export default defineComponent({
                         <ElInput
                           v-model={item.x}
                           onChange={(value) =>
-                            numericalProcessingShadow(value, i, "x")
+                            numericalProcessingShadow(value, i, "x",shadow)
                           }
-                          onFocus={(_) => shadowOldValue(item.x, i)}
+                          onFocus={(_) => shadowOldValue(item.x, i,shadow)}
                         />
                         <label>X值</label>
                       </div>
@@ -382,9 +460,9 @@ export default defineComponent({
                         <ElInput
                           v-model={item.y}
                           onChange={(value) =>
-                            numericalProcessingShadow(value, i, "y")
+                            numericalProcessingShadow(value, i, "y",shadow)
                           }
-                          onFocus={(_) => shadowOldValue(item.y, i)}
+                          onFocus={(_) => shadowOldValue(item.y, i,shadow)}
                         />
                         <label>Y值</label>
                       </div>
@@ -395,10 +473,11 @@ export default defineComponent({
                             numericalProcessingShadow(
                               value,
                               i,
-                              "fuzzy"
+                              "fuzzy",
+                              shadow
                             )
                           }
-                          onFocus={(_) => shadowOldValue(item.fuzzy, i)}
+                          onFocus={(_) => shadowOldValue(item.fuzzy, i,shadow)}
                         />
                         <label>模糊值</label>
                       </div>
@@ -409,10 +488,11 @@ export default defineComponent({
                             numericalProcessingShadow(
                               value,
                               i,
-                              "extension"
+                              "extension",
+                              shadow
                             )
                           }
-                          onFocus={(_) => shadowOldValue(item.extension, i)}
+                          onFocus={(_) => shadowOldValue(item.extension, i,shadow)}
                         />
                         <label>扩展值</label>
                       </div>
@@ -422,7 +502,7 @@ export default defineComponent({
               ))}
             </elCollapseItem>
             <elCollapseItem title="样式源码" name="styleSource">
-              <div class="elCollapseItem">
+              <div class="elCollapseItem editStyle">
                 <div class="editStyleSource">
                   <i class="icon iconfont icon-daimajishufuwu"></i>
                   <span>编辑样式源码</span>
