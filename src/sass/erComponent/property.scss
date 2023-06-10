@@ -32,9 +32,6 @@
     }
 }
 
-
-
-
 .el-scrollbar__view {
     width: 180px !important;
     display: grid;
@@ -52,5 +49,12 @@
 
     .active {
         color: #2468f2 !important;
+    }
+}
+
+//默认设置
+.defaultTitle {
+    .el-input {
+        width: 170px;
     }
 }

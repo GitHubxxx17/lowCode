@@ -365,6 +365,7 @@
         border-left-width: 2px;
         border-top-width: 2px;
     }
+
     .radius-top-right {
         border-right-width: 2px;
         border-top-width: 2px;
@@ -374,8 +375,64 @@
         border-bottom-width: 2px;
         border-left-width: 2px;
     }
+
     .radius-bottom-right {
         border-bottom-width: 2px;
         border-right-width: 2px;
+    }
+}
+
+//编辑样式源码
+.editStyleSource {
+    width: 100%;
+    height: 36px;
+    border-radius: 5px;
+    border: 1px solid #dcdfe6;
+    text-align: center;
+    line-height: 36px;
+    user-select: none;
+    cursor: pointer;
+    transition: all .2s;
+
+    span {
+        margin-left: 6px;
+    }
+
+    i {
+        font-size: 14px;
+    }
+
+    &:hover {
+        border: 1px solid #5786fb;
+        color: #5786fb;
+    }
+}
+
+//背景颜色
+.bgColorPicker {
+    .el-color-picker__trigger {
+        width: 120px;
+
+    }
+}
+
+//阴影
+.shadow {
+
+    &-setting {
+        margin-top: 5px;
+        display: flex;
+
+        &-item {
+            margin: 0 2px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        &-item:first-child .el-color-picker__trigger {
+            width: 40px;
+        }
     }
 }
