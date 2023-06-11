@@ -127,12 +127,134 @@ export const Property = defineComponent({
       { icon: "icon-zuoyouduiqi", active: false },
     ]);
     //显示类型
-    const displayType = reactive([
-      { icon: "icon-zuoduiqi", active: true },
-      { icon: "icon-juzhongduiqi", active: false },
-      { icon: "icon-youduiqi", active: false },
-      { icon: "icon-zuoyouduiqi", active: false },
-    ]);
+    const displayType = reactive({
+      alignmentLabel: "块级(block)设置",
+      flexisShow: false,
+      options: [
+        {
+          icon: "icon-a-Displayblock",
+          active: true,
+          alignmentLabel: "块级(block)设置",
+        },
+        {
+          icon: "icon-a-Displayinline-block",
+          active: false,
+          alignmentLabel: "行内块(inline-block)设置",
+        },
+        {
+          icon: "icon-a-Displayinline",
+          active: false,
+          alignmentLabel: "行内(inline)设置",
+        },
+        {
+          icon: "icon-a-Displayflex",
+          active: false,
+          alignmentLabel: "flex布局设置",
+        },
+      ],
+      flexList: [
+        {
+          label: "布局方向",
+          list: [
+            { value: "水平方向", attribute: "row" },
+            { value: "垂直方向", attribute: "column" },
+            { value: "水平反向", attribute: "row-reverse" },
+            { value: "垂直反向", attribute: "column-reverse" },
+          ],
+          value: "水平方向",
+        },
+        {
+          label: "水平对齐",
+          list: [
+            { value: "左对齐", attribute: "flex-start" },
+            { value: "水平居中", attribute: "center" },
+            { value: "右对齐", attribute: "flex-end" },
+            { value: "两端对齐", attribute: "space-between" },
+            { value: "间隔分布", attribute: "space-around" },
+          ],
+          value: "左对齐",
+        },
+        {
+          label: "垂直对齐",
+          list: [
+            { value: "顶部对齐", attribute: "flex-start" },
+            { value: "垂直居中", attribute: "center" },
+            { value: "底部对齐", attribute: "flex-end" },
+            { value: "基线对齐", attribute: "baseline" },
+            { value: "高度撑满", attribute: "stretch" },
+          ],
+          value: "顶部对齐",
+        },
+        {
+          label: "是否换行",
+          list: [
+            { value: "不换行", attribute: "nowrap" },
+            { value: "自动换行", attribute: "wrap" },
+            { value: "自动换行(颠倒)", attribute: "wrap-reverse" },
+          ],
+          value: "不换行",
+        },
+      ],
+      flexAttribute:['','','',''],
+      flexDirectionMap: new Map()
+    });
+
+    displayType.flexDirectionMap.set('row',{jc:[
+      { value: "左对齐", attribute: "flex-start" },
+      { value: "水平居中", attribute: "center" },
+      { value: "右对齐", attribute: "flex-end" },
+      { value: "两端对齐", attribute: "space-between" },
+      { value: "间隔分布", attribute: "space-around" },
+    ],ai:[
+      { value: "顶部对齐", attribute: "flex-start" },
+      { value: "垂直居中", attribute: "center" },
+      { value: "底部对齐", attribute: "flex-end" },
+      { value: "基线对齐", attribute: "baseline" },
+      { value: "高度撑满", attribute: "stretch" },
+    ]})
+
+    displayType.flexDirectionMap.set('column',{jc:[
+      { value: "顶部对齐", attribute: "flex-start" },
+      { value: "垂直居中", attribute: "center" },
+      { value: "底部对齐", attribute: "flex-end" },
+      { value: "两端对齐", attribute: "space-between" },
+      { value: "间隔分布", attribute: "space-around" },
+    ],ai:[
+      { value: "左对齐", attribute: "flex-start" },
+      { value: "水平居中", attribute: "center" },
+      { value: "右对齐", attribute: "flex-end" },
+      { value: "基线对齐", attribute: "baseline" },
+      { value: "水平铺开", attribute: "stretch" },
+    ]})
+
+    displayType.flexDirectionMap.set('row-reverse',{jc:[
+      { value: "右对齐", attribute: "flex-start" },
+      { value: "水平居中", attribute: "center" },
+      { value: "左对齐", attribute: "flex-end" },
+      { value: "两端对齐", attribute: "space-between" },
+      { value: "间隔分布", attribute: "space-around" },
+    ],ai:[
+      { value: "顶部对齐", attribute: "flex-start" },
+      { value: "垂直居中", attribute: "center" },
+      { value: "底部对齐", attribute: "flex-end" },
+      { value: "基线对齐", attribute: "baseline" },
+      { value: "高度撑满", attribute: "stretch" },
+    ]})
+
+    displayType.flexDirectionMap.set('column-reverse',{jc:[
+      { value: "底部对齐", attribute: "flex-start" },
+      { value: "垂直居中", attribute: "center" },
+      { value: "顶部对齐", attribute: "flex-end" },
+      { value: "两端对齐", attribute: "space-between" },
+      { value: "间隔分布", attribute: "space-around" },
+    ],ai:[
+      { value: "左对齐", attribute: "flex-start" },
+      { value: "水平居中", attribute: "center" },
+      { value: "右对齐", attribute: "flex-end" },
+      { value: "基线对齐", attribute: "baseline" },
+      { value: "水平铺开", attribute: "stretch" },
+    ]})
+
     return () => {
       return (
         <>
@@ -251,18 +373,24 @@ export const Property = defineComponent({
                 )}
               </>
             ))}
-            
+
             <div class="elCollapseItem container-displayType">
-              <p>显示方式</p>
-              {displayType.map((item) => (
+              <p>显示方式(display)</p>
+              {displayType.options.map((item) => (
                 <div
                   class={{
                     active: item.active,
                     "container-displayType-item": true,
                   }}
                   onClick={(_) => {
-                    displayType.forEach((item) => item.active = false);
+                    displayType.options.forEach(
+                      (item) => (item.active = false)
+                    );
                     item.active = true;
+                    displayType.alignmentLabel = item.alignmentLabel;
+                    if (item.alignmentLabel.includes("flex"))
+                      displayType.flexisShow = true;
+                    else displayType.flexisShow = false;
                   }}
                 >
                   <i class={[item.icon, "icon", "iconfont"]}></i>
@@ -270,21 +398,63 @@ export const Property = defineComponent({
               ))}
             </div>
             <div class="elCollapseItem container-alignment">
-              <p>内部对齐方式</p>
-              {alignment.map((item) => (
-                <div
-                  class={{
-                    active: item.active,
-                    "container-alignment-item": true,
-                  }}
-                  onClick={(_) => {
-                    alignment.forEach((item) => item.active = false);
-                    item.active = true;
-                  }}
-                >
-                  <i class={[item.icon, "icon", "iconfont"]}></i>
-                </div>
-              ))}
+              <div class="alignmentContent">
+                <p>{displayType.alignmentLabel}</p>
+                {!displayType.flexisShow && (
+                  <div class="alignmentContent-list">
+                    {alignment.map((item) => (
+                      <div
+                        class={{
+                          active: item.active,
+                          "container-alignment-item": true,
+                        }}
+                        onClick={(_) => {
+                          alignment.forEach((item) => (item.active = false));
+                          item.active = true;
+                        }}
+                      >
+                        <i class={[item.icon, "icon", "iconfont"]}></i>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {displayType.flexisShow &&
+                  displayType.flexList.map((flexItem,i) => (
+                    <div class="flexlayout-list">
+                      <div class="flexlayout-list-item">
+                        <p>{flexItem.label}</p>
+                        <el-select v-model={flexItem.value} onChange={_=>{
+                          
+                          //获取对应的属性值
+                          let item = flexItem.list.filter((v)=>{
+                            if(v.value == flexItem.value){
+                              return v;
+                            } 
+                          })
+                          displayType.flexAttribute[i] = item[0].attribute;
+                          console.log(displayType.flexAttribute);
+                          if(i == 0){
+                            displayType.flexList[1].list = displayType.flexDirectionMap.get(item[0].attribute).jc;
+                            displayType.flexList[2].list = displayType.flexDirectionMap.get(item[0].attribute).ai;
+                            displayType.flexList[1].value = displayType.flexList[1].list[0].value
+                            displayType.flexList[2].value = displayType.flexList[2].list[0].value
+                            displayType.flexAttribute[1] = displayType.flexList[1].list[0].attribute
+                            displayType.flexAttribute[2] = displayType.flexList[2].list[0].attribute
+                          }
+                        }}>
+                          {flexItem.list.map((item) => {
+                            return (
+                              <el-option
+                                key={item.value}
+                                value={item.value}
+                              ></el-option>
+                            );
+                          })}
+                        </el-select>
+                      </div>
+                    </div>
+                  ))}
+              </div>
             </div>
           </elCollapseItem>
         </>

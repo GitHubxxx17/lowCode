@@ -330,9 +330,9 @@ export default defineComponent({
                         />
                         <label>top</label>
                       </div>
-                      {/* <div class="marginAndPadding-setting-link">
+                      <div class="marginAndPadding-setting-link">
                         <i class="icon iconfont icon-ai70"></i>
-                      </div> */}
+                      </div>
                       <div class="marginAndPadding-setting-item">
                         <ElInput
                           v-model={item.bottom}
@@ -353,9 +353,9 @@ export default defineComponent({
                         />
                         <label>left</label>
                       </div>
-                      {/* <div class="marginAndPadding-setting-link">
+                      <div class="marginAndPadding-setting-link">
                         <i class="icon iconfont icon-ai70"></i>
-                      </div> */}
+                      </div>
                       <div class="marginAndPadding-setting-item">
                         <ElInput
                           v-model={item.right}
