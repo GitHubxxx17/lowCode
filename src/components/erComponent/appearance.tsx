@@ -5,6 +5,7 @@ export default defineComponent({
   setup() {
     // 下拉器
     const activeNames: string[] = ["basic", "styleSource"];
+    console.log(import("./containers/container-ordinary"));
 
     //背景颜色
     let bgColor = ref("rgba(255, 255, 255)");
@@ -73,23 +74,22 @@ export default defineComponent({
     // });
     const marginAndPadding = reactive([
       {
-        label:'外边距(margin)',
-        top: '0px',
-        bottom: '0px',
-        left: '0px',
-        right: '0px',
+        label: "外边距(margin)",
+        top: "0px",
+        bottom: "0px",
+        left: "0px",
+        right: "0px",
         oldValue: "",
       },
       {
-        label:'内边距(padding)',
-        top: '0px',
-        bottom: '0px',
-        left: '0px',
-        right: '0px',
+        label: "内边距(padding)",
+        top: "0px",
+        bottom: "0px",
+        left: "0px",
+        right: "0px",
         oldValue: "",
-      }
-    ])
-
+      },
+    ]);
 
     // 圆角 radius
     const radius = reactive({
@@ -139,7 +139,7 @@ export default defineComponent({
       newValue: string,
       i: number,
       key: string,
-      obj:Object
+      obj: Object
     ) => {
       if (newValue == "") {
         obj[i][key] = "0px";
@@ -154,7 +154,7 @@ export default defineComponent({
         obj[i][key] = obj[i].oldValue;
       }
     };
-    const shadowOldValue = (oldValue: string, i: number,obj:Object) => {
+    const shadowOldValue = (oldValue: string, i: number, obj: Object) => {
       //保存改变前的数值
       obj[i].oldValue = oldValue;
     };
@@ -313,20 +313,25 @@ export default defineComponent({
                   </div>
                 </div>
               </div> */}
-              {
-                marginAndPadding.map((item,i)=>(
-                  <div class="elCollapseItem">
+              {marginAndPadding.map((item, i) => (
+                <div class="elCollapseItem">
                   <div class="marginAndPadding">
                     <p>{item.label}</p>
                     <div class="marginAndPadding-setting">
-                  
                       <div class="marginAndPadding-setting-item">
                         <ElInput
                           v-model={item.top}
                           onChange={(value) =>
-                            numericalProcessingShadow(value, i, "top",marginAndPadding)
+                            numericalProcessingShadow(
+                              value,
+                              i,
+                              "top",
+                              marginAndPadding
+                            )
                           }
-                          onFocus={(_) => shadowOldValue(item.top, i,marginAndPadding)}
+                          onFocus={(_) =>
+                            shadowOldValue(item.top, i, marginAndPadding)
+                          }
                         />
                         <label>top</label>
                       </div>
@@ -337,9 +342,16 @@ export default defineComponent({
                         <ElInput
                           v-model={item.bottom}
                           onChange={(value) =>
-                            numericalProcessingShadow(value, i, "bottom",marginAndPadding)
+                            numericalProcessingShadow(
+                              value,
+                              i,
+                              "bottom",
+                              marginAndPadding
+                            )
                           }
-                          onFocus={(_) => shadowOldValue(item.bottom, i,marginAndPadding)}
+                          onFocus={(_) =>
+                            shadowOldValue(item.bottom, i, marginAndPadding)
+                          }
                         />
                         <label>bottom</label>
                       </div>
@@ -347,9 +359,16 @@ export default defineComponent({
                         <ElInput
                           v-model={item.left}
                           onChange={(value) =>
-                            numericalProcessingShadow(value, i, "left",marginAndPadding)
+                            numericalProcessingShadow(
+                              value,
+                              i,
+                              "left",
+                              marginAndPadding
+                            )
                           }
-                          onFocus={(_) => shadowOldValue(item.left, i,marginAndPadding)}
+                          onFocus={(_) =>
+                            shadowOldValue(item.left, i, marginAndPadding)
+                          }
                         />
                         <label>left</label>
                       </div>
@@ -360,17 +379,23 @@ export default defineComponent({
                         <ElInput
                           v-model={item.right}
                           onChange={(value) =>
-                            numericalProcessingShadow(value, i, "right",marginAndPadding)
+                            numericalProcessingShadow(
+                              value,
+                              i,
+                              "right",
+                              marginAndPadding
+                            )
                           }
-                          onFocus={(_) => shadowOldValue(item.right, i,marginAndPadding)}
+                          onFocus={(_) =>
+                            shadowOldValue(item.right, i, marginAndPadding)
+                          }
                         />
                         <label>right</label>
                       </div>
                     </div>
                   </div>
                 </div>
-                ))
-              }
+              ))}
               <div class="margin-border-self"></div>
               <div class="elCollapseItem title">圆角</div>
               <div class="elCollapseItem elCollapseRadius">
@@ -450,9 +475,9 @@ export default defineComponent({
                         <ElInput
                           v-model={item.x}
                           onChange={(value) =>
-                            numericalProcessingShadow(value, i, "x",shadow)
+                            numericalProcessingShadow(value, i, "x", shadow)
                           }
-                          onFocus={(_) => shadowOldValue(item.x, i,shadow)}
+                          onFocus={(_) => shadowOldValue(item.x, i, shadow)}
                         />
                         <label>X值</label>
                       </div>
@@ -460,9 +485,9 @@ export default defineComponent({
                         <ElInput
                           v-model={item.y}
                           onChange={(value) =>
-                            numericalProcessingShadow(value, i, "y",shadow)
+                            numericalProcessingShadow(value, i, "y", shadow)
                           }
-                          onFocus={(_) => shadowOldValue(item.y, i,shadow)}
+                          onFocus={(_) => shadowOldValue(item.y, i, shadow)}
                         />
                         <label>Y值</label>
                       </div>
@@ -470,14 +495,9 @@ export default defineComponent({
                         <ElInput
                           v-model={item.fuzzy}
                           onChange={(value) =>
-                            numericalProcessingShadow(
-                              value,
-                              i,
-                              "fuzzy",
-                              shadow
-                            )
+                            numericalProcessingShadow(value, i, "fuzzy", shadow)
                           }
-                          onFocus={(_) => shadowOldValue(item.fuzzy, i,shadow)}
+                          onFocus={(_) => shadowOldValue(item.fuzzy, i, shadow)}
                         />
                         <label>模糊值</label>
                       </div>
@@ -492,7 +512,9 @@ export default defineComponent({
                               shadow
                             )
                           }
-                          onFocus={(_) => shadowOldValue(item.extension, i,shadow)}
+                          onFocus={(_) =>
+                            shadowOldValue(item.extension, i, shadow)
+                          }
                         />
                         <label>扩展值</label>
                       </div>
