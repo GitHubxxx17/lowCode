@@ -1,5 +1,5 @@
 import { defineComponent, reactive } from "vue";
-import { ElColorPicker, ElInputNumber, ElInput } from "element-plus";
+import { ElInput } from "element-plus";
 export const appearance = defineComponent({
   props: {
     option: { type: Object },
