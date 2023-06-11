@@ -274,7 +274,7 @@ function useDragger(): any {
       startY = clientY - top;
       isDraging = true;
       createDragGhost(); //创建拖拽的影子节点
-      summarizeInlineNode(); // 算出当前容器的每行节点情况
+
       document.body.addEventListener("mousemove", dragMousemove);
     };
   };
@@ -336,38 +336,54 @@ function useDragger(): any {
     return inlineArr;
   };
 
-  // 计算要移动的组件的放置的最新位置
+  // 计算要移动的组件的放置的最新位置(bug：超出范围会直接返回第一个的位置)
   const calcNewIndex = function (mouseY, mouseX) {
-    console.log(mouseY, mouseX);
-    const { top, left } = container.getBoundingClientRect();
-    let newIndexLine = 0;
-    let newIndexRow = 0;
-    for (let i = 0; i < inlineArr.length - 1; i++) {
-      if (
-        mouseY > top + findInlineMaxHeight(i) &&
-        mouseY <= top + findInlineMaxHeight(i + 1)
-      ) {
+    inlineArr = [];
+    summarizeInlineNode(); // 算出当前容器的每行节点情况
+    let { top, left } = container.getBoundingClientRect();
+
+    let newIndexLine = 0; // 记录鼠标位置处于当前容器的节点的第几行
+    let newIndexRow = 0; // 记录鼠标位置处于 newIndexLine 的第几个节点位置
+    for (let i = 0; i < inlineArr.length; i++) {
+      let maxHeightTemp = findInlineMaxHeight(i);
+      if (mouseY > top && mouseY <= top + maxHeightTemp) {
         newIndexLine = i;
+        break;
       }
+      top += maxHeightTemp;
     }
-    console.log("newIndexLine" + newIndexLine);
-
-    for (let i = 0; i < inlineArr[newIndexLine].length - 1; i++) {
-      console.log("i" + i);
-
-      if (
-        mouseX > dragChildList[inlineArr[newIndexLine][i]].offsetWidth &&
-        mouseX <= dragChildList[inlineArr[newIndexLine][i + 1]].offsetWidth
-      ) {
+    let curOffsetWidth = 0;
+    for (let i = 0; i < inlineArr[newIndexLine].length; i++) {
+      curOffsetWidth = dragChildList[inlineArr[newIndexLine][i]].offsetWidth;
+      if (mouseX > left && mouseX <= left + curOffsetWidth) {
         newIndexRow = i;
+        break;
       }
+      left += curOffsetWidth;
     }
-    console.log("newIndexRow" + newIndexRow);
-
-    // return inlineArr[newIndexLine][newIndexRow];
     console.log(inlineArr[newIndexLine][newIndexRow]);
 
-    return dragChildList.indexOf(canChange);
+    return inlineArr[newIndexLine][newIndexRow]; // 把鼠标（即需要移动的组件）位于的放置的最新位置返回去
+  };
+
+  // 更新容器行内的节点个数情况
+  const updateInlineNode = (curPos) => {
+    let containerWidth = container.offsetWidth; // 获取当前容器的宽度
+    let calcWidth = 0; // 计算当前行已填入节点的宽度
+    let noChange = true;
+    for (let i = 0; i < inlineArr.length; i++) {
+      for (let j = 0; j < inlineArr[i].length; j++) {
+        calcWidth += dragChildList[inlineArr[i][j]].offsetWidth;
+        dragChildList[inlineArr[i][j]].style.setProperty(
+          "transition",
+          `transform 300ms ease`
+        );
+        // dragChildList[inlineArr[i][j]].style.setProperty(
+        //   "transform",
+        //   `translate3d(${dragEl.offsetWidth}px,0,0)`
+        // );
+      }
+    }
   };
 
   // 模拟移动组件
@@ -381,21 +397,21 @@ function useDragger(): any {
     // 渲染中的节点移动
     dragChildList.forEach((el, index) => {
       el.style.setProperty("transition", `transform 300ms ease`);
-      console.log("offsetTop=" + el.offsetTop);
       if (curPos > oldIndex && index > oldIndex && index <= curPos) {
         el.style.setProperty(
           "transform",
-          `translateX(-${dragEl.offsetWidth}px)`
+          `translate3d(-${dragEl.offsetWidth}px,0,0)`
         );
       } else if (curPos <= oldIndex && index < oldIndex && index >= curPos) {
         el.style.setProperty(
           "transform",
-          `translateX(${dragEl.offsetWidth}px)`
+          `translate3d(${dragEl.offsetWidth}px,0,0)`
         );
       } else {
-        el.style.setProperty("transform", `translateX(0)`);
+        el.style.setProperty("transform", `translate3d(0,0,0)`);
       }
     });
+    // updateInlineNode(curPos);
     newIndex = curPos; //获取拖拽组件在当前容器的位置
   };
 
