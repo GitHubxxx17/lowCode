@@ -8,12 +8,12 @@ export default defineComponent({
   setup(props) {
     //文字样式
     const writingStyle = reactive({
-      color:"rgba(255, 255, 255)",
-      Fontsize:'',
-      fontWeight:'',
-      lineHeight:'',
-      fontFamily:''
-    })
+      color: "rgba(255, 255, 255)",
+      Fontsize: "",
+      fontWeight: "",
+      lineHeight: "",
+      fontFamily: "",
+    });
 
     //背景颜色
     let bgColor = ref("rgba(255, 255, 255)");
@@ -69,7 +69,7 @@ export default defineComponent({
         },
       },
     ];
-    const changeSelectValue = (newValue:string) => {
+    const changeSelectValue = (newValue: string) => {
       border.selectInputValue = newValue;
     };
 
@@ -162,52 +162,42 @@ export default defineComponent({
     };
     return () => {
       return (
-        <elCollapseItem title="基本" name="basic">
+        <>
           {/* 文字样式 */}
           {props.option.writingStyle && (
             <div>
               <div class="elCollapseItem title">文字样式</div>
-                <div class="elCollapseItem">
-                  <div class="shadow">
-                    <div class="shadow-setting">
-                      <div class="shadow-setting-item">
-                        <div class="shadowColor">
-                          <el-color-picker
-                            show-alpha
-                            v-model={writingStyle.color}
-                          ></el-color-picker>
-                        </div>
-                        <label>颜色</label>
+              <div class="elCollapseItem">
+                <div class="shadow">
+                  <div class="shadow-setting">
+                    <div class="shadow-setting-item">
+                      <div class="shadowColor">
+                        <el-color-picker
+                          show-alpha
+                          v-model={writingStyle.color}
+                        ></el-color-picker>
                       </div>
-                      <div class="shadow-setting-item">
-                        <ElInput
-                          v-model={writingStyle.Fontsize}
-                        />
-                        <label>字号</label>
-                      </div>
-                      <div class="shadow-setting-item">
-                        <ElInput
-                          v-model={writingStyle.fontWeight}
-                        
-                        />
-                        <label>字重</label>
-                      </div>
-                      <div class="shadow-setting-item">
-                        <ElInput
-                          v-model={writingStyle.fontFamily}
-                          
-                        />
-                        <label>字体</label>
-                      </div>
-                      <div class="shadow-setting-item">
-                        <ElInput
-                          v-model={writingStyle.lineHeight}
-                        />
-                        <label>行间距</label>
-                      </div>
+                      <label>颜色</label>
+                    </div>
+                    <div class="shadow-setting-item">
+                      <ElInput v-model={writingStyle.Fontsize} />
+                      <label>字号</label>
+                    </div>
+                    <div class="shadow-setting-item">
+                      <ElInput v-model={writingStyle.fontWeight} />
+                      <label>字重</label>
+                    </div>
+                    <div class="shadow-setting-item">
+                      <ElInput v-model={writingStyle.fontFamily} />
+                      <label>字体</label>
+                    </div>
+                    <div class="shadow-setting-item">
+                      <ElInput v-model={writingStyle.lineHeight} />
+                      <label>行间距</label>
                     </div>
                   </div>
                 </div>
+              </div>
             </div>
           )}
           {/* 背景颜色 */}
@@ -543,7 +533,7 @@ export default defineComponent({
               ))}
             </div>
           )}
-        </elCollapseItem>
+        </>
       );
     };
   },

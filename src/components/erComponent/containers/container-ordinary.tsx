@@ -7,6 +7,8 @@ export const ContainerOrdinaryAppearance = defineComponent({
     option: { type: Object },
   },
   setup() {
+    // 下拉器
+    const activeNames: string[] = ["basic","styleSource"];
     const option = {
       writingStyle:true,
       bgColor:true,
@@ -17,7 +19,19 @@ export const ContainerOrdinaryAppearance = defineComponent({
     };
 
     return () => {
-      return <BaseAppearance option={option}></BaseAppearance>;
+      return <elCollapse modelValue={activeNames}>
+            <elCollapseItem title="基本" name="basic">
+            <BaseAppearance option={option}></BaseAppearance>
+            </elCollapseItem>
+            <elCollapseItem title="样式源码" name="styleSource">
+              <div class="elCollapseItem editStyle">
+                <div class="editStyleSource">
+                  <i class="icon iconfont icon-daimajishufuwu"></i>
+                  <span>编辑样式源码</span>
+                </div>
+              </div>
+            </elCollapseItem>
+          </elCollapse>
     };
   },
 });
