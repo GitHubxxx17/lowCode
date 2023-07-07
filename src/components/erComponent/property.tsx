@@ -2,6 +2,7 @@ import "@/sass/erComponent/property.scss";
 import { defineComponent, inject, watch } from "vue";
 import pinia from "../../stores/index.ts";
 import dragStore from "../../stores/dragStore.ts";
+import './base/index.ts'
 export default defineComponent({
   props: {
     EditorData: Object,

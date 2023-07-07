@@ -1,15 +1,22 @@
 import { defineComponent, reactive } from "vue";
-import { BaseSelect } from "../base/baseSelect";
-import { BaseSwitch } from "../base/baseSwitch";
-import { BaseInput } from "../base/baseInput";
-import BaseAppearance from "../base/baseAppearance";
+import {
+  BaseInput,
+  BaseSelect,
+  BaseSwitch,
+  BaseAppearance,
+} from "../base/index";
 export const TextBoxAppearance = defineComponent({
   props: {
     option: { type: Object },
   },
   setup() {
     // 下拉器
-    const activeNames: string[] = ["basic", "titleType", "inputBoxType","styleSource"];
+    const activeNames: string[] = [
+      "basic",
+      "titleType",
+      "inputBoxType",
+      "styleSource",
+    ];
 
     const state = reactive({
       layout: {
@@ -73,13 +80,13 @@ export const TextBoxAppearance = defineComponent({
             <BaseAppearance option={state.inputBoxType}></BaseAppearance>
           </elCollapseItem>
           <elCollapseItem title="样式源码" name="styleSource">
-              <div class="elCollapseItem editStyle">
-                <div class="editStyleSource">
-                  <i class="icon iconfont icon-daimajishufuwu"></i>
-                  <span>编辑样式源码</span>
-                </div>
+            <div class="elCollapseItem editStyle">
+              <div class="editStyleSource">
+                <i class="icon iconfont icon-daimajishufuwu"></i>
+                <span>编辑样式源码</span>
               </div>
-            </elCollapseItem>
+            </div>
+          </elCollapseItem>
         </elCollapse>
       );
     };

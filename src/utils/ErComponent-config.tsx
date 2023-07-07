@@ -65,6 +65,16 @@ import {
   SelectProperty,
 } from "../components/erComponent/commons/select";
 
+import {
+  TextBoxAppearance,
+  TextBoxProperty,
+} from "../components/erComponent/form/textBox";
+import {
+  MultilineTextAppearance,
+  MultilineTextProperty,
+} from "../components/erComponent/form/multilineText";
+
+
 interface ErcomponentConfig {
   type: string; //类型
   Properties?: () => any; //属性
@@ -125,6 +135,24 @@ const ErcomponentConfig = [
     },
     appearances() {
       return <SelectAppearance></SelectAppearance>;
+    },
+  },
+  {
+    type: "textBox",
+    Properties() {
+      return <TextBoxProperty></TextBoxProperty>;
+    },
+    appearances() {
+      return <TextBoxAppearance></TextBoxAppearance>;
+    },
+  },
+  {
+    type: "multilineText",
+    Properties() {
+      return <MultilineTextProperty></MultilineTextProperty>;
+    },
+    appearances() {
+      return <MultilineTextAppearance></MultilineTextAppearance>;
     },
   },
 ];

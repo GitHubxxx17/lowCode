@@ -1,9 +1,11 @@
 import { defineComponent, reactive } from "vue";
-import { BaseSelect } from "../base/baseSelect";
-import { BaseSwitch } from "../base/baseSwitch";
-import { BaseInput } from "../base/baseInput";
-import { BaseInputNumber } from "../base/baseInputNumber";
-import BaseAppearance from "../base/baseAppearance";
+import {
+  BaseInput,
+  BaseSelect,
+  BaseSwitch,
+  BaseInputNumber,
+  BaseAppearance,
+} from "../base/index";
 export const MultilineTextAppearance = defineComponent({
   props: {
     option: { type: Object },
@@ -53,14 +55,14 @@ export const MultilineTextAppearance = defineComponent({
         minRows: {
           label: "最小展示行数",
           value: 1,
-          min:1,
-          max:99
+          min: 1,
+          max: 99,
         },
         maxRows: {
           label: "最大展示行数",
           value: 1,
-          min:1,
-          max:99
+          min: 1,
+          max: 99,
         },
       },
       titleType: {

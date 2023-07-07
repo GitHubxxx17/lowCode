@@ -1,13 +1,10 @@
 import { defineComponent, reactive } from "vue";
-import { BaseSwitch } from "../base/baseSwitch";
-import { BaseInput } from "../base/baseInput";
+import { BaseInput, BaseSwitch } from "../base/index";
 export const SelectAppearance = defineComponent({
   props: {
     option: { type: Object },
   },
   setup() {
-    
-
     return () => {
       return <div></div>;
     };
@@ -20,10 +17,10 @@ export const SelectProperty = defineComponent({
   },
   setup() {
     // 下拉器
-    const activeNames: string[] = ["basic","options"];
+    const activeNames: string[] = ["basic", "options"];
 
     const state = reactive({
-      bindingField:{
+      bindingField: {
         label: "绑定字段",
         value: true,
       },
@@ -31,7 +28,7 @@ export const SelectProperty = defineComponent({
         label: "可搜索",
         value: true,
       },
-      multiple:{
+      multiple: {
         label: "是否多选",
         value: true,
       },
@@ -44,18 +41,16 @@ export const SelectProperty = defineComponent({
     return () => {
       return (
         <>
-        <elCollapse modelValue={activeNames}>
-          <elCollapseItem title="基本" name="basic">
-          <BaseInput option={state.bindingField}></BaseInput>
-            <BaseSwitch option={state.multiple}></BaseSwitch>
-            <BaseSwitch option={state.filterable}></BaseSwitch>
-          </elCollapseItem>
-          <elCollapseItem title="选项" name="options">
-          <div class="elCollapseItem">数据</div>
-          <div class="elCollapseItem">
-
-          </div>
-          </elCollapseItem>
+          <elCollapse modelValue={activeNames}>
+            <elCollapseItem title="基本" name="basic">
+              <BaseInput option={state.bindingField}></BaseInput>
+              <BaseSwitch option={state.multiple}></BaseSwitch>
+              <BaseSwitch option={state.filterable}></BaseSwitch>
+            </elCollapseItem>
+            <elCollapseItem title="选项" name="options">
+              <div class="elCollapseItem">数据</div>
+              <div class="elCollapseItem"></div>
+            </elCollapseItem>
           </elCollapse>
         </>
       );

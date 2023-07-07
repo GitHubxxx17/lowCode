@@ -1,7 +1,9 @@
 import { defineComponent, reactive } from "vue";
 import { ElInput } from "element-plus";
-import { BaseSelect } from "../base/baseSelect";
-import BaseAppearance from "../base/baseAppearance";
+import {
+  BaseSelect,
+  BaseAppearance,
+} from "../base/index";
 export const ContainerOrdinaryAppearance = defineComponent({
   props: {
     option: { type: Object },

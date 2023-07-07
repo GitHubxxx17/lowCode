@@ -1,8 +1,10 @@
 import { defineComponent, reactive } from "vue";
-import { BaseSelect } from "../base/baseSelect";
-import { BaseTextArea } from "../base/baseTextArea";
-import { BaseSwitch } from "../base/baseSwitch";
-import BaseAppearance from "../base/baseAppearance";
+import {
+  BaseSwitch,
+  BaseSelect,
+  BaseTextArea,
+  BaseAppearance,
+} from "../base/index";
 export const TextAppearance = defineComponent({
   props: {
     option: { type: Object },

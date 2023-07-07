@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-export const BaseInputNumber = defineComponent({
+export default defineComponent({
   props: {
     option: { type: Object },
   },

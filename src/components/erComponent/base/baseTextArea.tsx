@@ -1,6 +1,6 @@
 import { defineComponent } from "vue";
 import { ElInput } from "element-plus";
-export const BaseTextArea = defineComponent({
+export default defineComponent({
   props: {
     option:{type:Object}
   },

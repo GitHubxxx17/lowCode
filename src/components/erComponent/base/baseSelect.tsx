@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-export const BaseSelect = defineComponent({
+export default defineComponent({
   props: {
     label:{ type: String },
     setting: { type: Object },

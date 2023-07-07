@@ -1,20 +1,22 @@
 import { defineComponent, reactive } from "vue";
-import { BaseSelect } from "../base/baseSelect";
-import { BaseTextArea } from "../base/baseTextArea";
-import { BaseSwitch } from "../base/baseSwitch";
-import BaseAppearance from "../base/baseAppearance";
+import {
+  BaseSelect,
+  BaseTextArea,
+  BaseSwitch,
+  BaseAppearance,
+} from "../base/index";
 export const InputAppearance = defineComponent({
   props: {
     option: { type: Object },
   },
   setup() {
     const option = {
-      writingStyle:true,
-      bgColor:true,
-      border:true,
-      marginAndPadding:true,
-      radius:true,
-      shadow:true,
+      writingStyle: true,
+      bgColor: true,
+      border: true,
+      marginAndPadding: true,
+      radius: true,
+      shadow: true,
     };
 
     return () => {
@@ -29,8 +31,7 @@ export const InputProperty = defineComponent({
   },
   setup() {
     // 下拉器
-    const activeNames: string[] = ["basic","layout"];
-
+    const activeNames: string[] = ["basic", "layout"];
 
     const textFormat = reactive({
       value: "普通文字",
@@ -77,11 +78,11 @@ export const InputProperty = defineComponent({
       return (
         <>
           <elCollapse modelValue={activeNames}>
-          <elCollapseItem title="基本" name="basic">
-            <BaseSelect label="文字格式" setting={textFormat}></BaseSelect>
-            <BaseSwitch option={state.whetherInline}></BaseSwitch>
-            <BaseTextArea option={state.textContent}></BaseTextArea>
-          </elCollapseItem>
+            <elCollapseItem title="基本" name="basic">
+              <BaseSelect label="文字格式" setting={textFormat}></BaseSelect>
+              <BaseSwitch option={state.whetherInline}></BaseSwitch>
+              <BaseTextArea option={state.textContent}></BaseTextArea>
+            </elCollapseItem>
           </elCollapse>
         </>
       );
