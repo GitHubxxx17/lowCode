@@ -1,7 +1,7 @@
 import "@/sass/erComponent/appearance.scss";
 import { defineComponent, reactive, ref } from "vue";
 import { ElColorPicker, ElInputNumber, ElInput } from "element-plus";
-import { Appearance } from "./commons/select";
+import { SelectAppearance } from "./commons/select";
 
 export default defineComponent({
   setup() {
@@ -525,7 +525,7 @@ export default defineComponent({
                 </div>
               ))}
             </elCollapseItem>
-            <Appearance></Appearance>
+            <SelectAppearance></SelectAppearance>
             <elCollapseItem title="样式源码" name="styleSource">
               <div class="elCollapseItem editStyle">
                 <div class="editStyleSource">

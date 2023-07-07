@@ -1,6 +1,6 @@
 import { defineComponent, reactive, ref } from "vue";
 import { ElInput, ElSwitch } from "element-plus";
-export const appearance = defineComponent({
+export const ButtonAppearance = defineComponent({
   props: {
     option: { type: Object },
   },
@@ -11,7 +11,7 @@ export const appearance = defineComponent({
   },
 });
 
-export const Property = defineComponent({
+export const ButtonProperty = defineComponent({
   props: {
     option: { type: Object },
   },

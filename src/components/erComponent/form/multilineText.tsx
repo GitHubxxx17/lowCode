@@ -3,7 +3,7 @@ import { BaseSelect } from "../base/baseSelect";
 import { BaseTextArea } from "../base/baseTextArea";
 import { BaseSwitch } from "../base/baseSwitch";
 import BaseAppearance from "../base/baseAppearance";
-export const Appearance = defineComponent({
+export const MultilineTextAppearance = defineComponent({
   props: {
     option: { type: Object },
   },
@@ -23,7 +23,7 @@ export const Appearance = defineComponent({
   },
 });
 
-export const Property = defineComponent({
+export const MultilineTextProperty = defineComponent({
   props: {
     option: { type: Object },
   },
