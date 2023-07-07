@@ -8,17 +8,25 @@ export const TextAppearance = defineComponent({
     option: { type: Object },
   },
   setup() {
+    // 下拉器
+    const activeNames: string[] = ["basic"];
     const option = {
-      writingStyle:true,
-      bgColor:true,
-      border:true,
-      marginAndPadding:true,
-      radius:true,
-      shadow:true,
+      writingStyle: true,
+      bgColor: true,
+      border: true,
+      marginAndPadding: true,
+      radius: true,
+      shadow: true,
     };
 
     return () => {
-      return <BaseAppearance option={option}></BaseAppearance>;
+      return (
+        <elCollapse modelValue={activeNames}>
+          <elCollapseItem title="基本" name="basic">
+            <BaseAppearance option={option}></BaseAppearance>
+          </elCollapseItem>
+        </elCollapse>
+      );
     };
   },
 });
@@ -29,8 +37,7 @@ export const TextProperty = defineComponent({
   },
   setup() {
     // 下拉器
-    const activeNames: string[] = ["basic","layout"];
-
+    const activeNames: string[] = ["basic", "layout"];
 
     const textFormat = reactive({
       value: "普通文字",
@@ -77,11 +84,11 @@ export const TextProperty = defineComponent({
       return (
         <>
           <elCollapse modelValue={activeNames}>
-          <elCollapseItem title="基本" name="basic">
-            <BaseSelect label="文字格式" setting={textFormat}></BaseSelect>
-            <BaseSwitch option={state.whetherInline}></BaseSwitch>
-            <BaseTextArea option={state.textContent}></BaseTextArea>
-          </elCollapseItem>
+            <elCollapseItem title="基本" name="basic">
+              <BaseSelect label="文字格式" setting={textFormat}></BaseSelect>
+              <BaseSwitch option={state.whetherInline}></BaseSwitch>
+              <BaseTextArea option={state.textContent}></BaseTextArea>
+            </elCollapseItem>
           </elCollapse>
         </>
       );

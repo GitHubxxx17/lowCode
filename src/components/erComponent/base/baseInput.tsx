@@ -11,8 +11,8 @@ export const BaseInput = defineComponent({
           <p>{props.option.label}</p>
           <ElInput
             v-model={props.option.value}
-            placeholder="请输入名称"
-            clearable
+            placeholder={props.option.placeholder ? props.option.placeholder : '请输入内容'}
+            clearable={props.option.clearable}
           ></ElInput>
         </div>
       );
