@@ -2,23 +2,17 @@ import { defineComponent, reactive } from "vue";
 import { BaseSelect } from "../base/baseSelect";
 import { BaseTextArea } from "../base/baseTextArea";
 import { BaseSwitch } from "../base/baseSwitch";
+import { BaseInput } from "../base/baseInput";
 import BaseAppearance from "../base/baseAppearance";
 export const Appearance = defineComponent({
   props: {
     option: { type: Object },
   },
   setup() {
-    const option = {
-      writingStyle:true,
-      bgColor:true,
-      border:true,
-      marginAndPadding:true,
-      radius:true,
-      shadow:true,
-    };
+    
 
     return () => {
-      return <BaseAppearance option={option}></BaseAppearance>;
+      return <div></div>;
     };
   },
 });
@@ -29,8 +23,7 @@ export const Property = defineComponent({
   },
   setup() {
     // 下拉器
-    const activeNames: string[] = ["basic","layout"];
-
+    const activeNames: string[] = ["basic","options"];
 
     const textFormat = reactive({
       value: "普通文字",
@@ -63,8 +56,16 @@ export const Property = defineComponent({
     });
 
     const state = reactive({
-      whetherInline: {
-        label: "内联模式",
+      bindingField:{
+        label: "绑定字段",
+        value: true,
+      },
+      filterable: {
+        label: "可搜索",
+        value: true,
+      },
+      multiple:{
+        label: "是否多选",
         value: true,
       },
       textContent: {
@@ -76,11 +77,19 @@ export const Property = defineComponent({
     return () => {
       return (
         <>
-          <elCollapse modelValue={activeNames}>
+        <elCollapse modelValue={activeNames}>
           <elCollapseItem title="基本" name="basic">
-            <BaseSelect label="文字格式" setting={textFormat}></BaseSelect>
-            <BaseSwitch option={state.whetherInline}></BaseSwitch>
-            <BaseTextArea option={state.textContent}></BaseTextArea>
+          <BaseInput option={state.bindingField}></BaseInput>
+            {/* <BaseSelect label="文字格式" setting={textFormat}></BaseSelect> */}
+            <BaseSwitch option={state.multiple}></BaseSwitch>
+            <BaseSwitch option={state.filterable}></BaseSwitch>
+            {/* <BaseTextArea option={state.textContent}></BaseTextArea> */}
+          </elCollapseItem>
+          <elCollapseItem title="选项" name="options">
+          <div class="elCollapseItem">数据</div>
+          <div class="elCollapseItem">
+            
+          </div>
           </elCollapseItem>
           </elCollapse>
         </>

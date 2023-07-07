@@ -22,7 +22,7 @@ export const Appearance = defineComponent({
   },
 });
 
-export const ContainerOrdinaryProperty = defineComponent({
+export const Property = defineComponent({
   props: {
     option: { type: Object },
   },

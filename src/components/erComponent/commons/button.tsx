@@ -16,10 +16,11 @@ export const Property = defineComponent({
     option: { type: Object },
   },
   setup() {
-
+    // 下拉器
+    const activeNames: string[] = ["basic", "layout"];
     // 普通输入框
     const inputValue = ref("");
-    
+
     // switch按钮
     const isOpen = ref(true);
 
@@ -65,6 +66,7 @@ export const Property = defineComponent({
     return () => {
       return (
         <>
+        <elCollapse modelValue={activeNames}>
           {/* 输入框 */}
           <div class="elCollapseItem elCollapseInput">
             <div class="elCollapseInput-name">名称</div>
@@ -114,10 +116,9 @@ export const Property = defineComponent({
               </el-select>
             </div>
           </div>
+          </elCollapse>
         </>
       );
     };
   },
 });
-
- 
