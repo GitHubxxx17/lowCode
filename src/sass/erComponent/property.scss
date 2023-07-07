@@ -221,3 +221,19 @@
     }
   }
 }
+
+.base {
+  &-settings {
+    .el-select,
+    .el-input {
+      width: 160px;
+    }
+
+    &-textarea {
+      &-text {
+        margin-bottom: 0 !important;
+      }
+      margin: 4px 0 10px 0 !important;
+    }
+  }
+}

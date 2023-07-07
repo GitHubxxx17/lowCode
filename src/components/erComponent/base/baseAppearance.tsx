@@ -1,13 +1,19 @@
 import "@/sass/erComponent/appearance.scss";
 import { defineComponent, reactive, ref } from "vue";
 import { ElColorPicker, ElInputNumber, ElInput } from "element-plus";
-import { SelectAppearance } from "./commons/select";
-
 export default defineComponent({
-  setup() {
-    // 下拉器
-    const activeNames: string[] = ["basic", "styleSource"];
-    console.log(import("./containers/container-ordinary"));
+  props: {
+    option: { type: Object },
+  },
+  setup(props) {
+    //文字样式
+    const writingStyle = reactive({
+      color:"rgba(255, 255, 255)",
+      Fontsize:'',
+      fontWeight:'',
+      lineHeight:'',
+      fontFamily:''
+    })
 
     //背景颜色
     let bgColor = ref("rgba(255, 255, 255)");
@@ -63,17 +69,11 @@ export default defineComponent({
         },
       },
     ];
-    const changeSelectValue = (newValue) => {
+    const changeSelectValue = (newValue:string) => {
       border.selectInputValue = newValue;
     };
 
     // 边距 margin
-    // const marginAndPadding = reactive({
-    //   isMarginAllActive: true,
-    //   isMarginselfActive: false,
-    //   marginValue: "", // 记录margin的值
-    //   paddingValue: "", // 记录padding的值
-    // });
     const marginAndPadding = reactive([
       {
         label: "外边距(margin)",
@@ -132,7 +132,7 @@ export default defineComponent({
         oldValue: "",
       },
     ]);
-    /**阴影数值处理
+    /**数值处理
      * @param {string} newValue 新数值
      * @param {number} i 数组下标
      * @param {string} key 对应的键值
@@ -162,9 +162,57 @@ export default defineComponent({
     };
     return () => {
       return (
-        <div class="appearance">
-          <elCollapse modelValue={activeNames}>
-            <elCollapseItem title="基本" name="basic">
+        <elCollapseItem title="基本" name="basic">
+          {/* 文字样式 */}
+          {props.option.writingStyle && (
+            <div>
+              <div class="elCollapseItem title">文字样式</div>
+                <div class="elCollapseItem">
+                  <div class="shadow">
+                    <div class="shadow-setting">
+                      <div class="shadow-setting-item">
+                        <div class="shadowColor">
+                          <el-color-picker
+                            show-alpha
+                            v-model={writingStyle.color}
+                          ></el-color-picker>
+                        </div>
+                        <label>颜色</label>
+                      </div>
+                      <div class="shadow-setting-item">
+                        <ElInput
+                          v-model={writingStyle.Fontsize}
+                        />
+                        <label>字号</label>
+                      </div>
+                      <div class="shadow-setting-item">
+                        <ElInput
+                          v-model={writingStyle.fontWeight}
+                        
+                        />
+                        <label>字重</label>
+                      </div>
+                      <div class="shadow-setting-item">
+                        <ElInput
+                          v-model={writingStyle.fontFamily}
+                          
+                        />
+                        <label>字体</label>
+                      </div>
+                      <div class="shadow-setting-item">
+                        <ElInput
+                          v-model={writingStyle.lineHeight}
+                        />
+                        <label>行间距</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          )}
+          {/* 背景颜色 */}
+          {props.option.bgColor && (
+            <div>
               <div class="elCollapseItem title">背景颜色</div>
               <div class="elCollapseItem bgColorPicker">
                 <el-color-picker
@@ -172,7 +220,11 @@ export default defineComponent({
                   v-model={bgColor.value}
                 ></el-color-picker>
               </div>
-              {/* padding */}
+            </div>
+          )}
+          {/* 边框 */}
+          {props.option.border && (
+            <div>
               <div class="elCollapseItem title">边框</div>
               <div class="elCollapseItem elCollapseBorder">
                 <div class="elCollapseBorder-icon">
@@ -270,51 +322,12 @@ export default defineComponent({
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+          {/* 边距 */}
+          {props.option.marginAndPadding && (
+            <div>
               <div class="elCollapseItem title">边距</div>
-              {/* <div class="elCollapseItem elCollapseMargin">
-                <div class="elCollapseMargin-icon">
-                  <div
-                    class={[
-                      "common all",
-                      marginAndPadding.isMarginAllActive ? "active" : "",
-                    ]}
-                    onClick={() => (
-                      (marginAndPadding.isMarginAllActive = true),
-                      (marginAndPadding.isMarginselfActive = false)
-                    )}
-                  ></div>
-                  <div
-                    class="common self"
-                    onClick={() => (
-                      (marginAndPadding.isMarginAllActive = false),
-                      (marginAndPadding.isMarginselfActive = true)
-                    )}
-                  >
-                    <div
-                      class={[
-                        "zuoshang",
-                        marginAndPadding.isMarginselfActive ? "active" : "",
-                      ]}
-                    ></div>
-                    <div
-                      class={[
-                        "youxia",
-                        marginAndPadding.isMarginselfActive ? "active" : "",
-                      ]}
-                    ></div>
-                  </div>
-                </div>
-                <div class="elCollapseMargin-setting">
-                  <div class="box">
-                    <ElInput v-model={marginAndPadding.marginValue} />
-                    <span>Margin</span>
-                  </div>
-                  <div class="box right">
-                    <ElInput v-model={marginAndPadding.paddingValue} />
-                    <span>Padding</span>
-                  </div>
-                </div>
-              </div> */}
               {marginAndPadding.map((item, i) => (
                 <div class="elCollapseItem">
                   <div class="marginAndPadding">
@@ -337,9 +350,6 @@ export default defineComponent({
                         />
                         <label>top</label>
                       </div>
-                      {/* <div class="marginAndPadding-setting-link">
-                        <i class="icon iconfont icon-ai70"></i>
-                      </div> */}
                       <div class="marginAndPadding-setting-item">
                         <ElInput
                           v-model={item.bottom}
@@ -374,9 +384,6 @@ export default defineComponent({
                         />
                         <label>left</label>
                       </div>
-                      {/* <div class="marginAndPadding-setting-link">
-                        <i class="icon iconfont icon-ai70"></i>
-                      </div> */}
                       <div class="marginAndPadding-setting-item">
                         <ElInput
                           v-model={item.right}
@@ -399,6 +406,11 @@ export default defineComponent({
                 </div>
               ))}
               <div class="margin-border-self"></div>
+            </div>
+          )}
+          {/* 圆角 */}
+          {props.option.radius && (
+            <div>
               <div class="elCollapseItem title">圆角</div>
               <div class="elCollapseItem elCollapseRadius">
                 <div class="elCollapseRadius-icon">
@@ -458,6 +470,11 @@ export default defineComponent({
                 <div class="radiusCommon radius-bottom-left"></div>
                 <div class="radiusCommon  radius-bottom-right"></div>
               </div>
+            </div>
+          )}
+          {/* 阴影 */}
+          {props.option.shadow && (
+            <div>
               <div class="elCollapseItem title">阴影</div>
               {shadow.map((item, i) => (
                 <div class="elCollapseItem">
@@ -524,18 +541,9 @@ export default defineComponent({
                   </div>
                 </div>
               ))}
-            </elCollapseItem>
-            <SelectAppearance></SelectAppearance>
-            <elCollapseItem title="样式源码" name="styleSource">
-              <div class="elCollapseItem editStyle">
-                <div class="editStyleSource">
-                  <i class="icon iconfont icon-daimajishufuwu"></i>
-                  <span>编辑样式源码</span>
-                </div>
-              </div>
-            </elCollapseItem>
-          </elCollapse>
-        </div>
+            </div>
+          )}
+        </elCollapseItem>
       );
     };
   },
