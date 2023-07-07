@@ -12,7 +12,12 @@ const componentsConfig = [
     type: "container-ordinary",
     category: "container",
     render(props: any) {
-      props = { ...props, text: "容器", class: "container-ordinary" };
+      props = {
+        ...props,
+        text: "容器",
+        class: "container-ordinary",
+        "data-id": this.type,
+      };
       return <Container {...props}></Container>;
     },
     defaultData: {
@@ -31,7 +36,12 @@ const componentsConfig = [
     type: "container-free",
     category: "container",
     render(props: any) {
-      props = { ...props, text: "自由容器", class: "container-free" };
+      props = {
+        ...props,
+        text: "自由容器",
+        class: "container-free",
+        "data-id": this.type,
+      };
       return <Container {...props}></Container>;
     },
     defaultData: {
@@ -51,7 +61,7 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       return (
-        <div class="cannotPreview">
+        <div class="cannotPreview" data-id={this.type}>
           <span style={props.style} datatype="text">
             {props.children ? props.children : "渲染文字"}
           </span>
@@ -76,7 +86,7 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       return (
-        <div class="cannotPreview">
+        <div class="cannotPreview" data-id={this.type}>
           <ElButton style={props.style}>
             {props.children ? props.children : "渲染按钮"}
           </ElButton>
@@ -101,7 +111,7 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       return (
-        <div class="cannotPreview">
+        <div class="cannotPreview" data-id={this.type}>
           <ElInput style={props.style}></ElInput>
         </div>
       );
@@ -122,7 +132,7 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       return (
-        <div class="cannotPreview">
+        <div class="cannotPreview" data-id={this.type}>
           <ElSelect style={props.style}></ElSelect>
         </div>
       );
@@ -143,7 +153,7 @@ const componentsConfig = [
     category: "form",
     render(props: any) {
       return (
-        <div class="cannotPreview" style={props.style.box}>
+        <div class="cannotPreview" style={props.style.box} data-id={this.type}>
           <div style={props.style.title}>文本：</div>
           <ElInput style={props.style.input}></ElInput>
         </div>
@@ -168,7 +178,7 @@ const componentsConfig = [
     category: "form",
     render(props: any) {
       return (
-        <div class="cannotPreview" style={props.style.box}>
+        <div class="cannotPreview" style={props.style.box} data-id={this.type}>
           <div style={props.style.title}>多行文本：</div>
           <ElInput style={props.style.input} type="textarea"></ElInput>
         </div>

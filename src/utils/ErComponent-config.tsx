@@ -39,9 +39,31 @@
 
 // 引入容器组件的属性和外观
 import {
-  containerAppearance,
-  containerProperty,
+  ContainerOrdinaryAppearance,
+  ContainerOrdinaryProperty,
 } from "../components/erComponent/containers/container-ordinary";
+import {
+  ContainerFreeAppearance,
+  ContainerFreeProperty,
+} from "../components/erComponent/containers/container-free";
+
+// 引入常用组件的属性和外观
+import {
+  TextAppearance,
+  TextProperty,
+} from "../components/erComponent/commons/text";
+import {
+  ButtonAppearance,
+  ButtonProperty,
+} from "../components/erComponent/commons/button";
+import {
+  InputAppearance,
+  InputProperty,
+} from "../components/erComponent/commons/input";
+import {
+  SelectAppearance,
+  SelectProperty,
+} from "../components/erComponent/commons/select";
 
 interface ErcomponentConfig {
   type: string; //类型
@@ -49,42 +71,81 @@ interface ErcomponentConfig {
   appearances?: () => any; //外观
 }
 
+// 组件的配置信息集合
 const ErcomponentConfig = [
   {
     type: "container-ordinary",
     Properties() {
-      return <containerProperty></containerProperty>;
+      return <ContainerOrdinaryProperty></ContainerOrdinaryProperty>;
     },
     appearances() {
-      return <containerAppearance></containerAppearance>;
+      return <ContainerOrdinaryAppearance></ContainerOrdinaryAppearance>;
+    },
+  },
+  {
+    type: "container-free",
+    Properties() {
+      return <ContainerFreeProperty></ContainerFreeProperty>;
+    },
+    appearances() {
+      return <ContainerFreeAppearance></ContainerFreeAppearance>;
+    },
+  },
+  {
+    type: "text",
+    Properties() {
+      return <TextProperty></TextProperty>;
+    },
+    appearances() {
+      return <TextAppearance></TextAppearance>;
+    },
+  },
+  {
+    type: "button",
+    Properties() {
+      return <ButtonProperty></ButtonProperty>;
+    },
+    appearances() {
+      return <ButtonAppearance></ButtonAppearance>;
+    },
+  },
+  {
+    type: "input",
+    Properties() {
+      return <InputProperty></InputProperty>;
+    },
+    appearances() {
+      return <InputAppearance></InputAppearance>;
+    },
+  },
+  {
+    type: "select",
+    Properties() {
+      return <SelectProperty></SelectProperty>;
+    },
+    appearances() {
+      return <SelectAppearance></SelectAppearance>;
     },
   },
 ];
 
 class createErComponentConfig {
-  public componentList: Array<ErcomponentConfig>; //组件数组
   public componentMap: Map<string, ErcomponentConfig>; //组件映射表
 
-  constructor(
-    componentList: Array<ErcomponentConfig> = [],
-    componentMap: Map<string, ErcomponentConfig> = new Map()
-  ) {
-    this.componentList = componentList;
+  constructor(componentMap: Map<string, ErcomponentConfig> = new Map()) {
     this.componentMap = componentMap;
   }
 
   register(component: ErcomponentConfig) {
-    //注册组件
-    this.componentList.push(component);
     this.componentMap.set(component.type, component);
   }
 }
 
-export const erComponentConfig = new createErComponentConfig();
+export const erConfig = new createErComponentConfig();
 
+// 循环注册组件配置信息
 for (let perErcomponent of ErcomponentConfig) {
-  //遍历声明的组件并注册
-  erComponentConfig.register({
+  erConfig.register({
     type: perErcomponent.type,
     Properties: () => perErcomponent.Properties(),
     appearances: () => perErcomponent.appearances(),

@@ -1,13 +1,43 @@
 import "@/sass/erComponent/property.scss";
-import { defineComponent } from "vue";
-import { SelectProperty } from "./commons/select";
-// import { Property } from "./containers/container-ordinary";
+import { defineComponent, inject, watch } from "vue";
+import pinia from "../../stores/index.ts";
+import dragStore from "../../stores/dragStore.ts";
 export default defineComponent({
+  props: {
+    EditorData: Object,
+  },
   setup() {
+    const erConfig: any = inject("erConfig"); // 配置组件
+    const dragData = dragStore(pinia); //拖拽数据
+    // console.log();
+    //  let map = new Map();
+    //  console.log(map.get());
+
+    // let propertyRender = erConfig.componentList.map(
+    //   (component: any) =>
+    //     component.type == dragData.selectKey && component.Properties()
+    // );
+    // console.log(propertyRender);
+
+    // watch(
+    //   () => dragData.selectKey,
+    //   (newCount) => {
+    //     propertyRender = erConfig.componentList.map(
+    //       (component: any) =>
+    //         component.type == newCount && component.Properties()
+    //     );
+    //   }
+    // );
     return () => {
       return (
-        <div class="property">
-            <SelectProperty></SelectProperty>
+        <div class="property" key={dragData.selectKey}>
+          {/* {erConfig.componentList.map(
+            (component: any) =>
+              component.type == dragData.selectKey && component.Properties()
+          )} */}
+          {erConfig.componentMap.get(dragData.selectKey)
+            ? erConfig.componentMap.get(dragData.selectKey).Properties()
+            : ""}
         </div>
       );
     };

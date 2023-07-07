@@ -5,9 +5,9 @@ import EditorLeft from "../components/editor/EditorLeft.vue";
 import EditorRight from "../components/editor/EditorRight.vue";
 import EditorContainer from "../components/editor/EditorContainer";
 import { editorConfig } from "../utils/editor-config";
-import { erComponentConfig } from "../utils/ErComponent-config";
+import { erConfig } from "../utils/ErComponent-config";
 provide("editorConfig", editorConfig);
-provide("erComponentConfig", erComponentConfig);
+provide("erConfig", erConfig);
 const EditorData = reactive(data);
 </script>
 

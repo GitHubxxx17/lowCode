@@ -1,4 +1,4 @@
-import { reactive, render } from "vue";
+import { reactive, render, inject } from "vue";
 import dragStore from "../stores/dragStore.ts";
 import pinia from "../stores/index.ts";
 import deepcopy from "deepcopy";
@@ -256,6 +256,11 @@ function useDragger(): any {
     if (e.target.classList.contains("Editorcontainer")) return; //如果点击的是编辑区域就直接结束函数
     dragData.isDrag = true;
     dragEl = findDragEl(e.target); //获取拖拽节点
+    dragData.selectKey = dragEl.attributes["data-id"].nodeValue
+      .replace('datatype="', "")
+      .replace('"', ""); // 记录选中的节点类型
+    console.log(dragData.selectKey);
+
     dragEl.classList.add("chosenEl");
     container = findParentContainer(dragEl.parentNode); //获取当前正在拖拽的容器
     container.classList.add("chosen-container");
