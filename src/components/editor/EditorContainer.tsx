@@ -1,7 +1,6 @@
 import "@/sass/editor/EditorContainer.scss";
 import { defineComponent, inject, onMounted, ref } from "vue";
 import { usedragger, setJsonData } from "../../hooks/useDragger";
-import { ElInput } from "element-plus";
 
 export default defineComponent({
   props: {
@@ -34,8 +33,18 @@ export default defineComponent({
         return nodes; //不是数组直接返回
       }
     };
+
     onMounted(() => {
       setJsonData(props.EditorData.body);
+      const determineScope = () => {
+        // let { clientX, clientY } = e; // 获取鼠标松开的坐标
+        // let { top, left } = containerRef.getBoundingClientRect();
+        // console.log(top, left);
+
+        // if (clientX > 0) console.log(clientX, clientY);
+        return false;
+      };
+      console.log(usedragger.deterWhetherToMoveUp(determineScope));
     });
 
     return () => {
@@ -45,6 +54,7 @@ export default defineComponent({
           ref={containerRef}
           onMouseenter={(e) => usedragger.mouseenter(e)}
           onClick={(e) => usedragger.onclickToDrag(e)}
+          
         >
           {renderer(props.EditorData.body)}
         </div>

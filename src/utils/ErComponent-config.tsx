@@ -1,3 +1,4 @@
+//#region
 // import { ElInput } from "element-plus";
 // import ErComponentConfig from "./ErComponentConfig.json";
 
@@ -34,23 +35,58 @@
 //     </div>
 //   ),
 // });
+//#endregion
+
+// 引入容器组件的属性和外观
+import {
+  containerAppearance,
+  containerProperty,
+} from "../components/erComponent/containers/container-ordinary";
 
 interface ErcomponentConfig {
-  type: string,//类型
-  Properties?: () => any,//属性
-  appearances?: () => any,//外观
+  type: string; //类型
+  Properties?: () => any; //属性
+  appearances?: () => any; //外观
 }
-class createErComponentConfig {
-  public componentList: Array<ErcomponentConfig>;//组件数组
-  public componentMap: Map<string, ErcomponentConfig>;//组件映射表
 
-  constructor(componentList: Array<ErcomponentConfig> = [], componentMap: Map<string, ErcomponentConfig> = new Map()) {
+const ErcomponentConfig = [
+  {
+    type: "container-ordinary",
+    Properties() {
+      return <containerProperty></containerProperty>;
+    },
+    appearances() {
+      return <containerAppearance></containerAppearance>;
+    },
+  },
+];
+
+class createErComponentConfig {
+  public componentList: Array<ErcomponentConfig>; //组件数组
+  public componentMap: Map<string, ErcomponentConfig>; //组件映射表
+
+  constructor(
+    componentList: Array<ErcomponentConfig> = [],
+    componentMap: Map<string, ErcomponentConfig> = new Map()
+  ) {
     this.componentList = componentList;
     this.componentMap = componentMap;
   }
 
-  register(component: ErcomponentConfig) {//注册组件
+  register(component: ErcomponentConfig) {
+    //注册组件
     this.componentList.push(component);
     this.componentMap.set(component.type, component);
   }
+}
+
+export const erComponentConfig = new createErComponentConfig();
+
+for (let perErcomponent of ErcomponentConfig) {
+  //遍历声明的组件并注册
+  erComponentConfig.register({
+    type: perErcomponent.type,
+    Properties: () => perErcomponent.Properties(),
+    appearances: () => perErcomponent.appearances(),
+  });
 }

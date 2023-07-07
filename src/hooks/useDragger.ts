@@ -460,11 +460,17 @@ function useDragger(): any {
     dragEl.style.setProperty("visibility", "hidden"); // 设置
   };
 
+  const deterWhetherToMoveUp = (fun: any): boolean => {
+    let res: boolean = fun();
+    return res;
+  };
+
   return {
     mousedown,
     mouseenter,
     mouseleave,
     onclickToDrag,
+    deterWhetherToMoveUp,
   };
 }
 /**
