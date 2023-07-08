@@ -1,4 +1,4 @@
-import { reactive, render, inject } from "vue";
+import { reactive, render } from "vue";
 import dragStore from "../stores/dragStore.ts";
 import pinia from "../stores/index.ts";
 import deepcopy from "deepcopy";
@@ -28,7 +28,7 @@ function useDragger(): any {
    * @param {*} e
    */
   const mousedown = (component: any, e: any) => {
-    mouseup();
+    mouseup(e);
     const { clientY, clientX, target } = e;
     const span = findSpan(target);
     const { top, left } = span.getBoundingClientRect();
@@ -51,7 +51,14 @@ function useDragger(): any {
     document.body.addEventListener("mousemove", cloneMousemove);
   };
 
-  const mouseup = (): void => {
+  const mouseup = (e): void => {
+    // 如果不是编辑区域
+    // console.log("我是编辑区域吗？" + judgeIsMidContainer(e.target));
+    // if (!judgeIsMidContainer(e.target) && !dragData.isClone) {
+    //   console.log("取消鼠标移除事件");
+    //   return;
+    // }
+    
     //鼠标松开
     if (dragData.isClone) {
       //当处于克隆节点时
@@ -223,6 +230,23 @@ function useDragger(): any {
   };
 
   /**
+   * @param {*} target 目标节点
+   * @return {*} 判断是否是中间的容器
+   */
+  const judgeIsMidContainer = (target: any): any => {
+    if (
+      (target.className.includes("container") ||
+        target.className.includes("cannotPreview")) &&
+      !target.className.includes("editor-body-container-top") &&
+      !target.className.includes("editor-body-container-content")
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  /**
    * @param {*} target 目标容器
    * @return {*}  {*} 返回该容器的json子数据
    */
@@ -256,9 +280,10 @@ function useDragger(): any {
     if (e.target.classList.contains("Editorcontainer")) return; //如果点击的是编辑区域就直接结束函数
     dragData.isDrag = true;
     dragEl = findDragEl(e.target); //获取拖拽节点
-    dragData.selectKey = dragEl.attributes["data-id"].nodeValue
-      .replace('datatype="', "")
-      .replace('"', ""); // 记录选中的节点类型
+    console.log(dragEl.attributes);
+
+    dragData.selectKey = dragEl.attributes["data-id"].nodeValue;
+
     console.log(dragData.selectKey);
 
     dragEl.classList.add("chosenEl");

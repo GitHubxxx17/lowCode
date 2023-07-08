@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, reactive } from "vue";
+import { onMounted, provide, reactive, ref } from "vue";
 import data from "../data.json";
 import EditorLeft from "../components/editor/EditorLeft.vue";
 import EditorRight from "../components/editor/EditorRight.vue";
@@ -9,6 +9,19 @@ import { erConfig } from "../utils/ErComponent-config";
 provide("editorConfig", editorConfig);
 provide("erConfig", erConfig);
 const EditorData = reactive(data);
+
+// let editArea = ref(null);
+// onMounted(() => {
+//   const getEditAreaData = ()=> {
+//     return {
+//       top: editArea.value.offsetTop,
+//       left: editArea.value.offsetLeft,
+//       height: editArea.value.offsetHeight,
+//       width: editArea.value.offsetWidth,
+//     };
+//   }
+//   console.log(getEditAreaData());
+// });
 </script>
 
 <template>
@@ -41,7 +54,7 @@ const EditorData = reactive(data);
       <div class="editor-body-container">
         <div class="editor-body-container-top"></div>
         <div class="editor-body-container-content">
-          <div class="editor-body-container-content_inner">
+          <div class="editor-body-container-content_inner" ref="editArea">
             <EditorContainer :EditorData="EditorData"></EditorContainer>
           </div>
         </div>
