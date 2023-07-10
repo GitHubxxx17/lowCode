@@ -34,9 +34,7 @@ export default defineComponent({
     // 边框 border
     const border = reactive({
       isBorderActive: "middle", //选中的边框位置
-      borderValue: props.option.style.borderWidth
-        ? props.option.style.borderWidth
-        : 0, // 记录输入的border值
+      borderValue: 0, // 记录输入的border值
       selectInputValue: "", // 选择器框的内容
       showSelect: false, //是否显示下拉框
       color: "rgba(255, 255, 255, 0)",
@@ -87,6 +85,10 @@ export default defineComponent({
     const changeSelectValue = (newValue: string) => {
       border.selectInputValue = newValue;
     };
+    //处理边框
+    (() => {
+
+    })()
 
     // 边距 margin
     const marginAndPadding = reactive([

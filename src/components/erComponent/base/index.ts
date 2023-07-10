@@ -6,6 +6,7 @@ import BaseTextArea from "./baseTextArea";
 import BaseAppearance from "./baseAppearance";
 import BaseSize from "./baseSize";
 import BaseIconSelect from "./baseIconSelect";
+import BaseContainerProperty from "./baseContainerProperty";
 
 export {
   BaseInput,
@@ -15,5 +16,6 @@ export {
   BaseTextArea,
   BaseAppearance,
   BaseSize,
-  BaseIconSelect
+  BaseIconSelect,
+  BaseContainerProperty,
 };
