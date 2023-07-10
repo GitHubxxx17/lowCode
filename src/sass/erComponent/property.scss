@@ -59,6 +59,7 @@
 }
 
 .container {
+
   &-settings,
   &-positioningMode {
     .el-select {
@@ -72,6 +73,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
     button {
       background-color: #fff;
       border: 1px solid #afaeae;
@@ -80,14 +82,17 @@
       cursor: pointer;
       font-size: 14px;
       transition: all 0.3s;
+
       &:nth-child(1) {
         border-radius: 3px 0 0 3px;
         border-right: none !important;
       }
+
       &:nth-child(2) {
         border-radius: 0 3px 3px 0;
         border-left: none !important;
       }
+
       &:hover {
         border: 1px solid #2468f2;
         color: #2468f2;
@@ -107,8 +112,9 @@
 
   &-settings {
     &-wh {
-      & > div > .el-input {
+      &>div>.el-input {
         width: 100px;
+
         .el-input__wrapper {
           border: 1px solid #dcdfe6;
           box-shadow: none;
@@ -119,6 +125,7 @@
 
       .el-select {
         width: 65px;
+
         .el-input__wrapper {
           border-radius: 0 3px 3px 0;
           border: 1px solid #dcdfe6;
@@ -126,6 +133,7 @@
         }
       }
     }
+
     &-scrollMode {
       .el-select {
         width: 165px;
@@ -169,6 +177,7 @@
       border-radius: 5px;
       padding: 5px 10px;
       background-color: #ececec;
+
       p {
         width: 100%;
       }
@@ -203,6 +212,7 @@
 
   &-displayType {
     margin-top: 18px !important;
+
     p {
       margin-right: 10px;
     }
@@ -210,6 +220,7 @@
 
   .flexlayout-list {
     display: flex;
+
     &-item {
       margin: 5px 0;
       display: flex;
@@ -224,6 +235,7 @@
 
 .base {
   &-settings {
+
     .el-select,
     .el-input {
       width: 160px;
@@ -233,7 +245,91 @@
       &-text {
         margin-bottom: 0 !important;
       }
+
       margin: 4px 0 10px 0 !important;
+    }
+  }
+}
+
+// flex选择器
+
+.flexSelectContainer {
+  position: relative;
+
+  .flexSelect {
+    position: relative;
+    font-size: 14px;
+    display: flex;
+    width: 172px;
+    height: 32px;
+    line-height: 30px;
+    box-sizing: border-box;
+    vertical-align: middle;
+    border: 1.5px solid #dcdfe6;
+    border-radius: 5px;
+    padding: 0 10px;
+    outline-style: none;
+
+    // &:focus {
+    //   border: 1.5px solid #2468f2;
+    // }
+
+    // &:active {
+    //   border: 1.5px solid #2468f2;
+    // }
+
+    &:hover {
+      border: 1.5px solid #b0b0b0;
+    }
+
+    .context {
+      font-size: 12px;
+      margin-left: 5px;
+    }
+
+    .iconContext {
+      display: flex;
+    }
+
+    .clear {
+      background-color: #fff;
+      position: absolute;
+      right: 5px;
+    }
+
+  }
+
+
+  .flexSelectUl {
+    position: absolute;
+    top: 32px;
+    left: 87px;
+    font-size: 14px;
+    width: 172px;
+    display: grid;
+    grid-template-columns: repeat(5, 32px);
+    justify-self: center;
+    align-self: center;
+    box-sizing: border-box;
+    border-left: 1.5px solid #dcdfe6;
+    border-right: 1.5px solid #dcdfe6;
+    border-bottom: 1.5px solid #dcdfe6;
+    // border-radius: 5px;
+    padding: 5px;
+    background-color: #ffffff;
+    z-index: 10000;
+
+    &-option {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 5px;
+    }
+
+    &-option:hover {
+      background-color: #c3defb;
     }
   }
 }
