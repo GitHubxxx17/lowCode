@@ -8,10 +8,10 @@ export default defineComponent({
     const dragData = dragStore(pinia); //拖拽数据
     return () => {
       return (
-        <div class="appearance">
+        <div class="appearance" key={dragData.selectedComponent}>
           {" "}
           {erConfig.componentMap.get(dragData.selectKey)
-            ? erConfig.componentMap.get(dragData.selectKey).appearances()
+            ? erConfig.componentMap.get(dragData.selectKey).appearances(dragData.selectedComponent)
             : ""}
         </div>
       );

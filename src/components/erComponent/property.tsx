@@ -31,13 +31,13 @@ export default defineComponent({
     // );
     return () => {
       return (
-        <div class="property" key={dragData.selectKey}>
+        <div class="property" key={dragData.selectedComponent}>
           {/* {erConfig.componentList.map(
             (component: any) =>
               component.type == dragData.selectKey && component.Properties()
           )} */}
           {erConfig.componentMap.get(dragData.selectKey)
-            ? erConfig.componentMap.get(dragData.selectKey).Properties()
+            ? erConfig.componentMap.get(dragData.selectKey).Properties(dragData.selectedComponent)
             : ""}
         </div>
       );

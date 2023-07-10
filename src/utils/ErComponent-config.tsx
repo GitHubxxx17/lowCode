@@ -77,82 +77,82 @@ import {
 
 interface ErcomponentConfig {
   type: string; //类型
-  Properties?: () => any; //属性
-  appearances?: () => any; //外观
+  Properties?: (selectedComponent:Object) => any; //属性
+  appearances?: (selectedComponent:Object) => any; //外观
 }
 
 // 组件的配置信息集合
 const ErcomponentConfig = [
   {
     type: "container-ordinary",
-    Properties() {
-      return <ContainerOrdinaryProperty></ContainerOrdinaryProperty>;
+    Properties(selectedComponent:Object) {
+      return <ContainerOrdinaryProperty option={selectedComponent}></ContainerOrdinaryProperty>;
     },
-    appearances() {
-      return <ContainerOrdinaryAppearance></ContainerOrdinaryAppearance>;
+    appearances(selectedComponent:Object) {
+      return <ContainerOrdinaryAppearance option={selectedComponent}></ContainerOrdinaryAppearance>;
     },
   },
   {
     type: "container-free",
-    Properties() {
-      return <ContainerFreeProperty></ContainerFreeProperty>;
+    Properties(selectedComponent:Object) {
+      return <ContainerFreeProperty option={selectedComponent}></ContainerFreeProperty>;
     },
-    appearances() {
-      return <ContainerFreeAppearance></ContainerFreeAppearance>;
+    appearances(selectedComponent:Object) {
+      return <ContainerFreeAppearance option={selectedComponent}></ContainerFreeAppearance>;
     },
   },
   {
     type: "text",
-    Properties() {
-      return <TextProperty></TextProperty>;
+    Properties(selectedComponent:Object) {
+      return <TextProperty option={selectedComponent}></TextProperty>;
     },
-    appearances() {
-      return <TextAppearance></TextAppearance>;
+    appearances(selectedComponent:Object) {
+      return <TextAppearance option={selectedComponent}></TextAppearance>;
     },
   },
   {
     type: "button",
-    Properties() {
-      return <ButtonProperty></ButtonProperty>;
+    Properties(selectedComponent:Object) {
+      return <ButtonProperty option={selectedComponent}></ButtonProperty>;
     },
-    appearances() {
-      return <ButtonAppearance></ButtonAppearance>;
+    appearances(selectedComponent:Object) {
+      return <ButtonAppearance option={selectedComponent}></ButtonAppearance>;
     },
   },
   {
     type: "input",
-    Properties() {
-      return <InputProperty></InputProperty>;
+    Properties(selectedComponent:Object) {
+      return <InputProperty option={selectedComponent}></InputProperty>;
     },
-    appearances() {
-      return <InputAppearance></InputAppearance>;
+    appearances(selectedComponent:Object) {
+      return <InputAppearance option={selectedComponent}></InputAppearance>;
     },
   },
   {
     type: "select",
-    Properties() {
-      return <SelectProperty></SelectProperty>;
+    Properties(selectedComponent:Object) {
+      return <SelectProperty option={selectedComponent}></SelectProperty>;
     },
-    appearances() {
-      return <SelectAppearance></SelectAppearance>;
+    appearances(selectedComponent:Object) {
+      return <SelectAppearance option={selectedComponent}></SelectAppearance>;
     },
   },
   {
     type: "textBox",
-    Properties() {
-      return <TextBoxProperty></TextBoxProperty>;
+    Properties(selectedComponent:Object) {
+      return <TextBoxProperty option={selectedComponent}></TextBoxProperty>;
     },
-    appearances() {
-      return <TextBoxAppearance></TextBoxAppearance>;
+    appearances(selectedComponent:Object) {
+      return <TextBoxAppearance option={selectedComponent}></TextBoxAppearance>;
     },
   },
   {
     type: "multilineText",
-    Properties() {
-      return <MultilineTextProperty></MultilineTextProperty>;
+    Properties(selectedComponent:Object) {
+      return <MultilineTextProperty option={selectedComponent}></MultilineTextProperty>;
     },
-    appearances() {
-      return <MultilineTextAppearance></MultilineTextAppearance>;
+    appearances(selectedComponent:Object) {
+      return <MultilineTextAppearance option={selectedComponent}></MultilineTextAppearance>;
     },
   },
 ];
@@ -175,7 +175,7 @@ export const erConfig = new createErComponentConfig();
 for (let perErcomponent of ErcomponentConfig) {
   erConfig.register({
     type: perErcomponent.type,
-    Properties: () => perErcomponent.Properties(),
-    appearances: () => perErcomponent.appearances(),
+    Properties: (selectedComponent:Object) => perErcomponent.Properties(selectedComponent),
+    appearances: (selectedComponent:Object) => perErcomponent.appearances(selectedComponent),
   });
 }

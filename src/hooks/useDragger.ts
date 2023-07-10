@@ -288,6 +288,13 @@ function useDragger(): any {
 
     dragEl.classList.add("chosenEl");
     container = findParentContainer(dragEl.parentNode); //获取当前正在拖拽的容器
+    let childrenData = findVnodeProps(container); //获取json子数据
+    dragChildList = [...container.children]; //获取当前容器所有子组件
+    oldIndex = dragChildList.indexOf(dragEl); //获取拖拽组件在当前容器的位置
+    newIndex = oldIndex;
+    oldDragData = childrenData[oldIndex];
+    dragData.selectedComponent = reactive(oldDragData);
+
     container.classList.add("chosen-container");
     oldContainer = container;
     console.dir(dragEl);
@@ -295,11 +302,7 @@ function useDragger(): any {
       const { clientY, clientX } = e;
       const { top, left } = dragEl.getBoundingClientRect();
       console.log("正在交换组件中");
-      let childrenData = findVnodeProps(container); //获取json子数据
-      dragChildList = [...container.children]; //获取当前容器所有子组件
-      oldIndex = dragChildList.indexOf(dragEl); //获取拖拽组件在当前容器的位置
-      newIndex = oldIndex;
-      oldDragData = childrenData[oldIndex];
+      
       startX = clientX - left;
       startY = clientY - top;
       isDraging = true;

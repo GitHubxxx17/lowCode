@@ -8,7 +8,7 @@ export const ContainerFreeAppearance = defineComponent({
   props: {
     option: { type: Object },
   },
-  setup() {
+  setup(props) {
     // 下拉器
     const activeNames: string[] = ["basic","styleSource"];
     const option = {
@@ -18,6 +18,7 @@ export const ContainerFreeAppearance = defineComponent({
       marginAndPadding:true,
       radius:true,
       shadow:true,
+      style: props.option.style,
     };
 
     return () => {

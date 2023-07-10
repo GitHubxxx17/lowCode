@@ -7,6 +7,7 @@ const dragStore = defineStore("dragStore", {
       isClone: false, //是否处于克隆组件
       isDrag: false, //是否处于拖拽
       selectKey: null, // 记录选中的节点类型
+      selectedComponent:null //选中的组件
     };
   },
   actions: {},

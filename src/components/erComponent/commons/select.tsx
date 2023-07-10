@@ -1,4 +1,4 @@
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, watchEffect } from "vue";
 import { BaseInput, BaseSwitch } from "../base/index";
 export const SelectAppearance = defineComponent({
   props: {
@@ -15,27 +15,39 @@ export const SelectProperty = defineComponent({
   props: {
     option: { type: Object },
   },
-  setup() {
+  setup(props) {
     // 下拉器
     const activeNames: string[] = ["basic", "options"];
 
     const state = reactive({
       bindingField: {
         label: "绑定字段",
-        value: true,
+        value: '',
       },
       filterable: {
         label: "可搜索",
-        value: true,
+        value: false,
       },
       multiple: {
         label: "是否多选",
-        value: true,
+        value: false,
       },
       textContent: {
         label: "文字内容",
         value: "",
       },
+    });
+
+    watchEffect(() => {
+      if (state.bindingField.value != '')
+        props.option.bindingField = state.bindingField.value;
+      else delete props.option.bindingField;
+      if (state.filterable.value)
+        props.option.filterable = state.filterable.value;
+      else delete props.option.filterable;
+      if (state.multiple.value)
+        props.option.multiple = state.multiple.value;
+      else delete props.option.multiple;
     });
 
     return () => {

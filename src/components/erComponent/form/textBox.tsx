@@ -1,4 +1,4 @@
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, watchEffect } from "vue";
 import {
   BaseInput,
   BaseSelect,
@@ -9,7 +9,7 @@ export const TextBoxAppearance = defineComponent({
   props: {
     option: { type: Object },
   },
-  setup() {
+  setup(props) {
     // 下拉器
     const activeNames: string[] = [
       "basic",
@@ -53,6 +53,7 @@ export const TextBoxAppearance = defineComponent({
       titleType: {
         writingStyle: true,
         marginAndPadding: true,
+        style: props.option.style.title
       },
       inputBoxType: {
         writingStyle: true,
@@ -60,8 +61,11 @@ export const TextBoxAppearance = defineComponent({
         border: true,
         marginAndPadding: true,
         radius: true,
+        style: props.option.style.input
       },
     });
+
+    // watchEffect(() => {});
 
     return () => {
       return (
@@ -97,7 +101,7 @@ export const TextBoxProperty = defineComponent({
   props: {
     option: { type: Object },
   },
-  setup() {
+  setup(props) {
     // 下拉器
     const activeNames: string[] = ["basic", "layout"];
 
@@ -109,7 +113,7 @@ export const TextBoxProperty = defineComponent({
       },
       title: {
         label: "标题",
-        value: "",
+        value: props.option.title ? props.option.title : "",
         placeholder: "请输入标题",
       },
       inputType: {
@@ -135,6 +139,19 @@ export const TextBoxProperty = defineComponent({
         value: "",
         placeholder: "空内容提示占位",
       },
+    });
+
+    watchEffect(() => {
+      if (state.bindingField.value != "")
+        props.option.bindingField = state.bindingField.value;
+      else delete props.option.bindingField;
+      if (state.title.value != "") props.option.title = state.title.value;
+      else delete props.option.title;
+      if (state.clearable.value) props.option.clearable = state.clearable.value;
+      else delete props.option.clearable;
+      if (state.inputBoxPlaceholder.value != "")
+        props.option.inputBoxPlaceholder = state.inputBoxPlaceholder.value;
+      else delete props.option.inputBoxPlaceholder;
     });
 
     return () => {

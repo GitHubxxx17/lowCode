@@ -1,4 +1,4 @@
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, watchEffect } from "vue";
 import {
   BaseSwitch,
   BaseSelect,
@@ -9,9 +9,9 @@ export const TextAppearance = defineComponent({
   props: {
     option: { type: Object },
   },
-  setup() {
+  setup(props) {
     // 下拉器
-    const activeNames: string[] = ["basic"];
+    const activeNames: string[] = ["basic", "styleSource"];
     const option = {
       writingStyle: true,
       bgColor: true,
@@ -19,13 +19,22 @@ export const TextAppearance = defineComponent({
       marginAndPadding: true,
       radius: true,
       shadow: true,
+      style: props.option.style,
     };
 
     return () => {
       return (
         <elCollapse modelValue={activeNames}>
-          <elCollapseItem title="基本" name="basic">
+          <elCollapseItem title="自定义样式" name="basic">
             <BaseAppearance option={option}></BaseAppearance>
+          </elCollapseItem>
+          <elCollapseItem title="样式源码" name="styleSource">
+            <div class="elCollapseItem editStyle">
+              <div class="editStyleSource">
+                <i class="icon iconfont icon-daimajishufuwu"></i>
+                <span>编辑样式源码</span>
+              </div>
+            </div>
           </elCollapseItem>
         </elCollapse>
       );
@@ -37,7 +46,7 @@ export const TextProperty = defineComponent({
   props: {
     option: { type: Object },
   },
-  setup() {
+  setup(props) {
     // 下拉器
     const activeNames: string[] = ["basic", "layout"];
 
@@ -78,8 +87,19 @@ export const TextProperty = defineComponent({
       },
       textContent: {
         label: "文字内容",
-        value: "",
+        value: props.option.children,
       },
+    });
+
+    if (props.option.style.display) state.whetherInline.value = false;
+
+    watchEffect(() => {
+      props.option.children = state.textContent.value;
+      if (state.whetherInline.value) {
+        delete props.option.style.display;
+      } else {
+        props.option.style.display = "block";
+      }
     });
 
     return () => {
