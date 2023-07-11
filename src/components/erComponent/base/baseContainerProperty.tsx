@@ -36,6 +36,9 @@ export default defineComponent({
       ],
     });
 
+    if (props.option.containerLabels)
+      containerLabels.value = props.option.containerLabels;
+
     // 定位模式
     const positioningMode = reactive({
       value: "默认(static)",
@@ -140,7 +143,7 @@ export default defineComponent({
       },
     ];
     //处理宽高
-    const withWideHigh = (() => {
+    (() => {
       if (props.option.style.width) {
         heightAndWidth[1].value = props.option.style.width.match(/^\d+/)[0];
         heightAndWidth[1].valueUnit =
@@ -277,7 +280,7 @@ export default defineComponent({
       flexDirectionMap: new Map(),
     });
     //处理显示对齐
-    const processingAccordingToAlign = (() => {
+    (() => {
       if (props.option.style.display) {
         displayType.options.forEach((item) => (item.active = false));
         if (props.option.style.display == "flex") {

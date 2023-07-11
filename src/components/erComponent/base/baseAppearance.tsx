@@ -23,7 +23,6 @@ export default defineComponent({
         : "",
     });
 
-
     //背景颜色
     let bgColor = reactive({
       value: props.option.style.backgroundColor
@@ -33,14 +32,15 @@ export default defineComponent({
 
     // 边框 border
     const border = reactive({
-      isBorderActive: "middle", //选中的边框位置
+      isBorderActive: "border", //选中的边框位置
       borderValue: 0, // 记录输入的border值
       selectInputValue: "", // 选择器框的内容
       showSelect: false, //是否显示下拉框
-      color: "rgba(255, 255, 255, 0)",
+      color: "rgba(0,0,0)",
     });
     const setBorder = (pos: string): void => {
       border.isBorderActive = pos;
+      handleBorder(pos);
     };
     // 处理border数值的修改
     const handlePadValueChange = (borderValue: number): void => {
@@ -50,6 +50,7 @@ export default defineComponent({
     const selectContent = [
       {
         text: "——————",
+        value: "solid",
         render: () => {
           return (
             <>
@@ -61,6 +62,7 @@ export default defineComponent({
       },
       {
         text: "------------------",
+        value: "dashed",
         render: () => {
           return (
             <>
@@ -72,6 +74,7 @@ export default defineComponent({
       },
       {
         text: "···················",
+        value: "dotted",
         render: () => {
           return (
             <>
@@ -86,10 +89,18 @@ export default defineComponent({
       border.selectInputValue = newValue;
     };
     //处理边框
-    (() => {
-
-    })()
-
+    const handleBorder = (key: string) => {
+      console.log(props.option.style[key], key);
+      if (props.option.style[key]) {
+        let borderList = props.option.style[key].match(/^(\d+px) (.*?) (.*?)$/);
+        border.borderValue = parseInt(borderList[1].match(/^\d+/)[0]);
+        selectContent.forEach((item) => {
+          if (item.value == borderList[2]) border.selectInputValue = item.text;
+        });
+        border.color = borderList[3];
+      }
+    };
+    handleBorder("border");
     // 边距 margin
     const marginAndPadding = reactive([
       {
@@ -130,20 +141,58 @@ export default defineComponent({
     const radius = reactive({
       isRadiusAllActive: true,
       isRadiusSelfActive: false,
-      radiusValue: props.option.style.borderRadius ? props.option.style.borderRadius : '', // 记录radius的值
+      tipIsshow: false,
+      tip: "",
+      radiusValue: "", // 记录radius的值
       radiusTLValue: "", // 记录radius-top-left的值
       radiusTRValue: "", // 记录radius-top-right的值
       radiusBLValue: "", // 记录radius-bottom-left的值
       radiusBRValue: "", // 记录radius-bottom-right的值
+      oldValue: "",
     });
     const changeRadiusValue = () => {
-      radius.radiusValue += "px";
-      radius.radiusTLValue = radius.radiusValue;
-      radius.radiusTRValue = radius.radiusValue;
-      radius.radiusBLValue = radius.radiusValue;
-      radius.radiusBRValue = radius.radiusValue;
+      const {
+        radiusTLValue: tl,
+        radiusTRValue: tr,
+        radiusBLValue: bl,
+        radiusBRValue: br,
+      } = radius;
+      radius.tip = `${tl ? tl : "0px"} ${tr ? tr : "0px"} ${bl ? bl : "0px"} ${
+        br ? br : "0px"
+      }`;
     };
 
+    const handleBorderRadius = () => {
+      const {
+        borderRadius,
+        borderTopLeftRadius: tl,
+        borderTopRightRadius: tr,
+        borderBottomLeftRadius: bl,
+        borderBottomRightRadius: br,
+      } = props.option.style;
+
+      if (borderRadius) {
+        radius.radiusValue = borderRadius;
+        radius.radiusTLValue =
+          radius.radiusTRValue =
+          radius.radiusBLValue =
+          radius.radiusBRValue =
+            borderRadius;
+        radius.tipIsshow = false;
+      }
+      if (tl || tr || bl || br) {
+        let borderRadiusStr = `${tl ? tl : "0px"} ${tr ? tr : "0px"} ${
+          bl ? bl : "0px"
+        } ${br ? br : "0px"}`;
+        radius.tip = borderRadiusStr;
+        radius.tipIsshow = true;
+        if (tl) radius.radiusTLValue = tl;
+        if (tr) radius.radiusTRValue = tr;
+        if (bl) radius.radiusBLValue = bl;
+        if (br) radius.radiusBRValue = br;
+      }
+    };
+    handleBorderRadius();
     //阴影
     const shadow = reactive([
       {
@@ -167,119 +216,186 @@ export default defineComponent({
     ]);
     /**数值处理
      * @param {string} newValue 新数值
-     * @param {number} i 数组下标
+     * @param {number} obj 处理的对象
      * @param {string} key 对应的键值
      */
-    const numericalProcessingShadow = (
-      newValue: string,
-      i: number,
-      key: string,
-      obj: Object
-    ) => {
+    const numericalProcessing = (newValue: string, key: string, obj: any) => {
       if (newValue == "") {
-        obj[i][key] = "0px";
+        obj[key] = "0px";
       } else if (/^\d+$/.test(newValue)) {
         //如果为数字
-        obj[i][key] = `${newValue}px`;
+        obj[key] = `${newValue}px`;
       } else if (/^\d+px$/.test(newValue)) {
         //如果为有px单位
-        obj[i][key] = newValue;
+        obj[key] = newValue;
       } else {
         //否则数值不改变
-        obj[i][key] = obj[i].oldValue;
+        obj[key] = obj.oldValue;
       }
     };
-    const shadowOldValue = (oldValue: string, i: number, obj: Object) => {
+    const saveOldValue = (oldValue: string, obj: any) => {
       //保存改变前的数值
-      obj[i].oldValue = oldValue;
+      obj.oldValue = oldValue;
     };
 
     watchEffect(() => {
       // 文字样式
-      if (writingStyle.color != "")
-        props.option.style.color = writingStyle.color;
-      else delete props.option.style.color;
-      if (writingStyle.fontSize != "")
-        props.option.style.fontSize = writingStyle.fontSize;
-      else delete props.option.style.fontSize;
-      if (writingStyle.fontWeight != "")
-        props.option.style.fontWeight = writingStyle.fontWeight;
-      else delete props.option.style.fontWeight;
-      if (writingStyle.fontFamily != "")
-        props.option.style.fontFamily = writingStyle.fontFamily;
-      else delete props.option.style.fontFamily;
+      (() => {
+        if (writingStyle.color != "")
+          props.option.style.color = writingStyle.color;
+        else delete props.option.style.color;
+        if (writingStyle.fontSize != "")
+          props.option.style.fontSize = writingStyle.fontSize;
+        else delete props.option.style.fontSize;
+        if (writingStyle.fontWeight != "")
+          props.option.style.fontWeight = writingStyle.fontWeight;
+        else delete props.option.style.fontWeight;
+        if (writingStyle.fontFamily != "")
+          props.option.style.fontFamily = writingStyle.fontFamily;
+        else delete props.option.style.fontFamily;
+      })();
       // 背景颜色
-      if (bgColor.value != "rgba(255, 255, 255,0)")
-        props.option.style.backgroundColor = bgColor.value;
-      else delete props.option.style.backgroundColor;
+      (() => {
+        if (bgColor.value != "rgba(255, 255, 255,0)")
+          props.option.style.backgroundColor = bgColor.value;
+        else delete props.option.style.backgroundColor;
+      })();
       //边框
-      if (border.isBorderActive == "middle") {
-        if (border.borderValue != 0)
-          props.option.style.borderWidth = `${border.borderValue}px`;
-        else delete props.option.style.borderWidth;
+      const borderKey: string[] = [
+        "border",
+        "borderTop",
+        "borderLeft",
+        "borderRight",
+        "borderBottom",
+      ];
+      (() => {
+        let borderStyle = "solid";
         if (border.selectInputValue != "") {
-          if ("————————————".includes(border.selectInputValue)) {
-            props.option.style.borderStyle = "solid";
-          } else if ("------------------".includes(border.selectInputValue)) {
-            props.option.style.borderStyle = "dashed";
-          } else {
-            props.option.style.borderStyle = "dotted";
-          }
+          selectContent.forEach((item) => {
+            if (item.text.includes(border.selectInputValue))
+              borderStyle = item.value;
+          });
         }
-        if (border.color != "rgba(255, 255, 255, 0)")
-          props.option.style.borderColor = border.color;
-        else delete props.option.style.borderColor;
-      }
-      //边距
-      if (marginAndPadding[0].top != "0px")
-        props.option.style.marginTop = marginAndPadding[0].top;
-      else delete props.option.style.marginTop;
-      if (marginAndPadding[0].left != "0px")
-        props.option.style.marginLeft = marginAndPadding[0].left;
-      else delete props.option.style.marginLeft;
-      if (marginAndPadding[0].right != "0px")
-        props.option.style.marginRight = marginAndPadding[0].right;
-      else delete props.option.style.marginRight;
-      if (marginAndPadding[0].bottom != "0px")
-        props.option.style.marginBottom = marginAndPadding[0].bottom;
-      else delete props.option.style.marginBottom;
+        borderKey.forEach((item) => {
+          if (border.isBorderActive == item) {
+            if (border.borderValue != 0)
+              props.option.style[
+                item
+              ] = `${border.borderValue}px ${borderStyle} ${border.color}`;
+            else delete props.option.style[item];
+          }
+        });
+      })();
 
-      if (marginAndPadding[1].top != "0px")
-        props.option.style.paddingTop = marginAndPadding[1].top;
-      else delete props.option.style.paddingTop;
-      if (marginAndPadding[1].left != "0px")
-        props.option.style.paddingLeft = marginAndPadding[1].left;
-      else delete props.option.style.paddingLeft;
-      if (marginAndPadding[1].right != "0px")
-        props.option.style.paddingRight = marginAndPadding[1].right;
-      else delete props.option.style.paddingRight;
-      if (marginAndPadding[1].bottom != "0px")
-        props.option.style.paddingBottom = marginAndPadding[1].bottom;
-      else delete props.option.style.paddingBottom;
+      //边距
+      // margin
+      const mpKey: string[] = ["top", "left", "right", "bottom"];
+      const marginKey: string[] = [
+        "marginTop",
+        "marginLeft",
+        "marginRight",
+        "marginBottom",
+      ];
+      (() => {
+        marginKey.forEach((item, i) => {
+          if (marginAndPadding[0][mpKey[i]] != "0px")
+            props.option.style[item] = marginAndPadding[0][mpKey[i]];
+          else delete props.option.style[item];
+        });
+      })();
+      // padding
+      const paddingKey: string[] = [
+        "paddingTop",
+        "paddingLeft",
+        "paddingRight",
+        "paddingBottom",
+      ];
+      (() => {
+        paddingKey.forEach((item, i) => {
+          if (marginAndPadding[1][mpKey[i]] != "0px")
+            props.option.style[item] = marginAndPadding[1][mpKey[i]];
+          else delete props.option.style[item];
+        });
+      })();
 
       //圆角
-      if (radius.isRadiusAllActive) {
-        if (radius.radiusValue != "")
-          props.option.style.borderRadius = radius.radiusValue;
-        else delete props.option.style.borderRadius;
-      } else {
-        if (
-          !(
+      const radiusKey: string[] = [
+        "radiusTLValue",
+        "radiusTRValue",
+        "radiusBLValue",
+        "radiusBRValue",
+      ];
+      const propsRadius: string[] = [
+        "borderTopLeftRadius",
+        "borderTopRightRadius",
+        "borderBottomLeftRadius",
+        "borderBottomRightRadius",
+      ];
+      (() => {
+        if (radius.isRadiusAllActive) {
+          if (radius.radiusValue != "" && !radius.tipIsshow) {
+            props.option.style.borderRadius = radius.radiusValue;
+            propsRadius.forEach((item) => delete props.option.style[item]);
+          } else delete props.option.style.borderRadius;
+        } else {
+          if (
             radius.radiusTLValue == radius.radiusTRValue &&
             radius.radiusTRValue == radius.radiusBLValue &&
             radius.radiusBLValue == radius.radiusBRValue
-          )
-        )
-          props.option.style.borderRadius = `${radius.radiusTLValue} ${radius.radiusTRValue} ${radius.radiusBLValue} ${radius.radiusBRValue}`;
-        else {
-          if (radius.radiusValue != "")
-            props.option.style.borderRadius = radius.radiusValue;
-          else delete props.option.style.borderRadius;
+          ) {
+            props.option.style.borderRadius = radius.radiusTRValue;
+            propsRadius.forEach((item) => delete props.option.style[item]);
+          } else {
+            delete props.option.style.borderRadius;
+            radiusKey.forEach((item, i) => {
+              if (!["", "0px"].includes(radius[item])) {
+                props.option.style[propsRadius[i]] = radius[item];
+              } else delete props.option.style[propsRadius[i]];
+            });
+          }
         }
-      }
+      })();
 
       //阴影
-
+      (() => {
+        if (
+          !(
+            shadow[0].x == "0px" &&
+            shadow[0].y == "0px" &&
+            shadow[0].fuzzy == "0px" &&
+            shadow[0].extension == "0px"
+          ) &&
+          !(
+            shadow[1].x == "0px" &&
+            shadow[1].y == "0px" &&
+            shadow[1].fuzzy == "0px" &&
+            shadow[1].extension == "0px"
+          )
+        ) {
+          props.option.style.boxShadow = `${shadow[0].x} ${shadow[0].y} ${shadow[0].fuzzy} ${shadow[0].extension} ${shadow[0].color} ,inset ${shadow[1].x} ${shadow[1].y} ${shadow[1].fuzzy} ${shadow[1].extension} ${shadow[1].color}`;
+        } else {
+          if (
+            !(
+              shadow[0].x == "0px" &&
+              shadow[0].y == "0px" &&
+              shadow[0].fuzzy == "0px" &&
+              shadow[0].extension == "0px"
+            )
+          ) {
+            props.option.style.boxShadow = `${shadow[0].x} ${shadow[0].y} ${shadow[0].fuzzy} ${shadow[0].extension} ${shadow[0].color}`;
+          }
+          if (
+            !(
+              shadow[1].x == "0px" &&
+              shadow[1].y == "0px" &&
+              shadow[1].fuzzy == "0px" &&
+              shadow[1].extension == "0px"
+            )
+          ) {
+            props.option.style.boxShadow = `inset ${shadow[1].x} ${shadow[1].y} ${shadow[1].fuzzy} ${shadow[1].extension} ${shadow[1].color}`;
+          }
+        }
+      })();
     });
     return () => {
       return (
@@ -344,9 +460,11 @@ export default defineComponent({
                     <div
                       class={[
                         "top",
-                        border.isBorderActive == "top" ? "active-top" : "",
+                        border.isBorderActive == "borderTop"
+                          ? "active-top"
+                          : "",
                       ]}
-                      onClick={() => setBorder("top")}
+                      onClick={() => setBorder("borderTop")}
                     ></div>
                   </div>
                   <div></div>
@@ -354,29 +472,33 @@ export default defineComponent({
                     <div
                       class={[
                         "left",
-                        border.isBorderActive == "left" ? "active-left" : "",
+                        border.isBorderActive == "borderLeft"
+                          ? "active-left"
+                          : "",
                       ]}
-                      onClick={() => setBorder("left")}
+                      onClick={() => setBorder("borderLeft")}
                     ></div>
                   </div>
                   <div class="common">
                     <div
                       class={[
                         "middle",
-                        border.isBorderActive == "middle"
+                        border.isBorderActive == "border"
                           ? "active-middle"
                           : "",
                       ]}
-                      onClick={() => setBorder("middle")}
+                      onClick={() => setBorder("border")}
                     ></div>
                   </div>
                   <div class="common">
                     <div
                       class={[
                         "right",
-                        border.isBorderActive == "right" ? "active-right" : "",
+                        border.isBorderActive == "borderRight"
+                          ? "active-right"
+                          : "",
                       ]}
-                      onClick={() => setBorder("right")}
+                      onClick={() => setBorder("borderRight")}
                     ></div>
                   </div>
                   <div></div>
@@ -385,11 +507,11 @@ export default defineComponent({
                     <div
                       class={[
                         "bottom",
-                        border.isBorderActive == "bottom"
+                        border.isBorderActive == "borderBottom"
                           ? "active-bottom"
                           : "",
                       ]}
-                      onClick={() => setBorder("bottom")}
+                      onClick={() => setBorder("borderBottom")}
                     ></div>
                   </div>
                   <div></div>
@@ -448,15 +570,14 @@ export default defineComponent({
                         <ElInput
                           v-model={item.top}
                           onChange={(value) =>
-                            numericalProcessingShadow(
+                            numericalProcessing(
                               value,
-                              i,
                               "top",
-                              marginAndPadding
+                              marginAndPadding[i]
                             )
                           }
                           onFocus={(_) =>
-                            shadowOldValue(item.top, i, marginAndPadding)
+                            saveOldValue(item.top, marginAndPadding[i])
                           }
                         />
                         <label>top</label>
@@ -465,15 +586,14 @@ export default defineComponent({
                         <ElInput
                           v-model={item.bottom}
                           onChange={(value) =>
-                            numericalProcessingShadow(
+                            numericalProcessing(
                               value,
-                              i,
                               "bottom",
-                              marginAndPadding
+                              marginAndPadding[i]
                             )
                           }
                           onFocus={(_) =>
-                            shadowOldValue(item.bottom, i, marginAndPadding)
+                            saveOldValue(item.bottom, marginAndPadding[i])
                           }
                         />
                         <label>bottom</label>
@@ -482,15 +602,14 @@ export default defineComponent({
                         <ElInput
                           v-model={item.left}
                           onChange={(value) =>
-                            numericalProcessingShadow(
+                            numericalProcessing(
                               value,
-                              i,
                               "left",
-                              marginAndPadding
+                              marginAndPadding[i]
                             )
                           }
                           onFocus={(_) =>
-                            shadowOldValue(item.left, i, marginAndPadding)
+                            saveOldValue(item.left, marginAndPadding[i])
                           }
                         />
                         <label>left</label>
@@ -499,15 +618,14 @@ export default defineComponent({
                         <ElInput
                           v-model={item.right}
                           onChange={(value) =>
-                            numericalProcessingShadow(
+                            numericalProcessing(
                               value,
-                              i,
                               "right",
-                              marginAndPadding
+                              marginAndPadding[i]
                             )
                           }
                           onFocus={(_) =>
-                            shadowOldValue(item.right, i, marginAndPadding)
+                            saveOldValue(item.right, marginAndPadding[i])
                           }
                         />
                         <label>right</label>
@@ -530,46 +648,92 @@ export default defineComponent({
                       "common all",
                       radius.isRadiusAllActive ? "active" : "",
                     ]}
-                    onClick={() => (
-                      (radius.isRadiusAllActive = true),
-                      (radius.isRadiusSelfActive = false)
-                    )}
+                    onClick={() => {
+                      radius.isRadiusAllActive = true;
+                      radius.isRadiusSelfActive = false;
+                      handleBorderRadius();
+                    }}
                   ></div>
                   <div
                     class={[
                       "common self",
                       radius.isRadiusSelfActive ? "active" : "",
                     ]}
-                    onClick={() => (
-                      (radius.isRadiusAllActive = false),
-                      (radius.isRadiusSelfActive = true)
-                    )}
+                    onClick={() => {
+                      radius.isRadiusAllActive = false;
+                      radius.isRadiusSelfActive = true;
+                      handleBorderRadius();
+                    }}
                   ></div>
                 </div>
                 <div class="elCollapseRadius-setting">
                   <ElInput
                     v-model={radius.radiusValue}
                     disabled={!radius.isRadiusAllActive}
-                    onChange={() => changeRadiusValue()}
+                    onChange={(value) => {
+                      numericalProcessing(value, "radiusValue", radius);
+                      radius.radiusTLValue =
+                        radius.radiusTRValue =
+                        radius.radiusBLValue =
+                        radius.radiusBRValue =
+                          radius.radiusValue;
+                      console.log(radius);
+                    }}
+                    onFocus={(_) => saveOldValue(radius.radiusValue, radius)}
                   />
+                  {radius.tipIsshow && (
+                    <div class="elCollapseRadius-setting-tip">
+                      <span>{radius.tip}</span>
+                      {radius.isRadiusAllActive && (
+                        <i
+                          class="icon iconfont icon-cha"
+                          onClick={(_) => {
+                            radius.tipIsshow = false;
+                          }}
+                        ></i>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
               <div
                 class="elCollapseItem elCollapseRadius"
                 v-show={radius.isRadiusSelfActive}
               >
-                <ElInput v-model={radius.radiusTLValue} />
+                <ElInput
+                  v-model={radius.radiusTLValue}
+                  onChange={(value) => {
+                    numericalProcessing(value, "radiusTLValue", radius);
+                    changeRadiusValue();
+                  }}
+                  onFocus={(_) => saveOldValue(radius.radiusTLValue, radius)}
+                />
                 <ElInput
                   class="radiusSelfInput"
                   v-model={radius.radiusTRValue}
+                  onChange={(value) => {
+                    numericalProcessing(value, "radiusTRValue", radius);
+                    changeRadiusValue();
+                  }}
+                  onFocus={(_) => saveOldValue(radius.radiusTRValue, radius)}
                 />
                 <ElInput
                   class="radiusSelfInput"
                   v-model={radius.radiusBLValue}
+                  onChange={(value) => {
+                    numericalProcessing(value, "radiusBLValue", radius);
+                    changeRadiusValue();
+                  }}
+                  onFocus={(_) => saveOldValue(radius.radiusBLValue, radius)}
                 />
                 <ElInput
                   class="radiusSelfInput"
                   v-model={radius.radiusBRValue}
+                  onChange={(value) => {
+                    numericalProcessing(value, "radiusBRValue", radius);
+                    changeRadiusValue();
+                  }}
+                  onFocus={(_) => saveOldValue(radius.radiusBRValue, radius)}
                 />
               </div>
               <div
@@ -605,9 +769,9 @@ export default defineComponent({
                         <ElInput
                           v-model={item.x}
                           onChange={(value) =>
-                            numericalProcessingShadow(value, i, "x", shadow)
+                            numericalProcessing(value, "x", shadow[i])
                           }
-                          onFocus={(_) => shadowOldValue(item.x, i, shadow)}
+                          onFocus={(_) => saveOldValue(item.x, shadow[i])}
                         />
                         <label>X值</label>
                       </div>
@@ -615,9 +779,9 @@ export default defineComponent({
                         <ElInput
                           v-model={item.y}
                           onChange={(value) =>
-                            numericalProcessingShadow(value, i, "y", shadow)
+                            numericalProcessing(value, "y", shadow[i])
                           }
-                          onFocus={(_) => shadowOldValue(item.y, i, shadow)}
+                          onFocus={(_) => saveOldValue(item.y, shadow[i])}
                         />
                         <label>Y值</label>
                       </div>
@@ -625,9 +789,9 @@ export default defineComponent({
                         <ElInput
                           v-model={item.fuzzy}
                           onChange={(value) =>
-                            numericalProcessingShadow(value, i, "fuzzy", shadow)
+                            numericalProcessing(value, "fuzzy", shadow[i])
                           }
-                          onFocus={(_) => shadowOldValue(item.fuzzy, i, shadow)}
+                          onFocus={(_) => saveOldValue(item.fuzzy, shadow[i])}
                         />
                         <label>模糊值</label>
                       </div>
@@ -635,15 +799,10 @@ export default defineComponent({
                         <ElInput
                           v-model={item.extension}
                           onChange={(value) =>
-                            numericalProcessingShadow(
-                              value,
-                              i,
-                              "extension",
-                              shadow
-                            )
+                            numericalProcessing(value, "extension", shadow[i])
                           }
                           onFocus={(_) =>
-                            shadowOldValue(item.extension, i, shadow)
+                            saveOldValue(item.extension, shadow[i])
                           }
                         />
                         <label>扩展值</label>
