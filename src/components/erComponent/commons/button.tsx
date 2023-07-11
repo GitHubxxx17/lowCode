@@ -1,4 +1,4 @@
-import { defineComponent, reactive, watch } from "vue";
+import { defineComponent, reactive, watch, watchEffect } from "vue";
 import {
   BaseInput,
   BaseSelect,
@@ -127,7 +127,7 @@ export const ButtonProperty = defineComponent({
   props: {
     option: { type: Object },
   },
-  setup() {
+  setup(props) {
     const activeNames: string[] = ["basic", "layout"];
 
     const state = reactive({
@@ -175,18 +175,20 @@ export const ButtonProperty = defineComponent({
     });
 
     // 基本初始化渲染
+    console.log("选中的节点信息");
+    console.log(props.option);
+    if (state.bindingField.value != props.option.children) {
+      state.bindingField.value = props.option.children;
+    }
 
+    // 监听数据实现双向绑定
+    watchEffect(() => {
+      if (state.bindingField.value != "我的按钮") {
+        props.option.children = state.bindingField.value;
+      }
+    });
 
-    // 页面点击时关闭按钮列表
-    // document.addEventListener("click", () => {
-    //   if (state.leftIconSelect.isShowList) {
-    //     state.leftIconSelect.isShowList = false;
-    //   }
-    //   if (state.rightIconSelect.isShowList) {
-    //     state.rightIconSelect.isShowList = false;
-    //   }
-    // });
-
+    // 监听选择左右侧按钮的列表显示状态
     watch(
       () => state.leftIconSelect.isShowList,
       (newValue) => {

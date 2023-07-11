@@ -294,8 +294,6 @@ function useDragger(): any {
     newIndex = oldIndex;
     oldDragData = childrenData[oldIndex];
     dragData.selectedComponent = reactive(oldDragData);
-    console.log("选中的节点信息");
-    console.log(dragData.selectedComponent);
 
     container.classList.add("chosen-container");
     oldContainer = container;
