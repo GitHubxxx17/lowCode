@@ -154,14 +154,14 @@ const componentsConfig = [
     render(props: any) {
       return (
         <div class="cannotPreview" style={props.style.box} data-id={this.type}>
-          <div style={props.style.title}>{props.title}</div>
+          <div style={props.style.title}>{props.title ? props.title : '21313'}</div>
           <ElInput style={props.style.input} placeholder={props.inputBoxPlaceholder}></ElInput>
         </div>
       );
     },
     defaultData: {
       type: "textBox",
-      title:"文本：",
+      title:"文本",
       style: {
         box: {
           display: "block",

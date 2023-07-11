@@ -336,8 +336,29 @@
   }
 
   &-setting {
+    position: relative;
     margin-left: 16px;
     width: 170px;
+
+    &-tip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: #f6f6f6;
+      height: 100%;
+      width: 100%;
+      padding: 0 5px;
+      line-height: 30px;
+      border-radius: 5px;
+
+      .icon {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 10px;
+        cursor: pointer;
+      }
+    }
   }
 
   .radiusSelfInput {
