@@ -2,7 +2,6 @@ import { defineComponent, reactive, watch } from "vue";
 import {
   BaseInput,
   BaseSelect,
-  BaseTextArea,
   BaseSwitch,
   BaseAppearance,
   BaseSize,
@@ -13,6 +12,7 @@ export const ButtonAppearance = defineComponent({
     option: { type: Object },
   },
   setup() {
+    // 显示组件的配置项
     const activeNames: string[] = ["basic", "layout"];
     const option = {
       writingStyle: true,
@@ -133,7 +133,7 @@ export const ButtonProperty = defineComponent({
     const state = reactive({
       bindingField: {
         label: "名称",
-        value: "按钮",
+        value: "我的按钮",
         placeholder: "请输入名称",
       },
       twiceComfire: {
@@ -173,6 +173,9 @@ export const ButtonProperty = defineComponent({
         value: false,
       },
     });
+
+    // 基本初始化渲染
+
 
     // 页面点击时关闭按钮列表
     // document.addEventListener("click", () => {

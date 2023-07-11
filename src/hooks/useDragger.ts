@@ -58,7 +58,7 @@ function useDragger(): any {
     //   console.log("取消鼠标移除事件");
     //   return;
     // }
-    
+
     //鼠标松开
     if (dragData.isClone) {
       //当处于克隆节点时
@@ -294,6 +294,8 @@ function useDragger(): any {
     newIndex = oldIndex;
     oldDragData = childrenData[oldIndex];
     dragData.selectedComponent = reactive(oldDragData);
+    console.log("选中的节点信息");
+    console.log(dragData.selectedComponent);
 
     container.classList.add("chosen-container");
     oldContainer = container;
@@ -302,7 +304,7 @@ function useDragger(): any {
       const { clientY, clientX } = e;
       const { top, left } = dragEl.getBoundingClientRect();
       console.log("正在交换组件中");
-      
+
       startX = clientX - left;
       startY = clientY - top;
       isDraging = true;

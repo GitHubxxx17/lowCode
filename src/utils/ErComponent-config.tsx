@@ -82,7 +82,7 @@ interface ErcomponentConfig {
 }
 
 // 组件的配置信息集合
-const ErcomponentConfig = [
+const ErcomponentConfigList = [
   {
     type: "container-ordinary",
     Properties(selectedComponent:Object) {
@@ -172,10 +172,12 @@ class createErComponentConfig {
 export const erConfig = new createErComponentConfig();
 
 // 循环注册组件配置信息
-for (let perErcomponent of ErcomponentConfig) {
+for (let perErcomponent of ErcomponentConfigList) {
   erConfig.register({
     type: perErcomponent.type,
     Properties: (selectedComponent:Object) => perErcomponent.Properties(selectedComponent),
     appearances: (selectedComponent:Object) => perErcomponent.appearances(selectedComponent),
   });
 }
+
+
