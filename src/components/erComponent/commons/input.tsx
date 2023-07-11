@@ -11,7 +11,7 @@ export const InputAppearance = defineComponent({
   props: {
     option: { type: Object },
   },
-  setup() {
+  setup(props) {
     const activeNames: string[] = ["basic", "layout"];
 
     // 状态的下拉框选项
@@ -29,17 +29,20 @@ export const InputAppearance = defineComponent({
         },
       ],
     });
+    
     const InputStyleOption = {
       writingStyle: true,
       bgColor: true,
       border: true,
       marginAndPadding: true,
       radius: true,
+      style: props.option.style,
     };
 
     const labelStyleOption = {
       writingStyle: true,
       marginAndPadding: true,
+      style: props.option.style,
     };
 
     const widthState = reactive({

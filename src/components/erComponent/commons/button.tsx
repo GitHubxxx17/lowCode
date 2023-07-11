@@ -1,4 +1,4 @@
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, watch } from "vue";
 import {
   BaseInput,
   BaseSelect,
@@ -144,6 +144,22 @@ export const ButtonProperty = defineComponent({
         label: "气泡提示",
         value: false,
       },
+      leftIconSelect: {
+        isShowList: false, // 是否展示列表
+        clearable: false, // 是否有清除键
+        isFill: false, // 是否有内容
+        icon: "",
+        iconText: "",
+        clearIcon: "icon-cha",
+      },
+      rightIconSelect: {
+        isShowList: false, // 是否展示列表
+        clearable: false, // 是否有清除键
+        isFill: false, // 是否有内容
+        icon: "",
+        iconText: "",
+        clearIcon: "icon-cha",
+      },
       subscript: {
         label: "角标",
         value: false,
@@ -158,6 +174,34 @@ export const ButtonProperty = defineComponent({
       },
     });
 
+    // 页面点击时关闭按钮列表
+    // document.addEventListener("click", () => {
+    //   if (state.leftIconSelect.isShowList) {
+    //     state.leftIconSelect.isShowList = false;
+    //   }
+    //   if (state.rightIconSelect.isShowList) {
+    //     state.rightIconSelect.isShowList = false;
+    //   }
+    // });
+
+    watch(
+      () => state.leftIconSelect.isShowList,
+      (newValue) => {
+        if (newValue && state.rightIconSelect.isShowList) {
+          state.rightIconSelect.isShowList = false;
+        }
+      }
+    );
+
+    watch(
+      () => state.rightIconSelect.isShowList,
+      (newValue) => {
+        if (newValue && state.leftIconSelect.isShowList) {
+          state.leftIconSelect.isShowList = false;
+        }
+      }
+    );
+
     return () => {
       return (
         <>
@@ -166,8 +210,14 @@ export const ButtonProperty = defineComponent({
               <BaseInput option={state.bindingField}></BaseInput>
               <BaseSwitch option={state.twiceComfire}></BaseSwitch>
               <BaseSwitch option={state.bubblePrompt}></BaseSwitch>
-              <BaseIconSelect label="左侧图标"></BaseIconSelect>
-              <BaseIconSelect label="右侧图标"></BaseIconSelect>
+              <BaseIconSelect
+                label="左侧图标"
+                setting={state.leftIconSelect}
+              ></BaseIconSelect>
+              <BaseIconSelect
+                label="右侧图标"
+                setting={state.rightIconSelect}
+              ></BaseIconSelect>
               <BaseSwitch option={state.subscript}></BaseSwitch>
             </elCollapseItem>
             <elCollapseItem title="状态" name="state">

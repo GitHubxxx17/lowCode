@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, provide, reactive, ref } from "vue";
+import {  provide, reactive } from "vue";
 import data from "../data.json";
 import EditorLeft from "../components/editor/EditorLeft.vue";
 import EditorRight from "../components/editor/EditorRight.vue";
