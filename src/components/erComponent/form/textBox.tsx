@@ -65,7 +65,45 @@ export const TextBoxAppearance = defineComponent({
       },
     });
 
-    // watchEffect(() => {});
+    (() => {
+      if (props.option.style.box.display != "block") {
+        state.layout.value = "水平";
+      }
+      console.log(props.option.style.input.width);
+      if (props.option.style.input.width) {
+        const { width } = props.option.style.input.width;
+        if (width == "80px") {
+          state.inputBoxSize.value = "极小";
+        } else if (width == "160px") {
+          state.inputBoxSize.value = "小";
+        } else if (width == "240px") {
+          state.inputBoxSize.value = "中";
+        } else if (width == "320px") {
+          state.inputBoxSize.value = "大";
+        }
+      }
+    })();
+
+    watchEffect(() => {
+      if (state.layout.value == "垂直") {
+        props.option.style.box.display = "block";
+      } else {
+        props.option.style.box.display = "flex";
+        props.option.style.box.alignItems = "center";
+        props.option.style.title.marginRight = "5px";
+      }
+      if (state.inputBoxSize.value == "极小") {
+        props.option.style.input.width = "80px";
+      } else if (state.inputBoxSize.value == "小") {
+        props.option.style.input.width = "160px";
+      } else if (state.inputBoxSize.value == "中") {
+        props.option.style.input.width = "240px";
+      } else if (state.inputBoxSize.value == "大") {
+        props.option.style.input.width = "320px";
+      } else {
+        delete props.option.style.input.width;
+      }
+    });
 
     return () => {
       return (
@@ -117,7 +155,7 @@ export const TextBoxProperty = defineComponent({
         placeholder: "请输入标题",
       },
       inputType: {
-        value: props.option.inputType ? props.option.inputType  : "文本",
+        value: "文本",
         options: [
           {
             value: "文本",
@@ -142,12 +180,25 @@ export const TextBoxProperty = defineComponent({
         placeholder: "空内容提示占位",
       },
     });
+    //处理输入框类型
+    (() => {
+      if (props.option.inputType) {
+        if (props.option.inputType == "text") {
+          state.inputType.value = "文本";
+        }
+        if (props.option.inputType == "password") {
+          state.inputType.value = "密码";
+        }
+        if (props.option.inputType == "email") {
+          state.inputType.value = "邮箱";
+        }
+      }
+    })();
 
     watchEffect(() => {
       const textboxKey: string[] = [
         "bindingField",
         "title",
-        "inputType",
         "clearable",
         "inputBoxPlaceholder",
       ];
@@ -155,6 +206,15 @@ export const TextBoxProperty = defineComponent({
         if (state[item].value != "") props.option[item] = state[item].value;
         else delete props.option[item];
       });
+      if (state.inputType.value != "") {
+        if (state.inputType.value == "文本") {
+          props.option.inputType = "text";
+        } else if (state.inputType.value == "密码") {
+          props.option.inputType = "password";
+        } else {
+          props.option.inputType = "email";
+        }
+      } else delete props.option.inputType;
     });
 
     return () => {

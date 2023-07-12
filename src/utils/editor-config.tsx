@@ -163,9 +163,11 @@ const componentsConfig = [
           </div>
           <ElInput
             style={props.style.input}
-            placeholder={props.inputBoxPlaceholder}
+            placeholder={
+              props.inputBoxPlaceholder ? props.inputBoxPlaceholder : ""
+            }
             clearable={props.clearable ? props.clearable : false}
-            // type={props.inputType ? props.inputType : false}
+            type={props.inputType ? props.inputType : 'text'}
           ></ElInput>
         </div>
       );
@@ -194,7 +196,15 @@ const componentsConfig = [
           <div style={props.style.title}>
             {props.title ? props.title : "多行文本"}
           </div>
-          <ElInput style={props.style.input} type="textarea"></ElInput>
+          <ElInput
+            style={props.style.input}
+            type="textarea"
+            placeholder={
+              props.inputBoxPlaceholder ? props.inputBoxPlaceholder : ""
+            }
+            clearable={props.clearable ? props.clearable : false}
+            autosize={props.autosize}
+          ></ElInput>
         </div>
       );
     },
@@ -209,6 +219,10 @@ const componentsConfig = [
         input: {},
       },
       children: "",
+      autosize: {
+        minRows: 2,
+        maxRows: 6,
+      },
     },
   },
 ];
