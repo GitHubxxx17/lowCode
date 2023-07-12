@@ -21,6 +21,7 @@
     }
 
 }
+
 //选中的容器
 .chosen-container {
     border: 2px solid rgb(116, 144, 254) !important;
@@ -29,6 +30,7 @@
 .chosenEl {
     cursor: move;
     border: 2px dotted rgb(116, 167, 254) !important;
+
     &::before {
         pointer-events: none;
         z-index: 1000000000;
@@ -52,6 +54,7 @@
     position: relative;
     display: inline-block;
     user-select: none;
+
     &::after {
         z-index: 1000000000;
         content: '';
@@ -101,5 +104,20 @@
     position: absolute;
     top: 0;
     left: 0;
+
+}
+
+.baseButton {
+    color: #000;
+
+    .leftIcon {
+        margin-left: -5px;
+        margin-right: 5px;
+    }
+
+    .rightIcon {
+        margin-left: 5px;
+        margin-right: -5px;
+    }
 
 }

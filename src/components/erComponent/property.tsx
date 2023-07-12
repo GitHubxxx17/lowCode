@@ -1,8 +1,9 @@
 import "@/sass/erComponent/property.scss";
-import { defineComponent, inject, watch } from "vue";
+import { defineComponent, inject, ref } from "vue";
 import pinia from "../../stores/index.ts";
 import dragStore from "../../stores/dragStore.ts";
-import {ContainerProperty} from "./containers/container-editor.tsx"
+import { ContainerProperty } from "./containers/container-editor.tsx";
+import { ElInput } from "element-plus";
 export default defineComponent({
   props: {
     EditorData: Object,
@@ -29,6 +30,7 @@ export default defineComponent({
     //     );
     //   }
     // );
+    let value = ref("");
     return () => {
       return (
         <div class="property" key={dragData.selectedComponent}>
@@ -36,9 +38,19 @@ export default defineComponent({
             (component: any) =>
               component.type == dragData.selectKey && component.Properties()
           )} */}
-          {erConfig.componentMap.get(dragData.selectKey)
-            ? erConfig.componentMap.get(dragData.selectKey).Properties(dragData.selectedComponent)
-            : <ContainerProperty option={props.EditorData}></ContainerProperty>}
+          {erConfig.componentMap.get(dragData.selectKey) ? (
+            erConfig.componentMap
+              .get(dragData.selectKey)
+              .Properties(dragData.selectedComponent)
+          ) : (
+            <ContainerProperty option={props.EditorData}></ContainerProperty>
+          )}
+          <ElInput
+            v-model={value.value}
+            type={"submit"}
+            placeholder={"请输入"}
+            // showPassword={true}
+          ></ElInput>
         </div>
       );
     };

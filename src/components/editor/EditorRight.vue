@@ -3,7 +3,7 @@ import { reactive } from "vue";
 import Property from "../erComponent/property";
 import Appearance from "../erComponent/appearance";
 import Events from "../erComponent/events";
-const props = defineProps(['EditorData'])
+const props = defineProps(["EditorData"]);
 
 interface btn {
   label: String; // 标签
@@ -32,17 +32,27 @@ const selectBtn = (index: number) => {
 <template>
   <div class="ErComponent">
     <div class="ErComponent-nav">
-      <label v-for="(button, index) in buttons" v-show="button.isShow" @click="selectBtn(index)"
-        class="ErComponent-nav-btn" :class="{ active: button.active }">
+      <label
+        v-for="(button, index) in buttons"
+        v-show="button.isShow"
+        @click="selectBtn(index)"
+        class="ErComponent-nav-btn"
+        :class="{ active: button.active }"
+      >
         {{ button.label }}
       </label>
     </div>
     <div class="ErComponent-content">
-      <Property v-if="buttons[0].active" :EditorData="props.EditorData"></Property>
-      <Appearance v-if="buttons[1].active" :EditorData="props.EditorData"></Appearance>
-      <Events v-if="buttons[2].active" ></Events>
+      <Property
+        v-if="buttons[0].active"
+        :EditorData="props.EditorData"
+      ></Property>
+      <Appearance
+        v-if="buttons[1].active"
+        :EditorData="props.EditorData"
+      ></Appearance>
+      <Events v-if="buttons[2].active"></Events>
     </div>
-
   </div>
 </template>
 
@@ -122,5 +132,14 @@ const selectBtn = (index: number) => {
   margin: 10px 0;
   margin-bottom: 15px;
   color: #5c5f66;
+
+  p {
+    font-size: 12px;
+  }
+
+  .buttonSelected {
+    background-color: #ecf5ff;
+    color: #40b6ff;
+  }
 }
 </style>

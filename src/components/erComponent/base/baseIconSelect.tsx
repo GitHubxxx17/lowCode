@@ -1,4 +1,6 @@
 import { defineComponent, reactive } from "vue";
+import pinia from "../../../stores/index.ts";
+import dragStore from "../../../stores/dragStore.ts";
 export default defineComponent({
   props: {
     label: { type: String },
@@ -6,6 +8,7 @@ export default defineComponent({
     otherShow: { type: Boolean },
   },
   setup(props) {
+    const dragData = dragStore(pinia); //拖拽数据
     // 点击显示列表
     const showIconList = (e) => {
       if (props.setting.isShowList) {
@@ -31,6 +34,12 @@ export default defineComponent({
       props.setting.isShowList = false;
       props.setting.isFill = !props.setting.isFill;
       props.setting.clearable = !props.setting.clearable;
+      if (props.label == "左侧图标") {
+        dragData.selectedComponent.icon.leftIcon = "";
+      }
+      if (props.label == "右侧图标") {
+        dragData.selectedComponent.icon.rightIcon = "";
+      }
       e.stopPropagation();
     };
 
@@ -54,6 +63,12 @@ export default defineComponent({
       props.setting.isFill = true;
       props.setting.icon = item;
       props.setting.iconText = item.replace("icon-", "");
+      if (props.label == "左侧图标") {
+        dragData.selectedComponent.icon.leftIcon = item;
+      }
+      if (props.label == "右侧图标") {
+        dragData.selectedComponent.icon.rightIcon = item;
+      }
     };
 
     // 页面点击时关闭按钮列表

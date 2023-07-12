@@ -1,8 +1,7 @@
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent, reactive, ref, watchEffect } from "vue";
 import {
   BaseInput,
   BaseSelect,
-  BaseTextArea,
   BaseSwitch,
   BaseAppearance,
 } from "../base/index";
@@ -29,7 +28,7 @@ export const InputAppearance = defineComponent({
         },
       ],
     });
-    
+
     const InputStyleOption = {
       writingStyle: true,
       bgColor: true,
@@ -125,27 +124,34 @@ export const InputProperty = defineComponent({
   props: {
     option: { type: Object },
   },
-  setup() {
+  setup(props) {
     // 下拉器
     const activeNames: string[] = ["basic", "layout"];
 
     // 基本
     const BasicState = reactive({
-      fieldName: {
-        label: "字段名",
-        value: "text",
-        placeholder: "请输入字段名",
-      },
-      title: {
-        label: "标题",
-        value: "文本",
-        placeholder: "请输入标题",
-      },
       inputStyle: {
-        label: "输入类型",
-        value: "文本",
-        placeholder: "请输入输入类型",
+        value: "文本(text)",
+        options: [
+          { value: "文本(text)" },
+          { value: "密码(password)" },
+          { value: "数字(number)" },
+          { value: "按钮(button)" },
+          { value: "邮箱(email)" },
+          { value: "文件(file)" },
+          { value: "日期(date)" },
+          { value: "月份(month)" },
+          { value: "周(week)" },
+          { value: "时间(time)" },
+          { value: "单选项(radio)" },
+          { value: "复选框(checkbox)" },
+          { value: "颜色(color)" },
+          { value: "重置按钮(reset)" },
+          { value: "提交按钮(submit)" },
+          { value: "隐藏(hidden)" },
+        ],
       },
+      inputValue: { label: "默认值", value: "", placeholder: "请输入" },
       defaultValue: {
         label: "默认值",
         value: "",
@@ -182,7 +188,7 @@ export const InputProperty = defineComponent({
         value: false,
       },
       disable: {
-        label: "只读",
+        label: "禁用",
         value: false,
       },
       delhidden: {
@@ -191,14 +197,43 @@ export const InputProperty = defineComponent({
       },
     });
 
+    let reg = /(?<=\()(.+?)(?=\))/g; // 获取括号里面的值
+
+    // 基本初始化渲染
+    (() => {
+      // 输入类型
+      if (props.option.inputStyle != "input") {
+        for (let i = 0; i < BasicState.inputStyle.options.length; i++) {
+          let value = BasicState.inputStyle.options[i].value.match(reg);
+          if (value[0] == props.option.inputStyle) {
+            BasicState.inputStyle.value =
+              BasicState.inputStyle.options[i].value;
+          }
+          if (value[0] == "password") {
+            props.option.showPassword = true;
+          }
+        }
+      }
+    })();
+
+    //  双向绑定
+    watchEffect(() => {
+      // 输入类型
+      props.option.inputStyle = BasicState.inputStyle.value.match(reg)[0];
+      if (props.option.inputStyle != "password") {
+        props.option.showPassword = false;
+      }
+    });
+
     return () => {
       return (
         <>
           <elCollapse modelValue={activeNames}>
             <elCollapseItem title="基本" name="basic">
-              <BaseInput option={BasicState.fieldName}></BaseInput>
-              <BaseInput option={BasicState.title}></BaseInput>
-              <BaseInput option={BasicState.inputStyle}></BaseInput>
+              <BaseSelect
+                label="输入类型"
+                setting={BasicState.inputStyle}
+              ></BaseSelect>
               <BaseInput option={BasicState.defaultValue}></BaseInput>
               <BaseSwitch option={BasicState.clearable}></BaseSwitch>
               <BaseSwitch option={BasicState.countor}></BaseSwitch>

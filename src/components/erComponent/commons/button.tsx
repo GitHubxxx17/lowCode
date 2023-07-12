@@ -6,12 +6,13 @@ import {
   BaseAppearance,
   BaseSize,
   BaseIconSelect,
+  BasicPopup,
 } from "../base/index";
 export const ButtonAppearance = defineComponent({
   props: {
     option: { type: Object },
   },
-  setup() {
+  setup(props) {
     // 显示组件的配置项
     const activeNames: string[] = ["basic", "layout"];
     const option = {
@@ -20,6 +21,7 @@ export const ButtonAppearance = defineComponent({
       border: true,
       marginAndPadding: true,
       radius: true,
+      style: props.option.style,
     };
 
     // 样式的下拉框选项
@@ -129,6 +131,7 @@ export const ButtonProperty = defineComponent({
   },
   setup(props) {
     const activeNames: string[] = ["basic", "layout"];
+    console.log(props.option);
 
     const state = reactive({
       bindingField: {
@@ -160,32 +163,115 @@ export const ButtonProperty = defineComponent({
         iconText: "",
         clearIcon: "icon-cha",
       },
-      subscript: {
-        label: "角标",
-        value: false,
-      },
-      hide: {
-        label: "隐藏",
-        value: false,
-      },
       disable: {
         label: "禁用",
-        value: false,
+        value: true,
       },
     });
 
-    // 基本初始化渲染
+    // subscript: {
+    //   label: "角标",
+    //   value: false,
+    // },
+    // hide: {
+    //   label: "隐藏",
+    //   value: false,
+    // },
+
+    // 二次确认的输入框
+    const twiceComfireState = reactive({
+      textarea: [{ label: "确认内容", value: "" }],
+      hasTriggerMode: false,
+      hasPromptLocation: false,
+    });
+
+    // 气泡提示的输入框
+    const bubblePromptState = reactive({
+      textarea: [
+        { label: "正常提示", value: "" },
+        {
+          label: "禁用信息",
+          value: "",
+        },
+      ],
+      hasTriggerMode: true,
+      hasPromptLocation: true,
+    });
+
     console.log("选中的节点信息");
     console.log(props.option);
-    if (state.bindingField.value != props.option.children) {
-      state.bindingField.value = props.option.children;
-    }
+    // 基本初始化渲染
+    (() => {
+      // 名称
+      if (state.bindingField.value != props.option.children) {
+        state.bindingField.value = props.option.children;
+      }
+      // 二次确认
+      if (props.option.twiceComfire.value) {
+        state.twiceComfire.value = true;
+        twiceComfireState.textarea[0].value = props.option.twiceComfire.info;
+      } else {
+        state.twiceComfire.value = false;
+      }
+      // 气泡提示
+      if (props.option.bubblePrompt.value) {
+        state.bubblePrompt.value = true;
+        bubblePromptState.textarea[0].value =
+          props.option.bubblePrompt.normalInfo; // 正常提示
+        bubblePromptState.textarea[1].value =
+          props.option.bubblePrompt.disableInfo; // 禁用提示
+      } else {
+        state.twiceComfire.value = false;
+      }
+    })();
+
+    // 状态初始化渲染
+    (() => {
+      // 禁用
+      state.disable.value = props.option.isDisable;
+    })();
 
     // 监听数据实现双向绑定
     watchEffect(() => {
+      // 名称
       if (state.bindingField.value != "我的按钮") {
-        props.option.children = state.bindingField.value;
+        props.option.children = state.bindingField.value
+          ? state.bindingField.value
+          : "我的按钮";
       }
+      // 二次确认
+      if (state.twiceComfire.value) {
+        props.option.twiceComfire.value = true;
+        props.option.twiceComfire.info = twiceComfireState.textarea[0].value;
+      } else {
+        props.option.twiceComfire.value = false;
+        props.option.twiceComfire.info = twiceComfireState.textarea[0].value =
+          "";
+      }
+      // 气泡提示
+      if (state.bubblePrompt.value) {
+        props.option.bubblePrompt.value = true;
+        props.option.bubblePrompt.normalInfo =
+          bubblePromptState.textarea[0].value; // 正常提示
+        props.option.bubblePrompt.disableInfo =
+          bubblePromptState.textarea[1].value; // 禁用提示
+      } else {
+        props.option.bubblePrompt.value = false;
+        props.option.bubblePrompt.normalInfo =
+          bubblePromptState.textarea[0].value = ""; // 正常提示
+        props.option.bubblePrompt.disableInfo =
+          bubblePromptState.textarea[1].value = ""; // 禁用提示
+        //  触发方式
+        if (props.option.bubblePrompt.triggerMode != "鼠标悬浮") {
+          props.option.bubblePrompt.triggerMode = "鼠标悬浮";
+        }
+        // 提示位置
+        if (props.option.bubblePrompt.promptLocation != "下") {
+          props.option.bubblePrompt.promptLocation = "下";
+        }
+      }
+      // 禁用
+      props.option.isDisable = state.disable.value;
     });
 
     // 监听选择左右侧按钮的列表显示状态
@@ -214,7 +300,15 @@ export const ButtonProperty = defineComponent({
             <elCollapseItem title="基本" name="basic">
               <BaseInput option={state.bindingField}></BaseInput>
               <BaseSwitch option={state.twiceComfire}></BaseSwitch>
+              <BasicPopup
+                v-show={state.twiceComfire.value}
+                setting={twiceComfireState}
+              ></BasicPopup>
               <BaseSwitch option={state.bubblePrompt}></BaseSwitch>
+              <BasicPopup
+                v-show={state.bubblePrompt.value}
+                setting={bubblePromptState}
+              ></BasicPopup>
               <BaseIconSelect
                 label="左侧图标"
                 setting={state.leftIconSelect}
@@ -223,10 +317,10 @@ export const ButtonProperty = defineComponent({
                 label="右侧图标"
                 setting={state.rightIconSelect}
               ></BaseIconSelect>
-              <BaseSwitch option={state.subscript}></BaseSwitch>
+              {/* <BaseSwitch option={state.subscript}></BaseSwitch> */}
             </elCollapseItem>
             <elCollapseItem title="状态" name="state">
-              <BaseSwitch option={state.hide}></BaseSwitch>
+              {/* <BaseSwitch option={state.hide}></BaseSwitch> */}
               <BaseSwitch option={state.disable}></BaseSwitch>
             </elCollapseItem>
           </elCollapse>

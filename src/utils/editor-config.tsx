@@ -87,8 +87,10 @@ const componentsConfig = [
     render(props: any) {
       return (
         <div class="cannotPreview" data-id={this.type}>
-          <ElButton style={props.style}>
+          <ElButton style={props.style} class="baseButton">
+            <i class={["icon iconfont leftIcon", props.icon.leftIcon]}></i>
             {props.children ? props.children : "渲染按钮"}
+            <i class={["icon iconfont rightIcon", props.icon.rightIcon]}></i>
           </ElButton>
         </div>
       );
@@ -101,6 +103,10 @@ const componentsConfig = [
         height: "32px",
         zIndex: 1,
       },
+      icon: {},
+      twiceComfire: {},
+      bubblePrompt: {},
+      isDisable: true,
       children: "渲染按钮",
     },
   },
@@ -112,12 +118,22 @@ const componentsConfig = [
     render(props: any) {
       return (
         <div class="cannotPreview" data-id={this.type}>
-          <ElInput style={props.style}></ElInput>
+          <ElInput
+            v-model={props.value}
+            style={props.style}
+            type={props.inputStyle}
+            placeholder={props.placeholder}
+            showPassword={props.showPassword}
+          ></ElInput>
         </div>
       );
     },
     defaultData: {
       type: "input",
+      value: "",
+      inputStyle: "text",
+      placeholder: "请输入",
+      showPassword: false,
       style: {
         position: "relative",
         zIndex: 1,
