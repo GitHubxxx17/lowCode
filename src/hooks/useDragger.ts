@@ -277,7 +277,10 @@ function useDragger(): any {
   const onclickToDrag = (e: any) => {
     ghostEl = null;
     isDraging = false;
-    if (e.target.classList.contains("Editorcontainer")) return; //如果点击的是编辑区域就直接结束函数
+    if (e.target.classList.contains("Editorcontainer")) {
+      dragData.selectKey = null;
+      return; //如果点击的是编辑区域就直接结束函数
+    }
     dragData.isDrag = true;
     dragEl = findDragEl(e.target); //获取拖拽节点
     console.log(dragEl.attributes);

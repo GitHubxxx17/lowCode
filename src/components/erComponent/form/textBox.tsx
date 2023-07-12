@@ -53,7 +53,7 @@ export const TextBoxAppearance = defineComponent({
       titleType: {
         writingStyle: true,
         marginAndPadding: true,
-        style: props.option.style.title
+        style: props.option.style.title,
       },
       inputBoxType: {
         writingStyle: true,
@@ -61,7 +61,7 @@ export const TextBoxAppearance = defineComponent({
         border: true,
         marginAndPadding: true,
         radius: true,
-        style: props.option.style.input
+        style: props.option.style.input,
       },
     });
 
@@ -108,7 +108,7 @@ export const TextBoxProperty = defineComponent({
     const state = reactive({
       bindingField: {
         label: "绑定字段",
-        value: "",
+        value: props.option.bindingField ? props.option.bindingField : "",
         placeholder: "请输入字段",
       },
       title: {
@@ -117,7 +117,7 @@ export const TextBoxProperty = defineComponent({
         placeholder: "请输入标题",
       },
       inputType: {
-        value: "文本",
+        value: props.option.inputType ? props.option.inputType  : "文本",
         options: [
           {
             value: "文本",
@@ -132,26 +132,29 @@ export const TextBoxProperty = defineComponent({
       },
       clearable: {
         label: "可清除",
-        value: true,
+        value: props.option.clearable ? props.option.clearable : false,
       },
       inputBoxPlaceholder: {
         label: "占位提示",
-        value: "",
+        value: props.option.inputBoxPlaceholder
+          ? props.option.inputBoxPlaceholder
+          : "",
         placeholder: "空内容提示占位",
       },
     });
 
     watchEffect(() => {
-      if (state.bindingField.value != "")
-        props.option.bindingField = state.bindingField.value;
-      else delete props.option.bindingField;
-      if (state.title.value != "") props.option.title = state.title.value;
-      else delete props.option.title;
-      if (state.clearable.value) props.option.clearable = state.clearable.value;
-      else delete props.option.clearable;
-      if (state.inputBoxPlaceholder.value != "")
-        props.option.inputBoxPlaceholder = state.inputBoxPlaceholder.value;
-      else delete props.option.inputBoxPlaceholder;
+      const textboxKey: string[] = [
+        "bindingField",
+        "title",
+        "inputType",
+        "clearable",
+        "inputBoxPlaceholder",
+      ];
+      textboxKey.forEach((item) => {
+        if (state[item].value != "") props.option[item] = state[item].value;
+        else delete props.option[item];
+      });
     });
 
     return () => {

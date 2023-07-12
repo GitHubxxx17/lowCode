@@ -2,12 +2,12 @@ import "@/sass/erComponent/property.scss";
 import { defineComponent, inject, watch } from "vue";
 import pinia from "../../stores/index.ts";
 import dragStore from "../../stores/dragStore.ts";
-import './base/index.ts'
+import {ContainerProperty} from "./containers/container-editor.tsx"
 export default defineComponent({
   props: {
     EditorData: Object,
   },
-  setup() {
+  setup(props) {
     const erConfig: any = inject("erConfig"); // 配置组件
     const dragData = dragStore(pinia); //拖拽数据
     // console.log();
@@ -38,7 +38,7 @@ export default defineComponent({
           )} */}
           {erConfig.componentMap.get(dragData.selectKey)
             ? erConfig.componentMap.get(dragData.selectKey).Properties(dragData.selectedComponent)
-            : ""}
+            : <ContainerProperty option={props.EditorData}></ContainerProperty>}
         </div>
       );
     };

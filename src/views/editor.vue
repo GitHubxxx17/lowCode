@@ -60,7 +60,7 @@ const EditorData = reactive(data);
         </div>
       </div>
       <div class="editor-body-right">
-        <EditorRight></EditorRight>
+        <EditorRight :EditorData="EditorData"></EditorRight>
       </div>
     </section>
   </div>

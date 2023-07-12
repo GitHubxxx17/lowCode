@@ -3,6 +3,8 @@ import { reactive } from "vue";
 import Property from "../erComponent/property";
 import Appearance from "../erComponent/appearance";
 import Events from "../erComponent/events";
+const props = defineProps(['EditorData'])
+
 interface btn {
   label: String; // 标签
   active: boolean; // 是否被选择了
@@ -36,9 +38,9 @@ const selectBtn = (index: number) => {
       </label>
     </div>
     <div class="ErComponent-content">
-      <Property v-if="buttons[0].active"></Property>
-      <Appearance v-if="buttons[1].active"></Appearance>
-      <Events v-if="buttons[2].active"></Events>
+      <Property v-if="buttons[0].active" :EditorData="props.EditorData"></Property>
+      <Appearance v-if="buttons[1].active" :EditorData="props.EditorData"></Appearance>
+      <Events v-if="buttons[2].active" ></Events>
     </div>
 
   </div>

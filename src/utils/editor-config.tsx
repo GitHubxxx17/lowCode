@@ -133,7 +133,11 @@ const componentsConfig = [
     render(props: any) {
       return (
         <div class="cannotPreview" data-id={this.type}>
-          <ElSelect style={props.style} filterable={props.filterable} multiple={props.multiple}></ElSelect>
+          <ElSelect
+            style={props.style}
+            filterable={props.filterable}
+            multiple={props.multiple}
+          ></ElSelect>
         </div>
       );
     },
@@ -154,14 +158,21 @@ const componentsConfig = [
     render(props: any) {
       return (
         <div class="cannotPreview" style={props.style.box} data-id={this.type}>
-          <div style={props.style.title}>{props.title ? props.title : '21313'}</div>
-          <ElInput style={props.style.input} placeholder={props.inputBoxPlaceholder}></ElInput>
+          <div style={props.style.title}>
+            {props.title ? props.title : "文本"}
+          </div>
+          <ElInput
+            style={props.style.input}
+            placeholder={props.inputBoxPlaceholder}
+            clearable={props.clearable ? props.clearable : false}
+            // type={props.inputType ? props.inputType : false}
+          ></ElInput>
         </div>
       );
     },
     defaultData: {
       type: "textBox",
-      title:"文本",
+      title: "文本",
       style: {
         box: {
           display: "block",
@@ -180,14 +191,16 @@ const componentsConfig = [
     render(props: any) {
       return (
         <div class="cannotPreview" style={props.style.box} data-id={this.type}>
-          <div style={props.style.title}>{props.title ? props.title : '多行文本：'}</div>
+          <div style={props.style.title}>
+            {props.title ? props.title : "多行文本"}
+          </div>
           <ElInput style={props.style.input} type="textarea"></ElInput>
         </div>
       );
     },
     defaultData: {
       type: "multilineText",
-      title:"多行文本：",
+      title: "多行文本",
       style: {
         box: {
           display: "block",

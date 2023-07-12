@@ -1,6 +1,7 @@
 {
     "type": "page",
     "title": "Hello world",
+    "style":{},
     "body": [
         {
             "type": "container-ordinary",

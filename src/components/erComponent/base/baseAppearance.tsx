@@ -21,7 +21,76 @@ export default defineComponent({
       fontFamily: props.option.style.fontFamily
         ? props.option.style.fontFamily
         : "",
+      oldValue: "",
     });
+    const fontFamilyList = [
+      {
+        value: "黑体",
+      },
+      {
+        value: "宋体",
+      },
+      {
+        value: "楷体",
+      },
+      {
+        value: "微软雅黑",
+      },
+    ];
+
+    const fontWeightList = [
+      {
+        value: "normal",
+      },
+      {
+        value: "bold",
+      },
+      {
+        value: "bolder",
+      },
+      {
+        value: "lighter",
+      },
+      {
+        value: "100",
+      },
+      {
+        value: "200",
+      },
+      {
+        value: "300",
+      },
+      {
+        value: "400",
+      },
+      {
+        value: "500",
+      },
+      {
+        value: "600",
+      },
+      {
+        value: "700",
+      },
+      {
+        value: "800",
+      },
+      {
+        value: "900",
+      },
+    ];
+
+    const lineHeightList = [
+      {
+        value: "1.3倍",
+      },
+      {
+        value: "1.5倍",
+      },
+      {
+        value: "1.7倍",
+      },
+    ];
 
     //背景颜色
     let bgColor = reactive({
@@ -253,6 +322,14 @@ export default defineComponent({
         if (writingStyle.fontFamily != "")
           props.option.style.fontFamily = writingStyle.fontFamily;
         else delete props.option.style.fontFamily;
+        if (writingStyle.lineHeight != "") {
+          if (/^\d+px$/.test(writingStyle.lineHeight)) {
+            props.option.style.lineHeight = writingStyle.lineHeight
+          } else
+            props.option.style.lineHeight = writingStyle.lineHeight.match(
+              /^\d+(\.\d+)?/
+            )[0];
+        } else delete props.option.style.lineHeight;
       })();
       // 背景颜色
       (() => {
@@ -417,19 +494,77 @@ export default defineComponent({
                       <label>颜色</label>
                     </div>
                     <div class="shadow-setting-item">
-                      <ElInput v-model={writingStyle.fontSize} />
+                      <ElInput
+                        v-model={writingStyle.fontSize}
+                        onChange={(value) =>
+                          numericalProcessing(value, "fontSize", writingStyle)
+                        }
+                        onFocus={(_) =>
+                          saveOldValue(writingStyle.fontSize, writingStyle)
+                        }
+                      />
                       <label>字号</label>
                     </div>
+                  </div>
+                  <div class="shadow-setting">
                     <div class="shadow-setting-item">
-                      <ElInput v-model={writingStyle.fontWeight} />
+                      <el-select
+                        v-model={writingStyle.fontWeight}
+                        filterable
+                        allow-create
+                        remote
+                        default-first-option
+                        placeholder=" "
+                      >
+                        {fontWeightList.map((item: any) => {
+                          return (
+                            <el-option
+                              key={item.value}
+                              value={item.value}
+                            ></el-option>
+                          );
+                        })}
+                      </el-select>
                       <label>字重</label>
                     </div>
                     <div class="shadow-setting-item">
-                      <ElInput v-model={writingStyle.fontFamily} />
+                      <el-select
+                        v-model={writingStyle.fontFamily}
+                        filterable
+                        allow-create
+                        remote
+                        default-first-option
+                        placeholder=" "
+                      >
+                        {fontFamilyList.map((item: any) => {
+                          return (
+                            <el-option
+                              key={item.value}
+                              value={item.value}
+                            ></el-option>
+                          );
+                        })}
+                      </el-select>
                       <label>字体</label>
                     </div>
                     <div class="shadow-setting-item">
-                      <ElInput v-model={writingStyle.lineHeight} />
+                      <el-select
+                        v-model={writingStyle.lineHeight}
+                        filterable
+                        allow-create
+                        remote
+                        default-first-option
+                        placeholder=" "
+                      >
+                        {lineHeightList.map((item: any) => {
+                          return (
+                            <el-option
+                              key={item.value}
+                              value={item.value}
+                            ></el-option>
+                          );
+                        })}
+                      </el-select>
                       <label>行间距</label>
                     </div>
                   </div>
