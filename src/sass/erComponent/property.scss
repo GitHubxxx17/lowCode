@@ -59,7 +59,6 @@
 }
 
 .container {
-
   &-settings,
   &-positioningMode {
     .el-select {
@@ -112,7 +111,7 @@
 
   &-settings {
     &-wh {
-      &>div>.el-input {
+      & > div > .el-input {
         width: 100px;
 
         .el-input__wrapper {
@@ -235,7 +234,6 @@
 
 .base {
   &-settings {
-
     .el-select,
     .el-input {
       width: 160px;
@@ -295,9 +293,7 @@
       position: absolute;
       right: 5px;
     }
-
   }
-
 
   .flexSelectUl {
     position: absolute;
@@ -330,6 +326,40 @@
     &-option:hover {
       background-color: #c3defb;
     }
+  }
+}
+//下拉框数据
+.selectData {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .el-input {
+    width: 150px;
+  }
+
+  &-menu {
+    width: 32px;
+    height: 32px;
+    border-radius: 5px;
+    border: 1px solid #c5c5c5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .3s;
+
+    &:hover {
+      color: #2468f2;
+      border: 1px solid #2468f2;
+    }
+  }
+
+ 
+}
+.selectDataList-footer {
+  .el-button {
+    width: 200px;
   }
 }
 

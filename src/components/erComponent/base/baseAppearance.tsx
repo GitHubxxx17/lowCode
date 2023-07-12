@@ -10,7 +10,7 @@ export default defineComponent({
     const writingStyle = reactive({
       color: props.option.style.color
         ? props.option.style.color
-        : "rgba(255, 255, 255,0)",
+        : "rgba(0,0,0)",
       fontSize: props.option.style.fontSize ? props.option.style.fontSize : "",
       fontWeight: props.option.style.fontWeight
         ? props.option.style.fontWeight
@@ -310,7 +310,7 @@ export default defineComponent({
     watchEffect(() => {
       // 文字样式
       (() => {
-        if (writingStyle.color != "")
+        if (writingStyle.color != "rgba(0,0,0)")
           props.option.style.color = writingStyle.color;
         else delete props.option.style.color;
         if (writingStyle.fontSize != "")
