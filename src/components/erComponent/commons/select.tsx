@@ -1,13 +1,103 @@
-import { defineComponent, reactive, watchEffect } from "vue";
-import { BaseInput, BaseSwitch } from "../base/index";
-import { ElInput,ElButton } from "element-plus";
+import { defineComponent, reactive, watchEffect, ref, onMounted } from "vue";
+import { BaseInput,BaseSelect, BaseSwitch,BaseAppearance } from "../base/index";
+import { ElInput, ElButton } from "element-plus";
+import Draggable from '../../../hooks/draggable.ts'
 export const SelectAppearance = defineComponent({
   props: {
     option: { type: Object },
   },
-  setup() {
+  setup(props) {
+    // 下拉器
+    const activeNames: string[] = [
+      "basic",
+      "titleType",
+      "inputBoxType",
+      "styleSource",
+    ];
+
+    const state = reactive({
+      inputBoxSize: {
+        value: "占满",
+        options: [
+          {
+            value: "占满",
+          },
+          {
+            value: "大",
+          },
+          {
+            value: "中",
+          },
+          {
+            value: "小",
+          },
+          {
+            value: "极小",
+          },
+        ],
+      },
+      inputBoxType: {
+        writingStyle: true,
+        bgColor: true,
+        border: true,
+        marginAndPadding: true,
+        radius: true,
+        style: props.option.style,
+      },
+    });
+
+    (() => {
+      if (props.option.style.width) {
+        const { width } = props.option.style.width;
+        if (width == "80px") {
+          state.inputBoxSize.value = "极小";
+        } else if (width == "160px") {
+          state.inputBoxSize.value = "小";
+        } else if (width == "240px") {
+          state.inputBoxSize.value = "中";
+        } else if (width == "320px") {
+          state.inputBoxSize.value = "大";
+        }
+      }
+    })();
+
+    watchEffect(() => {
+    
+      if (state.inputBoxSize.value == "极小") {
+        props.option.style.width = "80px";
+      } else if (state.inputBoxSize.value == "小") {
+        props.option.style.width = "160px";
+      } else if (state.inputBoxSize.value == "中") {
+        props.option.style.width = "240px";
+      } else if (state.inputBoxSize.value == "大") {
+        props.option.style.width = "320px";
+      } else {
+        delete props.option.style.width;
+      }
+    });
+
     return () => {
-      return <div></div>;
+      return (
+        <elCollapse modelValue={activeNames}>
+          <elCollapseItem title="基本" name="basic">
+            <BaseSelect
+              label="下拉框尺寸"
+              setting={state.inputBoxSize}
+            ></BaseSelect>
+          </elCollapseItem>
+          <elCollapseItem title="下拉框样式" name="inputBoxType">
+            <BaseAppearance option={state.inputBoxType}></BaseAppearance>
+          </elCollapseItem>
+          <elCollapseItem title="样式源码" name="styleSource">
+            <div class="elCollapseItem editStyle">
+              <div class="editStyleSource">
+                <i class="icon iconfont icon-daimajishufuwu"></i>
+                <span>编辑样式源码</span>
+              </div>
+            </div>
+          </elCollapseItem>
+        </elCollapse>
+      );
     };
   },
 });
@@ -64,6 +154,39 @@ export const SelectProperty = defineComponent({
       ],
     });
 
+    (()=>{
+      if(props.option.selectData){
+        state.selectData = props.option.selectData.map((item)=>{
+          return {
+            ...item,
+            isShow:false
+          }
+        })
+      }
+    })()
+
+    let selectDataList = ref(null);
+    onMounted(() => {
+      new Draggable({
+        el: selectDataList.value,
+        handle: "selectDataDrag",
+        dragData: state.selectData,
+        dragClassName:"active",
+        cloneClassName:"drag-ghost"
+      });
+    });
+
+    const addSelectData = () => {
+      state.selectData.push({
+        ...{
+          radio: false,
+          value: "",
+          isShow: false,
+        },
+      });
+      selectDataList = ref(null);
+    };
+
     watchEffect(() => {
       if (state.bindingField.value != "")
         props.option.bindingField = state.bindingField.value;
@@ -79,6 +202,13 @@ export const SelectProperty = defineComponent({
       if (state.inputBoxPlaceholder.value != "")
         props.option.inputBoxPlaceholder = state.inputBoxPlaceholder.value;
       else delete props.option.inputBoxPlaceholder;
+
+      props.option.selectData = state.selectData.map((item) => {
+        return {
+          value:item.value,
+          radio:item.radio
+        }
+      })
     });
 
     return () => {
@@ -94,20 +224,29 @@ export const SelectProperty = defineComponent({
             </elCollapseItem>
             <elCollapseItem title="选项" name="options">
               <div class="elCollapseItem">数据</div>
-              <div class="selectDataList">
+              <div class="selectDataList" ref={selectDataList}>
                 {state.selectData.map((item) => {
                   return (
                     <div class="elCollapseItem">
                       <div class="selectData">
-                        <i class="icon iconfont icon-drag"></i>
+                        <i class="icon iconfont icon-drag selectDataDrag"></i>
                         <input
                           class="selectData-radio"
                           type="radio"
                           value="true"
                           name="defaultValue"
                           title="默认选中"
+                          checked={item.radio}
+                          onChange={_=>{
+                            state.selectData.forEach(item=>item.radio = false);
+                            item.radio = true;
+                            state.defaultValue.value = item.value;
+                          }}
                         />
-                        <ElInput v-model={item.value}></ElInput>
+                        <ElInput
+                          v-model={item.value}
+                          placeholder="请输入选项的值"
+                        ></ElInput>
                         <div class="selectData-menu">
                           <i class="icon iconfont icon-caidan"></i>
                         </div>
@@ -117,7 +256,9 @@ export const SelectProperty = defineComponent({
                 })}
               </div>
               <div class="elCollapseItem selectDataList-footer">
-                <ElButton plain>添加选项</ElButton>
+                <ElButton plain onClick={addSelectData}>
+                  添加选项
+                </ElButton>
                 <ElButton plain>批量添加</ElButton>
               </div>
             </elCollapseItem>
