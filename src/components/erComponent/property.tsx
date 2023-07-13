@@ -22,14 +22,6 @@ export default defineComponent({
           ) : (
             <ContainerProperty option={props.EditorData}></ContainerProperty>
           )}
-          <el-Input
-            v-model={value.value}
-            type={"text"}
-            placeholder={"请输入"}
-            maxlength={20}
-            show-word-limit={true}
-            // showPassword={true}
-          ></el-Input>
         </div>
       );
     };
