@@ -324,11 +324,10 @@ export default defineComponent({
         else delete props.option.style.fontFamily;
         if (writingStyle.lineHeight != "") {
           if (/^\d+px$/.test(writingStyle.lineHeight)) {
-            props.option.style.lineHeight = writingStyle.lineHeight
+            props.option.style.lineHeight = writingStyle.lineHeight;
           } else
-            props.option.style.lineHeight = writingStyle.lineHeight.match(
-              /^\d+(\.\d+)?/
-            )[0];
+            props.option.style.lineHeight =
+              writingStyle.lineHeight.match(/^\d+(\.\d+)?/)[0];
         } else delete props.option.style.lineHeight;
       })();
       // 背景颜色

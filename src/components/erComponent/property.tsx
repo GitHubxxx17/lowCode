@@ -11,33 +11,10 @@ export default defineComponent({
   setup(props) {
     const erConfig: any = inject("erConfig"); // 配置组件
     const dragData = dragStore(pinia); //拖拽数据
-    // console.log();
-    //  let map = new Map();
-    //  console.log(map.get());
-
-    // let propertyRender = erConfig.componentList.map(
-    //   (component: any) =>
-    //     component.type == dragData.selectKey && component.Properties()
-    // );
-    // console.log(propertyRender);
-
-    // watch(
-    //   () => dragData.selectKey,
-    //   (newCount) => {
-    //     propertyRender = erConfig.componentList.map(
-    //       (component: any) =>
-    //         component.type == newCount && component.Properties()
-    //     );
-    //   }
-    // );
     let value = ref("");
     return () => {
       return (
         <div class="property" key={dragData.selectedComponent}>
-          {/* {erConfig.componentList.map(
-            (component: any) =>
-              component.type == dragData.selectKey && component.Properties()
-          )} */}
           {erConfig.componentMap.get(dragData.selectKey) ? (
             erConfig.componentMap
               .get(dragData.selectKey)
@@ -45,12 +22,14 @@ export default defineComponent({
           ) : (
             <ContainerProperty option={props.EditorData}></ContainerProperty>
           )}
-          <ElInput
+          <el-Input
             v-model={value.value}
-            type={"submit"}
+            type={"text"}
             placeholder={"请输入"}
+            maxlength={20}
+            show-word-limit={true}
             // showPassword={true}
-          ></ElInput>
+          ></el-Input>
         </div>
       );
     };

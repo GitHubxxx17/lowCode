@@ -15,7 +15,8 @@ export const ButtonAppearance = defineComponent({
   setup(props) {
     // 显示组件的配置项
     const activeNames: string[] = ["basic", "layout"];
-    const option = {
+
+    const option: object = {
       writingStyle: true,
       bgColor: true,
       border: true,
@@ -32,31 +33,19 @@ export const ButtonAppearance = defineComponent({
           value: "默认",
         },
         {
-          value: "链接",
-        },
-        {
-          value: "主色",
-        },
-        {
-          value: "淡色",
-        },
-        {
-          value: "提示",
+          value: "主要",
         },
         {
           value: "成功",
         },
         {
+          value: "信息",
+        },
+        {
           value: "警告",
         },
         {
-          value: "严重",
-        },
-        {
-          value: "次要",
-        },
-        {
-          value: "加强",
+          value: "危险",
         },
       ],
     });
@@ -80,22 +69,97 @@ export const ButtonAppearance = defineComponent({
     // 尺寸按钮组内容
     const sizeContext = reactive({
       value: "尺寸",
-      options: [
-        { value: "极小" },
-        { value: "小" },
-        { value: "中" },
-        { value: "大" },
-      ],
+      options: [{ value: "大" }, { value: "中" }, { value: "小" }],
     });
 
     const buttonAppearState = reactive({
       blockDisplay: { label: "块状显示", value: false },
-      iconSize: {
-        label: "图标尺寸",
+      leftIconSize: {
+        label: "左侧图标尺寸",
+        value: "",
+        placeholder: "请输入尺寸",
+      },
+      rightIconSize: {
+        label: "右侧图标尺寸",
         value: "",
         placeholder: "请输入尺寸",
       },
     });
+
+    console.log(props.option);
+
+    // 基本初始化渲染
+    (() => {
+      // 样式
+      if (props.option.buttonstyle == "") {
+        styleSelect.value = "默认";
+      } else if (props.option.buttonstyle == "primary") {
+        styleSelect.value = "主要";
+      } else if (props.option.buttonstyle == "success") {
+        styleSelect.value = "成功";
+      } else if (props.option.buttonstyle == "info") {
+        styleSelect.value = "信息";
+      } else if (props.option.buttonstyle == "warning") {
+        styleSelect.value = "警告";
+      } else {
+        styleSelect.value = "危险";
+      }
+      // 块状显示
+      if (props.option.style.display == "block") {
+        buttonAppearState.blockDisplay.value = true;
+      }
+    })();
+
+    // 自定义样式初始化渲染
+    let showLeftIconSize: boolean = false;
+    let showRightIconSize: boolean = false;
+    (() => {
+      // 是否显示左右侧图标尺寸输入框
+      showLeftIconSize = props.option.icon.leftIcon ? true : false;
+      showRightIconSize = props.option.icon.rightIcon ? true : false;
+      // 左右侧图标尺寸
+      if (props.option.icon.leftIconSize) {
+        buttonAppearState.leftIconSize.value = props.option.icon.leftIconSize;
+      }
+      if (props.option.icon.leftIconSize) {
+        buttonAppearState.rightIconSize.value = props.option.icon.rightIconSize;
+      }
+    })();
+
+    watchEffect(() => {
+      // 样式
+      if (styleSelect.value == "默认") {
+        props.option.buttonstyle = "";
+      } else if (styleSelect.value == "主要") {
+        props.option.buttonstyle = "primary";
+      } else if (styleSelect.value == "成功") {
+        props.option.buttonstyle = "success";
+      } else if (styleSelect.value == "信息") {
+        props.option.buttonstyle = "info";
+      } else if (styleSelect.value == "警告") {
+        props.option.buttonstyle = "warning";
+      } else {
+        props.option.buttonstyle = "danger";
+      }
+      // 块状显示
+      if (buttonAppearState.blockDisplay.value) {
+        props.option.style.display = "block";
+      } else {
+        props.option.style.display = "";
+      }
+      // 左右侧图标尺寸
+      if (showLeftIconSize) {
+        props.option.icon.leftIconSize = buttonAppearState.leftIconSize.value;
+      } else {
+        props.option.icon.leftIconSize = "";
+      }
+      if (showRightIconSize) {
+        props.option.icon.rightIconSize = buttonAppearState.rightIconSize.value;
+      } else {
+        props.option.icon.rightIconSize = "";
+      }
+    });
+    // 左右侧图标输入的规范
 
     return () => {
       return (
@@ -109,11 +173,19 @@ export const ButtonAppearance = defineComponent({
             <elCollapseItem title="自定义样式" name="customStyle">
               <BaseSelect label="状态" setting={stateSelect}></BaseSelect>
               <BaseAppearance option={option}></BaseAppearance>
-              <BaseInput option={buttonAppearState.iconSize}></BaseInput>
+              <BaseInput
+                v-show={showLeftIconSize}
+                option={buttonAppearState.leftIconSize}
+              ></BaseInput>
+              <BaseInput
+                v-show={showRightIconSize}
+                option={buttonAppearState.rightIconSize}
+              ></BaseInput>
             </elCollapseItem>
-            <elCollapseItem title="样式源码" name="styleSourceCode">
-              <div class="events">
-                <div class="addEvents">
+            <elCollapseItem title="样式源码" name="styleSource">
+              <div class="elCollapseItem editStyle">
+                <div class="editStyleSource">
+                  <i class="icon iconfont icon-daimajishufuwu"></i>
                   <span>编辑样式源码</span>
                 </div>
               </div>
@@ -198,8 +270,6 @@ export const ButtonProperty = defineComponent({
       hasPromptLocation: true,
     });
 
-    console.log("选中的节点信息");
-    console.log(props.option);
     // 基本初始化渲染
     (() => {
       // 名称
@@ -213,6 +283,23 @@ export const ButtonProperty = defineComponent({
       } else {
         state.twiceComfire.value = false;
       }
+
+      // 左侧图标
+      state.leftIconSelect.icon = props.option.icon.leftIcon
+        ? props.option.icon.leftIcon
+        : "";
+      state.leftIconSelect.iconText = props.option.icon.leftIcon
+        ? props.option.icon.leftIcon.replace("icon-", "")
+        : "";
+
+      // 右侧图标
+      state.rightIconSelect.icon = props.option.icon.rightIcon
+        ? props.option.icon.rightIcon
+        : "";
+      state.rightIconSelect.iconText = props.option.icon.rightIcon
+        ? props.option.icon.rightIcon.replace("icon-", "")
+        : "";
+
       // 气泡提示
       if (props.option.bubblePrompt.value) {
         state.bubblePrompt.value = true;
@@ -239,6 +326,7 @@ export const ButtonProperty = defineComponent({
           ? state.bindingField.value
           : "我的按钮";
       }
+
       // 二次确认
       if (state.twiceComfire.value) {
         props.option.twiceComfire.value = true;
@@ -248,6 +336,7 @@ export const ButtonProperty = defineComponent({
         props.option.twiceComfire.info = twiceComfireState.textarea[0].value =
           "";
       }
+
       // 气泡提示
       if (state.bubblePrompt.value) {
         props.option.bubblePrompt.value = true;
@@ -261,10 +350,12 @@ export const ButtonProperty = defineComponent({
           bubblePromptState.textarea[0].value = ""; // 正常提示
         props.option.bubblePrompt.disableInfo =
           bubblePromptState.textarea[1].value = ""; // 禁用提示
+
         //  触发方式
         if (props.option.bubblePrompt.triggerMode != "鼠标悬浮") {
           props.option.bubblePrompt.triggerMode = "鼠标悬浮";
         }
+
         // 提示位置
         if (props.option.bubblePrompt.promptLocation != "下") {
           props.option.bubblePrompt.promptLocation = "下";
@@ -304,11 +395,7 @@ export const ButtonProperty = defineComponent({
                 v-show={state.twiceComfire.value}
                 setting={twiceComfireState}
               ></BasicPopup>
-              <BaseSwitch option={state.bubblePrompt}></BaseSwitch>
-              <BasicPopup
-                v-show={state.bubblePrompt.value}
-                setting={bubblePromptState}
-              ></BasicPopup>
+
               <BaseIconSelect
                 label="左侧图标"
                 setting={state.leftIconSelect}
@@ -317,6 +404,11 @@ export const ButtonProperty = defineComponent({
                 label="右侧图标"
                 setting={state.rightIconSelect}
               ></BaseIconSelect>
+              <BaseSwitch option={state.bubblePrompt}></BaseSwitch>
+              <BasicPopup
+                v-show={state.bubblePrompt.value}
+                setting={bubblePromptState}
+              ></BasicPopup>
               {/* <BaseSwitch option={state.subscript}></BaseSwitch> */}
             </elCollapseItem>
             <elCollapseItem title="状态" name="state">

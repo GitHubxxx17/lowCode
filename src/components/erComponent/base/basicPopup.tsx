@@ -6,7 +6,7 @@ export default defineComponent({
     setting: { type: Object },
   },
   setup(props) {
-    const baseSetting = {
+    const baseSetting: any = {
       triggerMode: {
         value: "触发方式",
         options: [{ value: "鼠标悬浮" }, { value: "聚焦" }],

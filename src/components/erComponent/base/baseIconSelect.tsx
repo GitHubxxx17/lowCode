@@ -1,4 +1,4 @@
-import { defineComponent, reactive } from "vue";
+import { defineComponent } from "vue";
 import pinia from "../../../stores/index.ts";
 import dragStore from "../../../stores/dragStore.ts";
 export default defineComponent({
@@ -9,6 +9,14 @@ export default defineComponent({
   },
   setup(props) {
     const dragData = dragStore(pinia); //拖拽数据
+    // 初始化渲染
+    (() => {
+      if (props.setting.icon && props.setting.iconText) {
+        props.setting.isFill = true;
+        props.setting.clearable = true;
+      }
+    })();
+
     // 点击显示列表
     const showIconList = (e) => {
       if (props.setting.isShowList) {

@@ -1,7 +1,6 @@
 //列表区显示所有物料
 //type对应组件的映射关系
 import { createVNode, defineComponent } from "vue";
-
 import { ElButton, ElInput, ElSelect } from "element-plus";
 import Container from "../components/renderer/container";
 
@@ -87,10 +86,22 @@ const componentsConfig = [
     render(props: any) {
       return (
         <div class="cannotPreview" data-id={this.type}>
-          <ElButton style={props.style} class="baseButton">
-            <i class={["icon iconfont leftIcon", props.icon.leftIcon]}></i>
+          <ElButton
+            style={props.style}
+            class="baseButton"
+            type={props.buttonstyle}
+            size={props.size}
+            disabled={props.isDisable}
+          >
+            <i
+              class={["icon iconfont leftIcon", props.icon.leftIcon]}
+              style={{ "font-size": props.icon.leftIconSize }}
+            ></i>
             {props.children ? props.children : "渲染按钮"}
-            <i class={["icon iconfont rightIcon", props.icon.rightIcon]}></i>
+            <i
+              class={["icon iconfont rightIcon", props.icon.rightIcon]}
+              style={{ "font-size": props.icon.rightIconSize }}
+            ></i>
           </ElButton>
         </div>
       );
@@ -103,10 +114,12 @@ const componentsConfig = [
         height: "32px",
         zIndex: 1,
       },
-      icon: {},
-      twiceComfire: {},
-      bubblePrompt: {},
-      isDisable: true,
+      buttonstyle: "", // 按钮类型
+      size: "default", // 按钮大小
+      icon: {}, // 左右侧图标
+      twiceComfire: {}, // 二次确认
+      bubblePrompt: {}, // 气泡提示
+      isDisable: true, // 是否禁用
       children: "渲染按钮",
     },
   },
@@ -118,22 +131,40 @@ const componentsConfig = [
     render(props: any) {
       return (
         <div class="cannotPreview" data-id={this.type}>
-          <ElInput
+          <el-Input
             v-model={props.value}
             style={props.style}
+            size={props.size}
             type={props.inputStyle}
             placeholder={props.placeholder}
             showPassword={props.showPassword}
-          ></ElInput>
+            clearable={props.clearable}
+            maxlength={props.maxlength}
+            minlength={props.minlength}
+            show-word-limit={props.showWordLimit}
+            disabled={props.disabled}
+            readonly={props.readonly}
+            autofocus={props.autofocus}
+            hidden={props.hidden}
+          ></el-Input>
         </div>
       );
     },
     defaultData: {
       type: "input",
-      value: "",
-      inputStyle: "text",
-      placeholder: "请输入",
-      showPassword: false,
+      value: "", // 默认值
+      inputStyle: "text", // 输入框类型
+      size: "default", // 输入框尺寸
+      placeholder: "请输入", // 占位提示
+      showPassword: false, // 是否可以隐藏密码
+      clearable: false, // 是否可以清除
+      maxlength: "", // 最长输入长度
+      minlength: "", // 最小输入长度
+      showWordLimit: false, // 是否显示输入字数统计，只在 type = "text" 或 type = "textarea" 时有效
+      disabled: false, // 是否可清空
+      readonly: false, // 原生属性，是否只读
+      autofocus: false, //原生属性，自动获取焦点
+      hidden: false, // 是否隐藏
       style: {
         position: "relative",
         zIndex: 1,
@@ -183,7 +214,7 @@ const componentsConfig = [
               props.inputBoxPlaceholder ? props.inputBoxPlaceholder : ""
             }
             clearable={props.clearable ? props.clearable : false}
-            type={props.inputType ? props.inputType : 'text'}
+            type={props.inputType ? props.inputType : "text"}
           ></ElInput>
         </div>
       );

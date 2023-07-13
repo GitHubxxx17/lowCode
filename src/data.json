@@ -14,9 +14,12 @@
                 {
                     "type": "button",
                     "style": {
+                        "display":"",
                         "position": "relative",
                         "zIndex": 1
                     },
+                    "buttonstyle":"primary",
+                    "size":"default",
                     "icon":{},
                     "twiceComfire":{},
                     "bubblePrompt":{"triggerMode":"鼠标悬浮","promptLocation":"下"},
@@ -32,6 +35,24 @@
                         "zIndex": 1
                     },
                     "children":"(｡･∀･)ﾉﾞ"
+                },
+                {
+                    "type": "input",
+                    "value": "default",
+                    "inputStyle": "text",
+                    "size":"",
+                    "defaultValue":"123",
+                    "placeholder": "",
+                    "showPassword": false,
+                    "clearable": false,
+                    "maxlength": "",
+                    "minlength": "",
+                    "showWordLimit": true,
+                    "style": {
+                      "position": "relative",
+                      "zIndex": 1
+                    },
+                    "children": ""
                 }
             ]
         }
