@@ -38,9 +38,9 @@
                 },
                 {
                     "type": "input",
-                    "value": "default",
+                    "value": "",
                     "inputStyle": "text",
-                    "size":"",
+                    "size":"default",
                     "defaultValue":"123",
                     "placeholder": "",
                     "showPassword": false,
