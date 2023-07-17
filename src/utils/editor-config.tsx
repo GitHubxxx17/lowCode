@@ -182,9 +182,16 @@ const componentsConfig = [
         <div class="cannotPreview" data-id={this.type}>
           <ElSelect
             style={props.style}
-            filterable={props.filterable}
-            multiple={props.multiple}
-          ></ElSelect>
+            filterable={props.filterable ? props.filterable : false}
+            placeholder={props.placeholder ? props.placeholder : '请选择'}
+            v-model={props.defaultValue}
+          >
+            {props.selectData && props.selectData.map((item: any) => {
+              return (
+                <el-option key={item.value} value={item.value}></el-option>
+              );
+            })}
+          </ElSelect>
         </div>
       );
     },
@@ -195,6 +202,7 @@ const componentsConfig = [
         zIndex: 1,
       },
       children: "",
+      defaultValue:''
     },
   },
   {

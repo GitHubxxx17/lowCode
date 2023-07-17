@@ -1,7 +1,19 @@
-import { defineComponent, reactive, watchEffect, ref, onMounted } from "vue";
-import { BaseInput,BaseSelect, BaseSwitch,BaseAppearance } from "../base/index";
-import { ElInput, ElButton } from "element-plus";
-import Draggable from '../../../hooks/draggable.ts'
+import {
+  defineComponent,
+  reactive,
+  watchEffect,
+  ref,
+  onMounted,
+  onUnmounted,
+} from "vue";
+import {
+  BaseInput,
+  BaseSelect,
+  BaseSwitch,
+  BaseAppearance,
+} from "../base/index";
+import { ElInput, ElButton, ElMessage } from "element-plus";
+import Draggable from "../../../hooks/draggable.ts";
 export const SelectAppearance = defineComponent({
   props: {
     option: { type: Object },
@@ -62,7 +74,6 @@ export const SelectAppearance = defineComponent({
     })();
 
     watchEffect(() => {
-    
       if (state.inputBoxSize.value == "极小") {
         props.option.style.width = "80px";
       } else if (state.inputBoxSize.value == "小") {
@@ -124,9 +135,8 @@ export const SelectProperty = defineComponent({
         value: props.option.multiple ? props.option.multiple : false,
       },
       defaultValue: {
-        label: "默认值",
         value: props.option.defaultValue ? props.option.defaultValue : "",
-        clearable: true,
+        options: [],
       },
       inputBoxPlaceholder: {
         label: "占位提示",
@@ -154,16 +164,16 @@ export const SelectProperty = defineComponent({
       ],
     });
 
-    (()=>{
-      if(props.option.selectData){
-        state.selectData = props.option.selectData.map((item)=>{
+    (() => {
+      if (props.option.selectData) {
+        state.selectData = props.option.selectData.map((item) => {
           return {
             ...item,
-            isShow:false
-          }
-        })
+            isShow: false,
+          };
+        });
       }
-    })()
+    })();
 
     let selectDataList = ref(null);
     onMounted(() => {
@@ -171,11 +181,11 @@ export const SelectProperty = defineComponent({
         el: selectDataList.value,
         handle: "selectDataDrag",
         dragData: state.selectData,
-        dragClassName:"active",
-        cloneClassName:"drag-ghost"
+        dragClassName: "active",
+        cloneClassName: "drag-ghost",
       });
     });
-
+    //添加选项
     const addSelectData = () => {
       state.selectData.push({
         ...{
@@ -184,7 +194,6 @@ export const SelectProperty = defineComponent({
           isShow: false,
         },
       });
-      selectDataList = ref(null);
     };
 
     watchEffect(() => {
@@ -200,17 +209,37 @@ export const SelectProperty = defineComponent({
         props.option.defaultValue = state.defaultValue.value;
       else delete props.option.defaultValue;
       if (state.inputBoxPlaceholder.value != "")
-        props.option.inputBoxPlaceholder = state.inputBoxPlaceholder.value;
-      else delete props.option.inputBoxPlaceholder;
+        props.option.placeholder = state.inputBoxPlaceholder.value;
+      else delete props.option.placeholder;
 
       props.option.selectData = state.selectData.map((item) => {
         return {
-          value:item.value,
-          radio:item.radio
-        }
-      })
-    });
+          value: item.value,
+          radio: item.radio,
+        };
+      });
 
+      new Promise((resolve) => {
+        let l = [];
+        for (let x of state.selectData) {
+          if (x.value.trim() != "") l.push(x);
+        }
+        resolve(l);
+      }).then((v: any) => {
+        state.defaultValue.options = v;
+      });
+
+      
+      
+    });
+    //点击隐藏菜单
+    const windowClick = () => {
+      state.selectData.map((item) => (item.isShow = false));
+    };
+    window.addEventListener("click", windowClick);
+    onUnmounted(() => {
+      window.removeEventListener("click", windowClick);
+    });
     return () => {
       return (
         <>
@@ -219,13 +248,22 @@ export const SelectProperty = defineComponent({
               <BaseInput option={state.bindingField}></BaseInput>
               <BaseSwitch option={state.multiple}></BaseSwitch>
               <BaseSwitch option={state.filterable}></BaseSwitch>
-              <BaseInput option={state.defaultValue}></BaseInput>
+              <BaseSelect
+                label="默认值"
+                setting={state.defaultValue}
+                change={(value: string) => {
+                  state.selectData.map((item) => (item.radio = false));
+                  state.selectData.some((item) => {
+                    if (item.value == value) item.radio = true;
+                  });
+                }}
+              ></BaseSelect>
               <BaseInput option={state.inputBoxPlaceholder}></BaseInput>
             </elCollapseItem>
             <elCollapseItem title="选项" name="options">
               <div class="elCollapseItem">数据</div>
               <div class="selectDataList" ref={selectDataList}>
-                {state.selectData.map((item) => {
+                {state.selectData.map((item, i) => {
                   return (
                     <div class="elCollapseItem">
                       <div class="selectData">
@@ -237,8 +275,10 @@ export const SelectProperty = defineComponent({
                           name="defaultValue"
                           title="默认选中"
                           checked={item.radio}
-                          onChange={_=>{
-                            state.selectData.forEach(item=>item.radio = false);
+                          onChange={(_) => {
+                            state.selectData.forEach(
+                              (item) => (item.radio = false)
+                            );
                             item.radio = true;
                             state.defaultValue.value = item.value;
                           }}
@@ -247,8 +287,48 @@ export const SelectProperty = defineComponent({
                           v-model={item.value}
                           placeholder="请输入选项的值"
                         ></ElInput>
-                        <div class="selectData-menu">
+                        <div
+                          class="selectData-menu"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            state.selectData.forEach(
+                              (item) => (item.isShow = false)
+                            );
+                            item.isShow = true;
+                          }}
+                        >
                           <i class="icon iconfont icon-caidan"></i>
+                          <div
+                            class="selectData-menu-dropdown"
+                            v-show={item.isShow}
+                          >
+                            <span
+                              v-show={item.radio}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                item.isShow = false;
+                                item.radio = false;
+                              }}
+                            >
+                              取消勾选
+                            </span>
+                            <span
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                item.isShow = false;
+                                if (state.selectData.length > 1)
+                                  state.selectData.splice(i, 1);
+                                else {
+                                  ElMessage.warning({
+                                    message: "最后一项不可删除",
+                                    duration: 2000,
+                                  });
+                                }
+                              }}
+                            >
+                              删除
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>

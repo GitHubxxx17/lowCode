@@ -3,8 +3,10 @@ export default defineComponent({
   props: {
     label: { type: String },
     setting: { type: Object },
+    change:{type:Function},
   },
   setup(props) {
+    
     return () => {
       return (
         <div class="elCollapseItem base-settings">
@@ -15,6 +17,7 @@ export default defineComponent({
               props.setting.filterable ? props.setting.filterable : true
             }
             placeholder={props.setting.placeholder ? props.setting.placeholder : ''}
+            onChange={(value)=>props.change&&props.change(value)}
           >
             {props.setting.options.map((item: any) => {
               return (
