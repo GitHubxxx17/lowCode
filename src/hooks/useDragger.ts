@@ -53,16 +53,15 @@ function useDragger(): any {
 
   const mouseup = (e): void => {
     // 如果不是编辑区域
-    // console.log("我是编辑区域吗？" + judgeIsMidContainer(e.target));
-    // if (!judgeIsMidContainer(e.target) && !dragData.isClone) {
-    //   console.log("取消鼠标移除事件");
-    //   return;
-    // }
+    if (!judgeIsMidContainer(e.target) && !dragData.isClone) {
+      console.log("取消鼠标移除事件");
+      return;
+    }
 
     //鼠标松开
     if (dragData.isClone) {
       //当处于克隆节点时
-      if (ghostEl) document.body.removeChild(ghostEl); //移除影子（后面得改成隐藏和显示）
+      if (ghostEl) ghostEl.remove() //移除影子（后面得改成隐藏和显示）
       if (container) {
         container.classList.remove("chosen-container"); //移除上一个容器的选中
         let childrenData = findVnodeProps(container); //获取json子数据
@@ -74,12 +73,12 @@ function useDragger(): any {
     }
 
     if (dragData.isDrag) {
-      if (ghostEl) document.body.removeChild(ghostEl); //移除影子（后面得改成隐藏和显示）
+      if (ghostEl) ghostEl.remove() //移除影子（后面得改成隐藏和显示）
       if (dragEl) {
         dragEl.style.removeProperty("visibility"); // 容器处于结束后也需要取消隐藏
         document.body.removeEventListener("mousemove", dragMousemove); //解绑鼠标移动事件，防止报错
-        container.classList.remove("chosen-container");
-        console.log(oldIndex, newIndex);
+        container?.classList.remove("chosen-container");
+        // console.log(oldIndex, newIndex);
         // if (isAdd) {
         //     let oldChildrenData = findVnodeProps(oldContainer);//获取json子数据
         //     oldChildrenData.forEach((data: any, i: number) => {
@@ -158,7 +157,6 @@ function useDragger(): any {
     }
 
     // 移动组件到零一个容器的情况
-    console.log(isDraging);
 
     // if (isDraging) {
     //     container.classList.remove('chosen-container');
@@ -234,15 +232,11 @@ function useDragger(): any {
    * @return {*} 判断是否是中间的容器
    */
   const judgeIsMidContainer = (target: any): any => {
-    if (
-      (target.className.includes("container") ||
-        target.className.includes("cannotPreview")) &&
-      !target.className.includes("editor-body-container-top") &&
-      !target.className.includes("editor-body-container-content")
-    ) {
+    if(target.parentNode == document.body)return false;
+    if(target?.classList.contains("Editorcontainer")){
       return true;
-    } else {
-      return false;
+    }else{
+      return judgeIsMidContainer(target.parentNode);
     }
   };
 
@@ -277,17 +271,16 @@ function useDragger(): any {
   const onclickToDrag = (e: any) => {
     ghostEl = null;
     isDraging = false;
+    if(container?.classList)container.classList.remove("chosen-container");
     if (e.target.classList.contains("Editorcontainer")) {
+      container = e.target;
+      e.target.classList.add("chosen-container");
       dragData.selectKey = null;
       return; //如果点击的是编辑区域就直接结束函数
     }
     dragData.isDrag = true;
     dragEl = findDragEl(e.target); //获取拖拽节点
-    console.log(dragEl.attributes);
-
     dragData.selectKey = dragEl.attributes["data-id"].nodeValue;
-
-    console.log(dragData.selectKey);
 
     dragEl.classList.add("chosenEl");
     container = findParentContainer(dragEl.parentNode); //获取当前正在拖拽的容器
@@ -331,10 +324,10 @@ function useDragger(): any {
 
   // 找到当前拖拽行最大的高度
   /**
-   * @param {*} curPos 被选中节点的位置
+   * @param {*} line 
    * @return {*} maxHeight
    */
-  const findInlineMaxHeight = (line) => {
+  const findInlineMaxHeight = (line:number):number => {
     let maxHeight = -1; // 记录当前拖拽节点处于的行中最大的节点高度
     for (let i = 0; i < inlineArr[line].length; i++) {
       maxHeight = Math.max(
@@ -373,7 +366,7 @@ function useDragger(): any {
   };
 
   // 计算要移动的组件的放置的最新位置(bug：超出范围会直接返回第一个的位置)
-  const calcNewIndex = function (mouseY, mouseX) {
+  const calcNewIndex = function (mouseY:number, mouseX:number) {
     inlineArr = [];
     summarizeInlineNode(); // 算出当前容器的每行节点情况
     let { top, left } = container.getBoundingClientRect();

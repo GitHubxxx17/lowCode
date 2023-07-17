@@ -17,7 +17,7 @@ export default defineComponent({
     }
     //渲染函数
     const renderer = (nodes: any): any => {
-      console.log(nodes);
+      // console.log(nodes);
       if (nodes instanceof Array) {
         //判断节点是否为数组
         return nodes.map((node) => {
