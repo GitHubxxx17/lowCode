@@ -16,7 +16,7 @@ function useMenuDragger(): any {
         e.dataTransfer.dropEffect = 'none'
     }
 
-    const drop = (e: any) => {
+    const drop = () => {
         console.log(containerRef,'12312');
                 
         data.value.body && data.value.body.push({

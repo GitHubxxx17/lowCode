@@ -18,7 +18,7 @@ export default defineComponent({
     })();
 
     // 点击显示列表
-    const showIconList = (e) => {
+    const showIconList = (e:any) => {
       if (props.setting.isShowList) {
         props.setting.isShowList = false;
       } else {
@@ -38,7 +38,7 @@ export default defineComponent({
     };
 
     // 点击清除
-    const handleIsFill = (e) => {
+    const handleIsFill = (e:any) => {
       props.setting.isShowList = false;
       props.setting.isFill = !props.setting.isFill;
       props.setting.clearable = !props.setting.clearable;
@@ -65,7 +65,7 @@ export default defineComponent({
     ];
 
     // 选择按钮
-    const selectIcon = (item) => {
+    const selectIcon = (item:string) => {
       props.setting.isShowList = false;
       props.setting.clearable = true;
       props.setting.isFill = true;
@@ -103,7 +103,7 @@ export default defineComponent({
           </div>
           <ul class="flexSelectUl" v-show={props.setting.isShowList}>
             {iconNames.map((item: any) => (
-              <li class="flexSelectUl-option" onClick={(e) => selectIcon(item)}>
+              <li class="flexSelectUl-option" onClick={_ => selectIcon(item)}>
                 <span class={["icon iconfont", item]}></span>
               </li>
             ))}

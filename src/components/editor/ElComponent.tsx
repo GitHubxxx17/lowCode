@@ -1,4 +1,4 @@
-import { defineComponent, reactive, inject, ref } from "vue";
+import { defineComponent, reactive, inject } from "vue";
 import "@/sass/editor/ElComponent.scss";
 import { usedragger } from "../../hooks/useDragger";
 
@@ -25,7 +25,6 @@ export default defineComponent({
       { label: "自定义组件", active: false },
     ]);
 
-    let listItem = ref([]);
 
     const onClickBtn = (index: number) => {
       buttons.forEach((item, i) => {

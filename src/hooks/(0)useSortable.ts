@@ -16,7 +16,7 @@ function useSortable(): any {
         sort: false, // 设为false，禁止sort
         ghostClass: "sortable-ghost",
         dragClass: "sortable-drag",
-        onClone: function (evt) {//当克隆组件时调用
+        onClone: function () {//当克隆组件时调用
 
         },
         onStart: function (evt) {//开始拖拽时调用

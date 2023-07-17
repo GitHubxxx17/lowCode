@@ -2,8 +2,6 @@ import { defineComponent, reactive, watchEffect } from "vue";
 
 import {
   BaseInput,
-  BaseSwitch,
-  BaseSelect,
   BaseTextArea,
   BaseAppearance,
 } from "../base/index";
