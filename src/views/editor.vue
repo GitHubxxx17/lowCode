@@ -7,55 +7,32 @@ import EditorContainer from "../components/editor/EditorContainer";
 import { editorConfig } from "../utils/editor-config";
 import { erConfig } from "../utils/ErComponent-config";
 import EditorPreview from "../components/editor/EditorPreview.tsx";
+import { useCommand } from "../hooks/useCommand";
+import mainStore from "../stores/mainStore.ts";
+import pinia from "../stores/index.ts";
 import { ElMessage } from "element-plus";
+import { localGetData } from "../hooks/useStorage.ts";
+
 provide("editorConfig", editorConfig);
 provide("erConfig", erConfig);
-const EditorData = reactive(data);
+const mainData = mainStore(pinia);
+mainData.title = localGetData('title') ? localGetData('title') : '新项目';
+mainData.EditorData = localGetData('data') ? localGetData('data') : reactive(data);
+//挂载命令
+const { commands } = useCommand();
 
 const state = reactive({
-  isPreview: false,
-  dialogIsShow: false,
+  dialogIsShow: false, //快捷键弹窗是否展示
 });
 
-const title = reactive({
-  value: "新项目",
-});
-
-watch(()=>title.value,(newVal)=>{
-  if(newVal.trim() == ''){
-    ElMessage.warning({ message: "标题不能为空", duration: 1000 });
+watch(
+  () => mainData.title,
+  (newVal) => {
+    if (newVal.trim() == "") {
+      ElMessage.warning({ message: "标题不能为空", duration: 1000 });
+    }
   }
-})
-// let editArea = ref(null);
-// onMounted(() => {
-//   const getEditAreaData = ()=> {
-//     return {
-//       top: editArea.value.offsetTop,
-//       left: editArea.value.offsetLeft,
-//       height: editArea.value.offsetHeight,
-//       width: editArea.value.offsetWidth,
-//     };
-//   }
-//   console.log(getEditAreaData());
-// });
-const enterPreview = () => {
-  state.isPreview = true;
-  ElMessage.success({ message: "已进入预览模式", duration: 2000 });
-};
-
-const downFile = () => {
-  const a = document.createElement("a");
-  a.style.display = "none";
-  //文件的名称为时间戳加文件名后缀
-  a.download = +new Date() + ".json";
-  //生成一个blob二进制数据，内容为json数据
-  var blob = new Blob([JSON.stringify(EditorData)]);
-  //生成一个指向blob的URL地址，并赋值给a标签的href属性
-  a.href = URL.createObjectURL(blob);
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-};
+);
 
 const shortcuts = [
   { label: "复制", key: "Ctrl+C" },
@@ -72,7 +49,7 @@ const shortcuts = [
 </script>
 
 <template>
-  <div class="editor" v-show="!state.isPreview">
+  <div class="editor" v-show="!mainData.isPreview">
     <header class="editor-header">
       <div class="editor-header-left">
         <span class="editor-header-left-exit">
@@ -82,7 +59,7 @@ const shortcuts = [
       </div>
       <div class="editor-header-mid">
         <div class="editor-header-mid-title">
-          <input type="text" v-model="title.value" />
+          <input type="text" v-model="mainData.title" />
         </div>
       </div>
       <div class="editor-header-right">
@@ -92,8 +69,10 @@ const shortcuts = [
         >
           <i class="icon iconfont icon-jianpan"></i>
         </div>
-        <div class="editor-header-right-btn" @click="enterPreview">预览</div>
-        <div class="editor-header-right-btn" @click="downFile()">导出</div>
+        <div class="editor-header-right-btn" @click="commands['preview']()">
+          预览
+        </div>
+        <div class="editor-header-right-btn" @click="commands['export']()">导出</div>
         <div class="editor-header-right-avatar">
           <img src="@/assets/user.jpg" alt="user" />
         </div>
@@ -101,25 +80,24 @@ const shortcuts = [
     </header>
     <section class="editor-body">
       <div class="editor-body-left">
-        <EditorLeft :EditorData="EditorData"></EditorLeft>
+        <EditorLeft :EditorData="mainData.EditorData"></EditorLeft>
       </div>
       <div class="editor-body-container">
         <div class="editor-body-container-top"></div>
         <div class="editor-body-container-content">
           <div class="editor-body-container-content_inner" ref="editArea">
-            <EditorContainer :EditorData="EditorData"></EditorContainer>
+            <EditorContainer :EditorData="mainData.EditorData"></EditorContainer>
           </div>
         </div>
       </div>
       <div class="editor-body-right">
-        <EditorRight :EditorData="EditorData"></EditorRight>
+        <EditorRight :EditorData="mainData.EditorData"></EditorRight>
       </div>
     </section>
   </div>
   <EditorPreview
-    v-if="state.isPreview"
-    :state="state"
-    :EditorData="EditorData"
+    v-if="mainData.isPreview"
+    :EditorData="mainData.EditorData"
   ></EditorPreview>
 
   <el-dialog title="快捷键" v-model="state.dialogIsShow" width="30%">
