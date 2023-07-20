@@ -2,6 +2,7 @@ import { reactive, render } from "vue";
 import dragStore from "../stores/dragStore.ts";
 import pinia from "../stores/index.ts";
 import deepcopy from "deepcopy";
+import { events } from "../utils/events.ts";
 let jsonData = null; //渲染的json数据
 console.log(jsonData);
 function useDragger(): any {
@@ -31,7 +32,7 @@ function useDragger(): any {
     const { clientY, clientX, target } = e;
     const span = findSpan(target);
     const { top, left } = span.getBoundingClientRect();
-
+    events.emit('cloneStart');
     startX = clientX - left;
     startY = clientY - top;
     dragData.isClone = true;
@@ -68,6 +69,7 @@ function useDragger(): any {
       if (renderEl) renderEl.remove();
       dragData.isClone = false;
       dragData.selectedMaterial = null;
+      events.emit('cloneEnd');
     }
 
     if (dragData.isDrag) {
@@ -268,6 +270,7 @@ function useDragger(): any {
     if (e.target.classList.contains("Editorcontainer")) {
       container = e.target;
       e.target.classList.add("chosen-container");
+      dragData.selectedComponent = null;
       dragData.selectKey = null;
       return; //如果点击的是编辑区域就直接结束函数
     }

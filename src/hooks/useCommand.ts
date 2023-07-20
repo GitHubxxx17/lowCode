@@ -1,5 +1,4 @@
-// import { events } from "../utils/events.ts";
-// import deepcopy from "deepcopy";
+import { events } from "../utils/events.ts";
 import { onUnmounted } from "vue";
 import { ElMessage } from "element-plus";
 import mainStore from "../stores/mainStore.ts";
@@ -26,7 +25,43 @@ export function useCommand() {
 
   //存放所有命令
   const commandArray: command[] = [
-    
+    //复制命令
+    {
+      name: "copy",
+      keyboard: "ctrl+c",
+      execute() {
+        return {
+          redo() {
+            mainData.copyData = dragData.selectedComponent;
+          },
+        };
+      },
+    },
+    //粘贴命令
+    {
+      name: "paste",
+      keyboard: "ctrl+v",
+      pushQueue: true,
+      execute() {
+        let before = deepcopy(mainData.EditorData);
+        if (mainData.copyData && dragData.containerData) {
+          dragData.containerData.splice(
+            dragData.selectedIndex + 1,
+            0,
+            deepcopy(mainData.copyData)
+          );
+        }
+        let after = deepcopy(mainData.EditorData);
+        return {
+          redo() {
+            mainData.EditorData = after;
+          },
+          undo() {
+            mainData.EditorData = before;
+          },
+        };
+      },
+    },
     //还原命令
     {
       name: "redo",
@@ -56,6 +91,29 @@ export function useCommand() {
               item.undo && item.undo();
               cur--;
             }
+          },
+        };
+      },
+    },
+    //剪切命令
+    {
+      name: "shear",
+      keyboard: "ctrl+x",
+      pushQueue: true,
+      execute() {
+        let before = deepcopy(mainData.EditorData);
+        if (dragData.isDrag) {
+          mainData.copyData = dragData.selectedComponent;
+          dragData.destructionOfDrag();
+          dragData.containerData.splice(dragData.selectedIndex, 1);
+        }
+        let after = deepcopy(mainData.EditorData);
+        return {
+          redo() {
+            mainData.EditorData = after;
+          },
+          undo() {
+            mainData.EditorData = before;
           },
         };
       },
@@ -162,6 +220,37 @@ export function useCommand() {
         };
       },
     },
+    //克隆组件命令
+    {
+      name: "clone",
+      pushQueue: true,
+      init() {
+        //初始化操作
+        this.before = null;
+        //监控拖拽开始事件，保存状态
+        const start = () => (this.before = deepcopy(mainData.EditorData));
+        //拖拽之后需要触发对应的指令
+        const end = () => commands["clone"]();
+        events.on("cloneStart", start);
+        events.on("cloneEnd", end);
+        return () => {
+          events.off("cloneStart", start);
+          events.off("cloneEnd", end);
+        };
+      },
+      execute() {
+        let before = this.before;
+        let after = deepcopy(mainData.EditorData);
+        return {
+          redo() {
+            mainData.EditorData = after;
+          },
+          undo() {
+            mainData.EditorData = before;
+          },
+        };
+      },
+    },
   ];
 
   //需要使用的键
@@ -225,7 +314,7 @@ export function useCommand() {
 
   (() => {
     destroyArray.push(keyboardEvent());
-    commandArray.forEach((com) => {
+    commandArray.forEach((com: command) => {
       register(com); //循环注册命令
       com.init && destroyArray.push(com.init()); //将可销毁命令放入销毁数组中
     });
