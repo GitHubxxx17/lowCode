@@ -1,0 +1,19 @@
+.container-ordinary {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+.container-ordinary .button {
+  position: relative;
+  z-index: 1;
+}
+.container-ordinary .text {
+  position: relative;
+  font-size: 20px;
+  color: blue;
+  z-index: 1;
+}
+.container-ordinary .input {
+  position: relative;
+  z-index: 1;
+}

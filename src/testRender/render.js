@@ -1,4 +1,35 @@
-const fs = new Request("")
+// import { writeFile, additionalContent, judgeFileExists } from "./less/wirte.js";
+
+// 将逗号转换为分号
+const replaceCommasWithSemicolon = (string) => {
+  let pattern = /,/g;
+  let replacement = ";";
+  return string.replace(pattern, replacement);
+};
+
+// 在最后一个花括号前面追加内容
+const addContentBeforeCurlyBraces = (sting, addContext) => {
+  // const regex = /(?=\})/;
+  const regex = /(?=\}(?!.*\}))/;
+  return sting.replace(regex, addContext);
+};
+
+// 追加内容
+const addContentTail = (sting, addContext) => {
+  return sting + "\n" + addContext;
+};
+
+// 去除引号
+const removeQuotationMarks = (string) => {
+  // const regex = /"([^"]+)"(?=:)/g; // 将冒号前的两个冒号去掉
+  const regex = /"/g;
+  return string.replace(regex, "");
+};
+
+// 将大写字母变成小写并且后面追加一个-
+const uptoLow = (sting) => {
+  return sting.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
+};
 
 // 获取json文件数据
 const loadData = (name) => {
@@ -22,31 +53,11 @@ const $ = (selectors) => {
 
 let dataStr = loadData("./data.json");
 let dataJson = JSON.parse(dataStr);
-console.log(dataJson);
 // console.log(dataJson);
-// for (var i = 0; i < dataJson.length; i++) {
-//   //循环生成
-//   console.log(generate(dataJson[i]));
-// }
 
-//
-const buttonStyle = (style) => {
-  let display, position, zIndex;
-  for (key in style) {
-    //遍历数据
-    switch (key) {
-      case "display":
-        display = style["display"];
-        break;
-      case "position":
-        position = style["position"];
-        break;
-      case "zIndex":
-        zIndex = style["zIndex"];
-        break;
-    }
-  }
-  return `display:${display}; position:${position}; z-index:${zIndex}`;
+const formatStyle = (name, style) => {
+  let newStyle = replaceCommasWithSemicolon(JSON.stringify(style));
+  return `.${name}` + addContentBeforeCurlyBraces(newStyle, ";");
 };
 
 let nodes = dataJson["body"];
@@ -54,14 +65,13 @@ const generateHTml = (nodes) => {
   if (nodes instanceof Array) {
     return nodes.map((node) => {
       let children = generateHTml(node.children);
-      console.log(children);
       if (node.type.includes("container")) {
         // 创建节点片段对象
         let fragment = document.createDocumentFragment();
         let target = document.createElement(`div`);
         // 设置target的属性
         target.setAttribute("type", `${node.type}`);
-        // target.setAttribute("style", `${node.style}`);
+        target.setAttribute("class", `${node.type}`);
         children.map((item) => {
           target.appendChild(item);
         });
@@ -72,9 +82,10 @@ const generateHTml = (nodes) => {
         let target = document.createElement(`${node.type}`);
         // 设置target的属性
         target.setAttribute("type", `${node.type}`);
-        if (node.type == "button") {
-          target.setAttribute("style", `${buttonStyle(node.style)}`);
-        }
+        // if (node.type == "button") {
+        // target.setAttribute("style", `${buttonStyle(node.type, node.style)}`);
+        // }
+        target.setAttribute("class", `${node.type}`);
         target.innerHTML = node.children;
         return target;
       }
@@ -83,6 +94,30 @@ const generateHTml = (nodes) => {
     return nodes; // 不是数组直接返回
   }
 };
+
+const generateStyle = (nodes) => {
+  if (nodes instanceof Array) {
+    return nodes.map((node) => {
+      let childrenStyle = generateStyle(node.children);
+      console.log(childrenStyle);
+      if (node.type.includes("container")) {
+        let parentStyle = formatStyle(node.type, node.style);
+        childrenStyle.map((item) => {
+          parentStyle = addContentBeforeCurlyBraces(parentStyle, item);
+          console.log(parentStyle);
+        });
+        return parentStyle;
+      } else {
+        return formatStyle(node.type, node.style);
+      }
+    });
+  } else {
+    return nodes; // 不是数组直接返回
+  }
+};
+
+let aaa = generateStyle(dataJson["body"])[0];
+console.log(uptoLow(removeQuotationMarks(aaa)));
 
 let temp = generateHTml(dataJson["body"]);
 console.log(temp);
