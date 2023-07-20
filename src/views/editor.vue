@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, reactive, watch } from "vue";
+import { provide, reactive, ref, watch } from "vue";
 import data from "../data.json";
 import EditorLeft from "../components/editor/EditorLeft.vue";
 import EditorRight from "../components/editor/EditorRight.vue";
@@ -16,14 +16,25 @@ import { localGetData } from "../hooks/useStorage.ts";
 provide("editorConfig", editorConfig);
 provide("erConfig", erConfig);
 const mainData = mainStore(pinia);
-mainData.title = localGetData('title') ? localGetData('title') : '新项目';
-mainData.EditorData = localGetData('data') ? localGetData('data') : reactive(data);
+mainData.title = localGetData("title") ? localGetData("title") : "新项目";
+mainData.EditorData = localGetData("data")
+  ? localGetData("data")
+  : reactive(data);
 //挂载命令
 const { commands } = useCommand();
 
 const state = reactive({
   dialogIsShow: false, //快捷键弹窗是否展示
 });
+
+const editorTitle = ref(null);
+// 如果项目名为空的话不失焦
+const keepFocus = (value) => {
+  if (value.trim() == "") {
+    editorTitle.value.focus();
+    ElMessage.warning({ message: "标题不能为空", duration: 1000 });
+  }
+};
 
 watch(
   () => mainData.title,
@@ -59,7 +70,12 @@ const shortcuts = [
       </div>
       <div class="editor-header-mid">
         <div class="editor-header-mid-title">
-          <input type="text" v-model="mainData.title" />
+          <input
+            type="text"
+            v-model="mainData.title"
+            ref="editorTitle"
+            @blur="keepFocus(mainData.title)"
+          />
         </div>
       </div>
       <div class="editor-header-right">
@@ -72,7 +88,9 @@ const shortcuts = [
         <div class="editor-header-right-btn" @click="commands['preview']()">
           预览
         </div>
-        <div class="editor-header-right-btn" @click="commands['export']()">导出</div>
+        <div class="editor-header-right-btn" @click="commands['export']()">
+          导出
+        </div>
         <div class="editor-header-right-avatar">
           <img src="@/assets/user.jpg" alt="user" />
         </div>
@@ -86,7 +104,9 @@ const shortcuts = [
         <div class="editor-body-container-top"></div>
         <div class="editor-body-container-content">
           <div class="editor-body-container-content_inner" ref="editArea">
-            <EditorContainer :EditorData="mainData.EditorData"></EditorContainer>
+            <EditorContainer
+              :EditorData="mainData.EditorData"
+            ></EditorContainer>
           </div>
         </div>
       </div>
