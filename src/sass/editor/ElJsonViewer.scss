@@ -1,0 +1,11 @@
+.ElJsonViewer {
+    width: 100%;
+    height: 100%;
+    &-top {
+        width: 100%;
+        height: 42px;
+        line-height: 42px;
+        padding-left: 10px;
+        font-size: 14px;
+    }
+}

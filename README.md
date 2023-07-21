@@ -1,9 +1,9 @@
-github 提交规范：
-增加新功能用 feat: xxxx
-改 bug 用 fix: xxxxx
-重构代码用 refactor: xxx
-加单测用 test: xxxx
-改基建用 chore: xxx
+### github 提交规范：
+1. 增加新功能用 feat: xxxx
+2. 改 bug 用 fix: xxxxx
+3. 重构代码用 refactor: xxx
+4. 加单测用 test: xxxx
+5. 改基建用 chore: xxx
 
 ### 堉琦记录：
 
@@ -38,4 +38,5 @@ interface nodeProps {
 5. 右边侧边栏底部部分没有显示完全
 6. input 外观圆角不能双向绑定
 7. 预览没有双向绑定
+8. 撤销和还原只能执行一次
 

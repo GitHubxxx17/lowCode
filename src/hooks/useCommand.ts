@@ -297,6 +297,8 @@ export function useCommand() {
         if (keyboard === keyString) {
           //执行相应的命令并阻止默认事件
           commands[name]();
+          if (["c", "v", "x"].includes(keyCodes[keyCode]) && !dragData.isDrag)
+            return;
           e.preventDefault();
         }
       });
