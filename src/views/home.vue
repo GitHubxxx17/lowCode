@@ -1,16 +1,26 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { reactive, onMounted } from "vue";
 import data from "../data.json";
 import HomeViewer from "../components/renderer/homeViewer";
 import mainStore from "../stores/mainStore.ts";
 import pinia from "../stores/index.ts";
 import { localGetData } from "../hooks/useStorage.ts";
+import { getEditData } from "../request/api/home";
 
 const mainData = mainStore(pinia);
 mainData.title = localGetData("title") ? localGetData("title") : "新项目";
 mainData.EditorData = localGetData("data")
   ? localGetData("data")
   : reactive(data);
+onMounted(() => {
+  const GetEditData = async () => {
+    let res = await getEditData();
+    console.log(res);
+    console.log(JSON.parse(res.data.jsonData));
+    
+  };
+  GetEditData();
+});
 </script>
 
 <template>
@@ -48,8 +58,6 @@ mainData.EditorData = localGetData("data")
       </div>
     </section>
   </div>
-
-
 </template>
 
 <style lang="scss" scoped>
@@ -167,13 +175,13 @@ mainData.EditorData = localGetData("data")
           &:hover {
             background-color: #eef3fe;
             .del {
-                display: block;
+              display: block;
             }
           }
         }
 
         .active {
-            background-color: #eef3fe;
+          background-color: #eef3fe;
         }
       }
     }
@@ -181,7 +189,6 @@ mainData.EditorData = localGetData("data")
     &-right {
       position: relative;
       flex: 7;
-
 
       &-viewer {
         width: 100%;

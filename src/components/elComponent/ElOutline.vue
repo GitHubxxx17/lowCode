@@ -9,7 +9,7 @@ const getOutlineData = (data: any, id: number = 2) => {
   if (Array.isArray(data)) {
     let arr = [];
     data.forEach((item, i) => {
-      arr.push({
+      arr.push({ 
         id: newId + i,
         label: config.componentMap.get(item.type).label,
         children: getOutlineData(item.children, id + data.length),
@@ -35,6 +35,7 @@ const state: any = reactive({
   },
   filterText:''
 });
+
 //点击input
 const searchFocus = (): void => {
   state.inputIsFocus = true;
