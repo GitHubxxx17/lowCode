@@ -16,7 +16,8 @@
     "sass": "^1.62.1",
     "sass-loader": "^13.3.0",
     "sortablejs": "^1.15.0",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "vue-router": "^4.0.13"
   },
   "devDependencies": {
     "@types/sortablejs": "^1.15.1",
