@@ -1,11 +1,18 @@
-import { createApp } from 'vue'
-import pinia from './stores/index.ts'
-import './style.css'
-import App from './App.vue'
-import 'element-plus/dist/index.css'
-import ElementPlus from 'element-plus'
-const app = createApp(App)
+import { createApp } from "vue";
+import pinia from "./stores/index.ts";
+import "./style.css";
+import App from "./App.vue";
+import "element-plus/dist/index.css";
+import ElementPlus from "element-plus";
+// 导入路由模块
+import router from "./router/index.ts";
 
-app.use(pinia)
-app.use(ElementPlus)
-app.mount('#app')
+const app = createApp(App);
+
+app.use(pinia);
+app.use(ElementPlus);
+// 挂载路由模块
+app.use(router);
+app.mount("#app");
+
+export default app;
