@@ -1,7 +1,8 @@
 <script setup>
-import { ElButton, ElForm, ElFormItem, ElInput } from "element-plus";
+import { ElButton, ElForm, ElFormItem, ElInput, ElMessage } from "element-plus";
 import "../sass/login/login.scss";
-import { reactive, ref, watchEffect } from "vue";
+import { reactive, ref } from "vue";
+import { reguser, login } from "../request/api/login";
 
 // 登录数据集合
 let changeState = reactive({
@@ -9,6 +10,13 @@ let changeState = reactive({
   confirmName: "登录",
   isRegister: false,
 });
+
+let formRef = ref(null); //表单对象
+
+// 重置表单
+const resetFrom = () => {
+  formRef.value.resetFields();
+};
 
 // 点击切换登录注册
 const changeModel = () => {
@@ -18,29 +26,42 @@ const changeModel = () => {
     changeState.confirmName = "注册";
     form.username = "";
     form.password = "";
-    form.twicePassword = "";
+    form.checkPassword = "";
   } else {
     changeState.isRegister = false;
     changeState.changeName = "注册";
     changeState.confirmName = "登录";
     form.username = "";
     form.password = "";
-    form.twicePassword = "";
+    form.checkPassword = "";
   }
+  resetFrom();
 };
 
 // 表单的数据绑定对象
 let form = reactive({
   username: "",
   password: "",
-  twicePassword: "",
+  checkPassword: "",
 });
 
-// 密码
-const checkPasswordIsSame = (rule, value, callback) => {
+// 检查密码
+const validatePass = (rule, value, callback) => {
+  if (value === "") {
+    callback(new Error("请输入密码"));
+  } else {
+    if (form.checkPassword !== "") {
+      formRef.value.validateField("checkPassword");
+    }
+    callback();
+  }
+};
+
+// 校验密码
+const validateCheckPass = (rule, value, callback) => {
   if (value === "") {
     callback(new Error("请再次输入密码"));
-  } else if (value !== this.ruleForm.pass) {
+  } else if (value !== form.password) {
     callback(new Error("两次输入密码不一致!"));
   } else {
     callback();
@@ -56,11 +77,46 @@ let rules = reactive({
   ],
   // 验证密码是否合法
   password: [
-    { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 6, max: 15, message: "密码长度应在 6-15 个字符", trigger: "blur" },
+    {
+      min: 6,
+      max: 15,
+      message: "密码长度应在 6-15 个字符",
+      trigger: "blur",
+    },
+    { validator: validatePass, trigger: "blur" },
   ],
-  twicePassword: [{ validator: checkPasswordIsSame, trigger: "blur" }],
+  checkPassword: [{ validator: validateCheckPass, trigger: "blur" }],
 });
+
+// 立即登录或者立即注册
+const confirm = () => {
+  formRef.value.validate(async (valid) => {
+    console.log(valid);
+    // 如果表单的数据不合法则不发起请求
+    if (!valid) return;
+    if (changeState.confirmName === "注册") {
+      let registerServe = await reguser(form.username, form.password);
+      console.log(registerServe);
+      let regData = registerServe.data;
+      // 如果注册不成功则给出提示
+      if (regData.status) {
+        ElMessage.error(regData.msg);
+      } else {
+        ElMessage.success(regData.msg);
+      }
+    } else {
+      let loginServe = await login(form.username, form.password);
+      console.log(loginServe);
+      let regData = loginServe.data;
+      // 如果注册不成功则给出提示
+      if (regData.status) {
+        ElMessage.error(regData.msg);
+      } else {
+        ElMessage.success(regData.msg);
+      }
+    }
+  });
+};
 </script>
 <template>
   <div class="login">
@@ -71,6 +127,7 @@ let rules = reactive({
       </div>
       <!-- 登录表单区域 -->
       <el-form
+        ref="formRef"
         :model="form"
         :rules="rules"
         label-width="100px"
@@ -100,12 +157,12 @@ let rules = reactive({
         </el-form-item>
         <el-form-item
           label="确认密码："
-          v-show="changeState.isRegister"
-          prop="twicePassword"
+          v-if="changeState.isRegister"
+          prop="checkPassword"
         >
           <ElInput
             placeholder="请再次输入密码"
-            v-model="form.twicePassword"
+            v-model="form.checkPassword"
             input-style="height:35px;"
             show-password
             type="password"
@@ -113,7 +170,9 @@ let rules = reactive({
           ></ElInput>
         </el-form-item>
         <el-form-item class="login-box-form-btns">
-          <button class="confirm">立即{{ changeState.confirmName }}</button>
+          <button class="confirm" @click="confirm()">
+            立即{{ changeState.confirmName }}
+          </button>
           <div class="change" @click="changeModel()">
             去{{ changeState.changeName }}
           </div>
