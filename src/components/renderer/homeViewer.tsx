@@ -8,7 +8,7 @@ export default defineComponent({
   },
   setup(props) {
     return () => {
-      return renderer(props.EditorData.body);
+      return renderer(props.EditorData?.body);
     };
   },
 });

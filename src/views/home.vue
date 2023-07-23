@@ -4,23 +4,81 @@ import data from "../data.json";
 import HomeViewer from "../components/renderer/homeViewer";
 import mainStore from "../stores/mainStore.ts";
 import pinia from "../stores/index.ts";
-import { localGetData } from "../hooks/useStorage.ts";
-import { getEditData } from "../request/api/home";
+import { localGetData, localSaveData } from "../hooks/useStorage.ts";
+import { getEditData,delEditData,addEditData } from "../request/api/home";
 
 const mainData = mainStore(pinia);
-mainData.title = localGetData("title") ? localGetData("title") : "新项目";
 mainData.EditorData = localGetData("data")
   ? localGetData("data")
   : reactive(data);
+
+const state = reactive({
+  editdata: [],
+  dialogVisible: false,
+  delIndex: 0,
+});
 onMounted(() => {
+  //获取页面数据
   const GetEditData = async () => {
     let res = await getEditData();
-    console.log(res);
-    console.log(JSON.parse(res.data.jsonData));
-    
+    state.editdata = res.data.map((item: any, i: number) => {
+      item.jsonData = JSON.parse(item.jsonData);
+      item.active = false;
+      if (i == 0) {
+        item.active = true;
+        mainData.EditorData = item.jsonData;
+        mainData.title = item.title;
+      }
+      return item;
+    });
+    console.log(state.editdata);
   };
   GetEditData();
 });
+//切换页面
+const changeEditData = (index: number) => {
+  state.editdata.forEach((item, i) => {
+    item.active = false;
+    if (i == index) {
+      item.active = true;
+      mainData.EditorData = item.jsonData;
+      mainData.title = item.title;
+    }
+  });
+};
+//点击进入编辑
+const enterEdit = ($router: any) => {
+  $router.push("/editor");
+  localSaveData("title", mainData.title);
+  localSaveData("data", mainData.EditorData);
+};
+//弹出删除页面弹窗
+const toDelPage = (e: any, i: number) => {
+  e.stopPropagation();
+  state.delIndex = i;
+  state.dialogVisible = true;
+};
+
+//删除页面
+const delPage = async() => {
+  let res = await delEditData(state.editdata[state.delIndex].id);
+  console.log(res);
+  state.dialogVisible = false;
+  state.editdata.splice(state.delIndex, 1);
+  let l = state.editdata.length;
+  if (l == 0) {
+    mainData.EditorData = null;
+    localStorage.clear();
+    return;
+  }
+  changeEditData(state.delIndex == l ? state.delIndex - 1 : state.delIndex);
+};
+//添加页面
+const addPage = async() => {
+  let res = await addEditData({uId:1,title:'未命名页面',jsonData:JSON.stringify(data)});
+  console.log(res);
+  
+}
 </script>
 
 <template>
@@ -30,8 +88,10 @@ onMounted(() => {
         <h2>codeFlow</h2>
       </div>
       <div class="home-header-right">
-        <div class="home-header-right-btn">进入编辑</div>
-        <div class="home-header-right-btn">新建页面</div>
+        <div class="home-header-right-btn" @click="enterEdit($router)">
+          进入编辑
+        </div>
+        <div class="home-header-right-btn" @click="addPage">新建页面</div>
         <div class="home-header-right-avatar">
           <img src="@/assets/user.jpg" alt="user" />
         </div>
@@ -44,9 +104,17 @@ onMounted(() => {
         </div>
         <div class="home-body-left-content">
           <ul>
-            <li class="active">
-              <div class="title">{{ mainData.title }}</div>
-              <i class="del icon iconfont icon-cha"></i>
+            <li
+              v-for="(item, i) in state.editdata"
+              :class="{ active: item.active }"
+              @click="changeEditData(i)"
+              :key="item.id"
+            >
+              <div class="title">{{ item.title }}</div>
+              <i
+                class="del icon iconfont icon-cha"
+                @click="toDelPage($event, i)"
+              ></i>
             </li>
           </ul>
         </div>
@@ -58,6 +126,15 @@ onMounted(() => {
       </div>
     </section>
   </div>
+  <el-dialog title="删除页面" v-model="state.dialogVisible" width="30%">
+    <span>确认删除该页面吗？</span>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="state.dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="delPage">确 定</el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <style lang="scss" scoped>

@@ -63,7 +63,7 @@ const shortcuts = [
   <div class="editor" v-show="!mainData.isPreview">
     <header class="editor-header">
       <div class="editor-header-left">
-        <span class="editor-header-left-exit">
+        <span class="editor-header-left-exit" @click="$router.go(-1)">
           <i class="icon iconfont icon-fanhui"></i>
         </span>
         <h2>codeFlow</h2>
