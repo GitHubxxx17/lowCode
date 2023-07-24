@@ -3,13 +3,15 @@ import { reactive, onMounted } from "vue";
 import data from "../data.json";
 import HomeViewer from "../components/renderer/homeViewer";
 import mainStore from "../stores/mainStore.ts";
+import userStore from "../stores/userStore.ts";
 import pinia from "../stores/index.ts";
-import { localSaveData } from "../hooks/useStorage.ts";
+import { localSaveData,sessionGetData } from "../hooks/useStorage.ts";
 import { getEditData, delEditData, addEditData } from "../request/api/home";
 import { ElMessage } from "element-plus";
 
 const mainData = mainStore(pinia);
-
+const userData = userStore(pinia); // 用户数据
+userData.token = sessionGetData('token')
 const state = reactive({
   editdata: [],
   dialogVisible: false,
