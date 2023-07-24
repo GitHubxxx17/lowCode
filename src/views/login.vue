@@ -3,6 +3,13 @@ import { ElButton, ElForm, ElFormItem, ElInput, ElMessage } from "element-plus";
 import "../sass/login/login.scss";
 import { reactive, ref } from "vue";
 import { reguser, login } from "../request/api/login";
+import userStore from "../stores/userStore.ts";
+import pinia from "../stores/index.ts";
+import { sessionSaveData } from "../hooks/useStorage.ts";
+import router from "../router/index.ts";
+
+sessionStorage.clear(); // 刷新清空会话
+const userData = userStore(pinia); // 用户数据
 
 // 登录数据集合
 let changeState = reactive({
@@ -24,24 +31,21 @@ const changeModel = () => {
     changeState.isRegister = true;
     changeState.changeName = "登录";
     changeState.confirmName = "注册";
-    form.username = "";
-    form.password = "";
-    form.checkPassword = "";
   } else {
     changeState.isRegister = false;
     changeState.changeName = "注册";
     changeState.confirmName = "登录";
-    form.username = "";
-    form.password = "";
-    form.checkPassword = "";
   }
+  form.username = "";
+  form.password = "";
+  form.checkPassword = "";
   resetFrom();
 };
 
 // 表单的数据绑定对象
 let form = reactive({
-  username: "",
-  password: "",
+  username: "admin",
+  password: "123456",
   checkPassword: "",
 });
 
@@ -89,31 +93,36 @@ let rules = reactive({
 });
 
 // 立即登录或者立即注册
-const confirm = () => {
+const confirm = ($router) => {
   formRef.value.validate(async (valid) => {
-    console.log(valid);
     // 如果表单的数据不合法则不发起请求
     if (!valid) return;
+    let isSuccess = false;
+    let loginServe = null;
     if (changeState.confirmName === "注册") {
-      let registerServe = await reguser(form.username, form.password);
-      console.log(registerServe);
-      let regData = registerServe.data;
-      // 如果注册不成功则给出提示
-      if (regData.status) {
-        ElMessage.error(regData.msg);
+      loginServe = await reguser(form.username, form.password);
+    } else {
+      loginServe = await login(form.username, form.password);
+    }
+    if (loginServe) {
+      let loginData = loginServe.data;
+      // 如果登录失败则给出提示
+      if (loginData.status) {
+        ElMessage.error(loginData.msg);
       } else {
-        ElMessage.success(regData.msg);
+        ElMessage.success(loginData.msg);
+        isSuccess = true;
+      }
+      if (isSuccess) {
+        // 保存 token username 到 piano
+        userData.username = loginData.username;
+        userData.token = loginData.token;
+        // 保存 token 到 session
+        sessionSaveData("token", loginData.token);
+        $router.push("/home");
       }
     } else {
-      let loginServe = await login(form.username, form.password);
-      console.log(loginServe);
-      let regData = loginServe.data;
-      // 如果注册不成功则给出提示
-      if (regData.status) {
-        ElMessage.error(regData.msg);
-      } else {
-        ElMessage.success(regData.msg);
-      }
+      ElMessage.success(changeState.confirmName + "异常，请重试！");
     }
   });
 };
@@ -170,7 +179,7 @@ const confirm = () => {
           ></ElInput>
         </el-form-item>
         <el-form-item class="login-box-form-btns">
-          <button class="confirm" @click="confirm()">
+          <button class="confirm" @click="confirm($router)">
             立即{{ changeState.confirmName }}
           </button>
           <div class="change" @click="changeModel()">

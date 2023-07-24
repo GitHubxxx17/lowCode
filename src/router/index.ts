@@ -2,6 +2,7 @@
 // createRouter方法用于创建路由实例对象
 // createWebHashHistory方法用于指定路由的工作模式（hash模式）
 import { createRouter, createWebHashHistory } from "vue-router";
+import { sessionGetData } from "../hooks/useStorage.ts";
 // 创建路由对象
 const router = createRouter({
   // 通过 history 属性，指定路由的工作模式
@@ -26,6 +27,28 @@ const router = createRouter({
       component: () => import("../views/home.vue"),
     },
   ],
+});
+
+// 声明全局的导航守卫
+router.beforeEach((to, from, next) => {
+  const token = sessionGetData("token"); // 读取token
+
+  if (to.path === "/editor" && !token) {
+    next("/login");
+  } else {
+    next();
+  }
+});
+
+// 声明全局的导航守卫
+router.beforeEach((to, from, next) => {
+  const token = sessionGetData("token"); // 1、读取token
+
+  if (to.path === "/home" && !token) {
+    next("/login");
+  } else {
+    next();
+  }
 });
 
 // 向外共享路由对象
