@@ -4,37 +4,33 @@ import data from "../data.json";
 import HomeViewer from "../components/renderer/homeViewer";
 import mainStore from "../stores/mainStore.ts";
 import pinia from "../stores/index.ts";
-import { localGetData, localSaveData } from "../hooks/useStorage.ts";
-import { getEditData,delEditData,addEditData } from "../request/api/home";
+import { localSaveData } from "../hooks/useStorage.ts";
+import { getEditData, delEditData, addEditData } from "../request/api/home";
+import { ElMessage } from "element-plus";
 
 const mainData = mainStore(pinia);
-mainData.EditorData = localGetData("data")
-  ? localGetData("data")
-  : reactive(data);
 
 const state = reactive({
   editdata: [],
   dialogVisible: false,
   delIndex: 0,
 });
-onMounted(() => {
-  //获取页面数据
-  const GetEditData = async () => {
-    let res = await getEditData();
-    state.editdata = res.data.map((item: any, i: number) => {
-      item.jsonData = JSON.parse(item.jsonData);
-      item.active = false;
-      if (i == 0) {
-        item.active = true;
-        mainData.EditorData = item.jsonData;
-        mainData.title = item.title;
-      }
-      return item;
-    });
-    console.log(state.editdata);
-  };
-  GetEditData();
-});
+//获取页面数据
+const GetEditData = async () => {
+  let res = await getEditData();
+  state.editdata = res.data.editData.map((item: any, i: number) => {
+    item.jsonData = JSON.parse(item.jsonData);
+    item.active = false;
+    if (i == 0) {
+      item.active = true;
+      mainData.EditorData = item.jsonData;
+      mainData.title = item.title;
+    }
+    return item;
+  });
+  console.log(state.editdata);
+};
+
 //切换页面
 const changeEditData = (index: number) => {
   state.editdata.forEach((item, i) => {
@@ -58,9 +54,8 @@ const toDelPage = (e: any, i: number) => {
   state.delIndex = i;
   state.dialogVisible = true;
 };
-
 //删除页面
-const delPage = async() => {
+const delPage = async () => {
   let res = await delEditData(state.editdata[state.delIndex].id);
   console.log(res);
   state.dialogVisible = false;
@@ -68,17 +63,29 @@ const delPage = async() => {
   let l = state.editdata.length;
   if (l == 0) {
     mainData.EditorData = null;
-    localStorage.clear();
+    // localStorage.clear();
+    localStorage.removeItem("title");
+    localStorage.removeItem("data");
     return;
   }
   changeEditData(state.delIndex == l ? state.delIndex - 1 : state.delIndex);
+  ElMessage.success({ message: res.data.msg, duration: 2000 });
 };
 //添加页面
-const addPage = async() => {
-  let res = await addEditData({uId:1,title:'未命名页面',jsonData:JSON.stringify(data)});
+const addPage = async ($router: any) => {
+  let res = await addEditData({
+    title: "未命名页面",
+    jsonData: JSON.stringify(data),
+  });
+  ElMessage.success({ message: res.data.msg, duration: 1000 });
+  $router.push("/editor");
+  localSaveData("title", "未命名页面");
+  localSaveData("data", data);
   console.log(res);
-  
-}
+};
+onMounted(() => {
+  GetEditData();
+});
 </script>
 
 <template>
@@ -91,7 +98,9 @@ const addPage = async() => {
         <div class="home-header-right-btn" @click="enterEdit($router)">
           进入编辑
         </div>
-        <div class="home-header-right-btn" @click="addPage">新建页面</div>
+        <div class="home-header-right-btn" @click="addPage($router)">
+          新建页面
+        </div>
         <div class="home-header-right-avatar">
           <img src="@/assets/user.jpg" alt="user" />
         </div>
@@ -120,8 +129,11 @@ const addPage = async() => {
         </div>
       </div>
       <div class="home-body-right">
-        <div class="home-body-right-viewer">
+        <div v-if="state.editdata.length" class="home-body-right-viewer">
           <HomeViewer :EditorData="mainData.EditorData"></HomeViewer>
+        </div>
+        <div v-else class="home-body-right-none">
+          <img src="@/assets/image/noneData1.png" alt="没有页面捏" />
         </div>
       </div>
     </section>
@@ -273,6 +285,19 @@ const addPage = async() => {
           &::after {
             pointer-events: none !important;
           }
+        }
+      }
+
+      &-none {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+          max-width: 500px;
+          max-height: 230px;
         }
       }
     }
