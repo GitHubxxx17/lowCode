@@ -2,7 +2,7 @@
 import { ElButton, ElForm, ElFormItem, ElInput, ElMessage } from "element-plus";
 import "../sass/login/login.scss";
 import { reactive, ref } from "vue";
-import { reguser, login } from "../request/api/login";
+import { checkIfUserExist, reguser, login } from "../request/api/login";
 import userStore from "../stores/userStore.ts";
 import pinia from "../stores/index.ts";
 import { sessionSaveData } from "../hooks/useStorage.ts";
@@ -49,6 +49,30 @@ let form = reactive({
   checkPassword: "",
 });
 
+// 检查用户名是否存在
+const validateifUserExist = async (rule, value, callback) => {
+  if (value === "") {
+    callback(new Error("请输入用户名"));
+  } else {
+    let ifUserExistServer = await checkIfUserExist(form.username);
+    if (changeState.confirmName === "注册") {
+      let regData = ifUserExistServer.data;
+      if (regData.status) {
+        callback(new Error(regData.msg));
+      } else {
+        callback();
+      }
+    } else {
+      let loginData = ifUserExistServer.data;
+      if (loginData.status) {
+        callback();
+      } else {
+        callback("该用户名不存在！");
+      }
+    }
+  }
+};
+
 // 检查密码
 const validatePass = (rule, value, callback) => {
   if (value === "") {
@@ -61,7 +85,7 @@ const validatePass = (rule, value, callback) => {
   }
 };
 
-// 校验密码
+// 二次校验密码
 const validateCheckPass = (rule, value, callback) => {
   if (value === "") {
     callback(new Error("请再次输入密码"));
@@ -76,17 +100,12 @@ const validateCheckPass = (rule, value, callback) => {
 let rules = reactive({
   // 验证用户名是否合法
   username: [
-    { required: true, message: "请输入用户名", trigger: "blur" },
     { min: 3, max: 10, message: "用户名长度应在 3-10 个字符", trigger: "blur" },
+    { validator: validateifUserExist, trigger: "blur" },
   ],
   // 验证密码是否合法
   password: [
-    {
-      min: 6,
-      max: 15,
-      message: "密码长度应在 6-15 个字符",
-      trigger: "blur",
-    },
+    { min: 6, max: 15, message: "密码长度应在 6-15 个字符", trigger: "blur" },
     { validator: validatePass, trigger: "blur" },
   ],
   checkPassword: [{ validator: validateCheckPass, trigger: "blur" }],

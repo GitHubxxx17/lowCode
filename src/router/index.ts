@@ -31,24 +31,12 @@ const router = createRouter({
 
 // 声明全局的导航守卫
 router.beforeEach((to, from, next) => {
+  // 如果用户访问登录页直接放行
+  if (to.path === "/login") return next();
   const token = sessionGetData("token"); // 读取token
-
-  if (to.path === "/editor" && !token) {
-    next("/login");
-  } else {
-    next();
-  }
-});
-
-// 声明全局的导航守卫
-router.beforeEach((to, from, next) => {
-  const token = sessionGetData("token"); // 1、读取token
-
-  if (to.path === "/home" && !token) {
-    next("/login");
-  } else {
-    next();
-  }
+  // 没有 token 直接跳转回 login 页面
+  if (!token) return next("/login");
+  next();
 });
 
 // 向外共享路由对象
