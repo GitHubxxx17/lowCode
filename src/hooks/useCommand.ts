@@ -5,7 +5,9 @@ import mainStore from "../stores/mainStore.ts";
 import dragStore from "../stores/dragStore.ts";
 import pinia from "../stores/index.ts";
 import deepcopy from "deepcopy";
-import { localSaveData } from "./useStorage.ts";
+import { localSaveData, localGetData } from "./useStorage.ts";
+import { updateEditData } from "../request/api/home";
+
 //命令
 interface command {
   name: string; //执行的命令的名称
@@ -124,10 +126,17 @@ export function useCommand() {
       keyboard: "ctrl+s",
       execute() {
         return {
-          redo() {
+          async redo() {
             localSaveData("title", mainData.title);
             localSaveData("data", mainData.EditorData);
-            ElMessage.success({ message: "保存成功", duration: 2000 });
+            let res = await updateEditData({
+              jsonData: JSON.stringify(mainData.EditorData),
+              id: localGetData("id"),
+              title:mainData.title
+            });
+            if(res.data?.code == 200){
+              ElMessage.success({ message: "保存成功", duration: 2000 });
+            }
           },
         };
       },
@@ -139,7 +148,8 @@ export function useCommand() {
       execute() {
         return {
           redo() {
-            localStorage.clear();
+            localStorage.removeItem("title");
+            localStorage.removeItem("data");
             ElMessage.success({ message: "清除保存数据成功", duration: 2000 });
           },
         };

@@ -1,7 +1,4 @@
 import service from "..";
-import userStore from "../../stores/userStore.ts";
-import pinia from "../../stores/index.ts";
-const userData = userStore(pinia);
 //获取编辑数据
 export function getEditData() {
   return service({
@@ -9,7 +6,6 @@ export function getEditData() {
     url: "/getEditData",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      authorization: userData.token,
     },
   });
 }
@@ -20,7 +16,6 @@ export function delEditData(id: number) {
     url: `/delEditData`,
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      authorization: userData.token,
     },
     data: {
       id,
@@ -34,7 +29,17 @@ export function addEditData(data: any) {
     url: `/addEditData`,
     headers: {
       "Content-Type": "application/json;charset=utf-8",
-      authorization: userData.token,
+    },
+    data: data,
+  });
+}
+//修改页面
+export function updateEditData(data: any) {
+  return service({
+    method: "post",
+    url: `/updateEditData`,
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
     },
     data: data,
   });

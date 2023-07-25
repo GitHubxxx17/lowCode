@@ -16,6 +16,7 @@ const state = reactive({
   editdata: [],
   dialogVisible: false,
   delIndex: 0,
+  selectIndex:0,
 });
 //获取页面数据
 const GetEditData = async () => {
@@ -27,6 +28,7 @@ const GetEditData = async () => {
       item.active = true;
       mainData.EditorData = item.jsonData;
       mainData.title = item.title;
+      state.selectIndex = item.id;
     }
     return item;
   });
@@ -41,6 +43,7 @@ const changeEditData = (index: number) => {
       item.active = true;
       mainData.EditorData = item.jsonData;
       mainData.title = item.title;
+      state.selectIndex = item.id;
     }
   });
 };
@@ -49,6 +52,7 @@ const enterEdit = ($router: any) => {
   $router.push("/editor");
   localSaveData("title", mainData.title);
   localSaveData("data", mainData.EditorData);
+  localSaveData("id",state.selectIndex);
 };
 //弹出删除页面弹窗
 const toDelPage = (e: any, i: number) => {
@@ -83,6 +87,7 @@ const addPage = async ($router: any) => {
   $router.push("/editor");
   localSaveData("title", "未命名页面");
   localSaveData("data", data);
+  localSaveData("id",res.data.id);
   console.log(res);
 };
 onMounted(() => {
