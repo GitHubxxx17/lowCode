@@ -1,0 +1,33 @@
+.card {
+    width: 500px;
+
+    .el-tabs__item {
+        height: 60px;
+    }
+
+    .btns {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 25px;
+
+        .confirm {
+            border: 0;
+            background-color: #409eff;
+            min-width: 125px;
+            padding: 5px 10px;
+            border-radius: 30px;
+            height: 35px;
+            box-sizing: border-box;
+            color: #fff;
+        }
+
+        .confirm:hover {
+            background-color: #3992eb;
+        }
+    }
+}
+
+.formItemCommon{
+    margin-top: 10px;
+}
