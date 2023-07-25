@@ -138,6 +138,7 @@ const confirm = ($router) => {
         userData.token = loginData.token;
         // 保存 token 到 session
         sessionSaveData("token", loginData.token);
+        sessionSaveData("username", loginData.username);
         $router.push("/home");
       }
     } else {

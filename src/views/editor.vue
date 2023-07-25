@@ -4,13 +4,14 @@ import data from "../data.json";
 import EditorLeft from "../components/editor/EditorLeft.vue";
 import EditorRight from "../components/editor/EditorRight.vue";
 import EditorContainer from "../components/editor/EditorContainer";
+import PopUp from "../components/Popover/popUp";
 import { editorConfig } from "../utils/editor-config";
 import { erConfig } from "../utils/ErComponent-config";
 import EditorPreview from "../components/editor/EditorPreview.tsx";
 import { useCommand } from "../hooks/useCommand";
 import mainStore from "../stores/mainStore.ts";
 import pinia from "../stores/index.ts";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElPopover } from "element-plus";
 import { localGetData } from "../hooks/useStorage.ts";
 
 provide("editorConfig", editorConfig);
@@ -91,9 +92,14 @@ const shortcuts = [
         <div class="editor-header-right-btn" @click="commands['export']()">
           导出
         </div>
-        <div class="editor-header-right-avatar">
-          <img src="@/assets/user.jpg" alt="user" />
-        </div>
+        <el-popover placement="bottom" :width="200" trigger="click">
+          <template #reference>
+            <div class="editor-header-right-avatar">
+              <img src="@/assets/user.jpg" alt="user" />
+            </div>
+          </template>
+          <PopUp></PopUp>
+        </el-popover>
       </div>
     </header>
     <section class="editor-body">
@@ -335,3 +341,4 @@ const shortcuts = [
   }
 }
 </style>
+../components/Popover/popUp.tsx
