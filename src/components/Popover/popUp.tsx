@@ -2,14 +2,10 @@ import "../../sass/Popover/popUp.scss";
 import { defineComponent, ref } from "vue";
 import router from "../../router/index.ts";
 import SettingPages from "./settingPages.vue";
-import userStore from "../../stores/userStore.ts";
-import pinia from "../../stores/index.ts";
 import { sessionGetData } from "../../hooks/useStorage.ts";
 
 export default defineComponent({
   setup() {
-    const userData = userStore(pinia); // 用户数据
-
     // 我的主页
     const changeHome = () => {
       router.push("/home");
@@ -30,17 +26,8 @@ export default defineComponent({
             <div class="setting-user-portrait">
               <img src="assets/user.jpg" alt="" />
             </div>
-            <div
-              class="setting-user-info"
-              title={
-                userData.username
-                  ? userData.username
-                  : sessionGetData("username")
-              }
-            >
-              {userData.username
-                ? userData.username
-                : sessionGetData("username")}
+            <div class="setting-user-info" title={sessionGetData("username")}>
+              {sessionGetData("username")}
             </div>
           </div>
           <div class="setting-line"></div>
@@ -60,7 +47,7 @@ export default defineComponent({
             <div class="setting-common-name">我的设置</div>
           </div>
           <el-dialog title="我的设置" v-model={modifyForm.value} width="540px">
-            <SettingPages></SettingPages>
+            <SettingPages modifyForm={modifyForm}></SettingPages>
           </el-dialog>
           <div class="setting-common setting-warn" onClick={() => exist()}>
             <div class="icon iconfont icon-h"></div>

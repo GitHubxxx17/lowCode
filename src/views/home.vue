@@ -2,21 +2,22 @@
 import { reactive, onMounted } from "vue";
 import data from "../data.json";
 import HomeViewer from "../components/renderer/homeViewer";
+import PopUp from "../components/Popover/popUp";
 import mainStore from "../stores/mainStore.ts";
 import userStore from "../stores/userStore.ts";
 import pinia from "../stores/index.ts";
-import { localSaveData,sessionGetData } from "../hooks/useStorage.ts";
+import { localSaveData, sessionGetData } from "../hooks/useStorage.ts";
 import { getEditData, delEditData, addEditData } from "../request/api/home";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElPopover } from "element-plus";
 
 const mainData = mainStore(pinia);
 const userData = userStore(pinia); // 用户数据
-userData.token = sessionGetData('token')
+userData.token = sessionGetData("token");
 const state = reactive({
   editdata: [],
   dialogVisible: false,
   delIndex: 0,
-  selectIndex:0,
+  selectIndex: 0,
 });
 //获取页面数据
 const GetEditData = async () => {
@@ -52,7 +53,7 @@ const enterEdit = ($router: any) => {
   $router.push("/editor");
   localSaveData("title", mainData.title);
   localSaveData("data", mainData.EditorData);
-  localSaveData("id",state.selectIndex);
+  localSaveData("id", state.selectIndex);
 };
 //弹出删除页面弹窗
 const toDelPage = (e: any, i: number) => {
@@ -87,7 +88,7 @@ const addPage = async ($router: any) => {
   $router.push("/editor");
   localSaveData("title", "未命名页面");
   localSaveData("data", data);
-  localSaveData("id",res.data.id);
+  localSaveData("id", res.data.id);
   console.log(res);
 };
 onMounted(() => {
@@ -108,9 +109,15 @@ onMounted(() => {
         <div class="home-header-right-btn" @click="addPage($router)">
           新建页面
         </div>
-        <div class="home-header-right-avatar">
-          <img src="@/assets/user.jpg" alt="user" />
-        </div>
+
+        <el-popover placement="bottom" :width="200" trigger="click">
+          <template #reference>
+            <div class="home-header-right-avatar">
+              <img src="@/assets/user.jpg" alt="user" />
+            </div>
+          </template>
+          <PopUp></PopUp>
+        </el-popover>
       </div>
     </header>
     <section class="home-body">

@@ -10,7 +10,9 @@ import {
 } from "../../request/api/modifyInfo";
 import userStore from "../../stores/userStore.ts";
 import pinia from "../../stores/index.ts";
+import { sessionSaveData } from "../../hooks/useStorage.ts";
 
+const props = defineProps(["modifyForm"]);
 const userData = userStore(pinia); // 用户数据
 // 修改用户名
 let usernameFormRef = ref(null); // 修改用户名表单对象
@@ -47,6 +49,10 @@ const confirmUserName = () => {
     } else {
       ElMessage.success(modifyData.msg);
       userData.username = modifyData.username;
+      sessionSaveData("username", modifyData.username);
+      newUserInfo.username = "";
+      props.modifyForm.value = false;
+      newUserInfo.username = "";
     }
   });
 };
@@ -106,7 +112,12 @@ const confirmPassword = () => {
       ElMessage.error(modifyData.msg);
     } else {
       ElMessage.success(modifyData.msg);
-      userData.username = modifyData.username;
+      userData.password = modifyData.password;
+      sessionSaveData("password", modifyData.password);
+      props.modifyForm.value = false;
+      newUserInfo.oldPassword = "";
+      newUserInfo.newPassword = "";
+      newUserInfo.checkPassword = "";
     }
   });
 };
