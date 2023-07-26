@@ -28,7 +28,7 @@ export default defineComponent({
         <div class="setting">
           <div class="setting-user">
             <div class="setting-user-portrait">
-              <img src="@/assets/user.jpg" alt="" />
+              <img src="assets/user.jpg" alt="" />
             </div>
             <div
               class="setting-user-info"

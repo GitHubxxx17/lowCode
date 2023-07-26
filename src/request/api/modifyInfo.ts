@@ -1,7 +1,4 @@
 import service from "..";
-import userStore from "../../stores/userStore.ts";
-import pinia from "../../stores/index.ts";
-const userData = userStore(pinia);
 // 修改用户名
 export function modifyUsername(username) {
   return service({
@@ -9,7 +6,6 @@ export function modifyUsername(username) {
     url: "/modfiyUserInfo/modifyUsername",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      authorization: userData.token,
     },
     data: {
       username: username,
@@ -24,7 +20,6 @@ export function checkPassword(password) {
     url: "/modfiyUserInfo/checkPassword",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      authorization: userData.token,
     },
     data: {
       password: password,
@@ -39,7 +34,6 @@ export function modifyPassword(password) {
     url: "/modfiyUserInfo/modifyPassword",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
-      authorization: userData.token,
     },
     data: {
       password: password,

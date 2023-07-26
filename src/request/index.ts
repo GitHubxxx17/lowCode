@@ -1,9 +1,6 @@
 import axios from "axios";
-import userStore from "../stores/userStore.ts";
-import pinia from "../stores/index.ts";
 import { ElMessage } from "element-plus";
-
-const userData = userStore(pinia);
+import { sessionGetData } from "../hooks/useStorage.ts";
 
 let service = axios.create({
   baseURL: "http://127.0.0.1:8081",
@@ -15,7 +12,7 @@ service.interceptors.request.use(
   function (config) {
     //给需要验证token的接口添加authorization
     if (!config.url.match(/^\/user/)) {
-      config.headers.authorization = userData.token;
+      config.headers.authorization = sessionGetData('token');
     }
     return config;
   },
