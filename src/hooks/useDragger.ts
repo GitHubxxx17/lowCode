@@ -14,7 +14,6 @@ function useDragger(): any {
   let startX = 0; //鼠标在目标节点中的x值
   let startY = 0; //鼠标在目标节点中的y值
   let oldContainer = null; //一开始拖拽时组件所在的容器
-  let oldDragData = null; //拖拽节点的数据
   let oldIndex = -1; //拖拽节点一开始的位置
   let newIndex = -1; //拖拽节点最后的位置
   let dragChildList = []; //拖拽节点当前容器所有的子节点
@@ -22,88 +21,77 @@ function useDragger(): any {
   let isAdd = false; //是否添加进其他容器
   let canChange = null; // 能进行交换节点或者容器
   let inlineArr = []; // 记录当前容器的每行节点情况
-  /**
-   *物料区鼠标事件
-   * @param {*} component //物料区组件
-   * @param {*} e
-   */
-  const mousedown = (component: any, e: any) => {
-    mouseup(e);
-    const { clientY, clientX, target } = e;
-    const span = findSpan(target);
-    const { top, left } = span.getBoundingClientRect();
-    events.emit('cloneStart');
-    startX = clientX - left;
-    startY = clientY - top;
-    dragData.isClone = true;
-    dragData.selectedMaterial = component;
-    //添加拖拽的影子
-    ghostEl = document.createElement("div");
-    ghostEl.classList.add("ghostClone");
-    document.body.appendChild(
-      (render(dragData.selectedMaterial.preview(), ghostEl), ghostEl)
-    );
-    ghostEl.style.top = `${top}px`;
-    ghostEl.style.left = `${left}px`;
 
+  /**
+   *初始化函数
+   */
+  const init = () => {
+    container?.classList.remove("chosen-container"); //移除上一个容器的选中
+    if (ghostEl) ghostEl.remove(); //移除影子（后面得改成隐藏和显示）
+    if (renderEl) renderEl.remove(); //移除渲染节点
+    ghostEl = null;
     renderEl = null;
     container = null;
-    document.body.addEventListener("mousemove", cloneMousemove);
+    dragData.isClone = false;
+    dragData.isDrag = false;
+    dragData.isDraging = false;
+    document.body.removeEventListener("mousemove", DragGhostMove);
+    document.body.removeEventListener("mousemove", dragMousemove);
   };
 
+  /**
+   *物料区鼠标按下事件
+   * @param {*} component //物料区组件
+   * @param {*} e 鼠标事件
+   */
+  const cloneMousedown = (component: any, e: any) => {
+    mouseup(e);
+    const span = findSpan(e.target);
+    events.emit("cloneStart");
+    dragData.isClone = true;
+    dragData.selectedMaterial = component;
+    createDragGhost("ghostClone", span, e); //创建拖拽的影子节点
+    document.body.addEventListener("mousemove", DragGhostMove);
+  };
+
+  /**
+   *页面鼠标松开事件
+   * @param {*} e 鼠标事件
+   */
   const mouseup = (e: any): void => {
     // 如果不是编辑区域
-    if (!judgeIsMidContainer(e.target) && !dragData.isClone) {
-      return;
-    }
-
-    //鼠标松开
+    if (!judgeIsMidContainer(e.target) && !dragData.isClone) return;
+    //当处于克隆节点时
     if (dragData.isClone) {
-      //当处于克隆节点时
-      if (ghostEl) ghostEl.remove(); //移除影子（后面得改成隐藏和显示）
       if (container) {
-        container.classList.remove("chosen-container"); //移除上一个容器的选中
         let childrenData = findVnodeProps(container); //获取json子数据
         childrenData.push(deepcopy(dragData.selectedMaterial.defaultData)); //修改数据并重新渲染编辑区域
       }
-      if (renderEl) renderEl.remove();
-      dragData.isClone = false;
       dragData.selectedMaterial = null;
-      events.emit('cloneEnd');
+      events.emit("cloneEnd");
     }
-
+    //当处于拖拽节点时
     if (dragData.isDrag) {
-      if (ghostEl) ghostEl.remove(); //移除影子（后面得改成隐藏和显示）
       if (dragEl) {
         dragEl.style.removeProperty("visibility"); // 容器处于结束后也需要取消隐藏
         document.body.removeEventListener("mousemove", dragMousemove); //解绑鼠标移动事件，防止报错
-        container?.classList.remove("chosen-container");
-        // console.log(oldIndex, newIndex);
-        // if (isAdd) {
-        //     let oldChildrenData = findVnodeProps(oldContainer);//获取json子数据
-        //     oldChildrenData.forEach((data: any, i: number) => {
-        //         if (data == oldDragData) {
-        //             oldChildrenData.splice(i, 1);
-        //         }
-        //     })
-        //     isAdd = false;
-        // }
-
         // 如果处于拖拽状态就相应改变
         if (dragData.isDraging) {
           applyReorder();
         }
-
         // 节点间重新排序
         if (isSort) {
           console.log("11111111");
           let childrenData = findVnodeProps(container); //获取json子数据
-          let dragData = oldDragData;
           if (oldIndex != childrenData.length - 1) {
             childrenData.splice(oldIndex, 1);
-            childrenData.splice(newIndex, 0, dragData); //修改数据并重新渲染编辑区域
+            childrenData.splice(newIndex, 0, dragData.selectedComponent); //修改数据并重新渲染编辑区域
           } else {
-            childrenData.splice(newIndex, 0, deepcopy(dragData)); //修改数据并重新渲染编辑区域
+            childrenData.splice(
+              newIndex,
+              0,
+              deepcopy(dragData.selectedComponent)
+            ); //修改数据并重新渲染编辑区域
             childrenData.pop();
           }
           isSort = false;
@@ -113,25 +101,19 @@ function useDragger(): any {
         dragEl.onmousedown = null;
       }
       dragData.isDraging = false;
-      dragData.isDrag = false;
       dragEl = null;
     }
-
-    document.body.removeEventListener("mousemove", cloneMousemove);
-    document.body.removeEventListener("mousemove", dragMousemove);
+    init();
   };
 
+  //绑定鼠标松开事件
   document.body.onmouseup = mouseup;
 
-  const cloneMousemove = (e: any) => {
-    //克隆组件时的鼠标移动
-    const { clientY, clientX } = e;
-    ghostEl.style.top = `${clientY - startY}px`;
-    ghostEl.style.left = `${clientX - startX}px`;
-  };
-
+  /**
+   *容器鼠标移入
+   * @param {*} e 鼠标事件
+   */
   const mouseenter = (e: any) => {
-    //鼠标移入
     // 克隆组件的情况
     if (dragData.isClone) {
       if (container) {
@@ -155,25 +137,12 @@ function useDragger(): any {
         renderEl)
       );
     }
-
-    // 移动组件到零一个容器的情况
-
-    // if (dragData.isDraging) {
-    //     container.classList.remove('chosen-container');
-    //     let newDragEl = deepcopy(dragEl);//深拷贝拖拽组件
-    //     dragEl.remove();//将组件移除
-    //     container = findParentContainer(e.target);//获取当前正在拖拽的容器
-    //     container.classList.add('chosen-container');
-    //     container.appendChild(newDragEl);//将复制的组件添加进新容器里面
-    //     isAdd = oldContainer == container ? false : true;
-    //     //初始化所有参数
-    //     dragEl = newDragEl;
-    //     dragChildList = [...container.children];//获取当前容器所有子组件
-    //     oldIndex = dragChildList.indexOf(dragEl);//获取拖拽组件在当前容器的位置
-    //     newIndex = oldIndex;
-    // }
   };
 
+  /**
+   *容器鼠标移出
+   * @param {*} e 鼠标事件
+   */
   const mouseleave = (e: any) => {
     //鼠标移出
     if (dragData.isClone) {
@@ -204,10 +173,8 @@ function useDragger(): any {
    * @return {*} 返回标签为span的父组件
    */
   const findSpan = (target: any): any => {
-    if (target.tagName == "DIV")
-      //如果点到父节点就直接返回子节点
-      return target.children[0];
-
+    //如果点到父节点就直接返回子节点
+    if (target.tagName == "DIV") return target.children[0];
     if (target.tagName == "SPAN") {
       return target;
     } else {
@@ -217,7 +184,7 @@ function useDragger(): any {
 
   /**
    * @param {*} target 目标节点
-   * @return {*}  {*}返回最近的父容器节点
+   * @return {*} 返回最近的父容器节点
    */
   const findParentContainer = (target: any): any => {
     if (target.className.includes("container")) {
@@ -242,65 +209,44 @@ function useDragger(): any {
 
   /**
    * @param {*} target 目标容器
-   * @return {*}  {*} 返回该容器的json子数据
+   * @return {*} 返回该容器的json子数据
    */
   const findVnodeProps = (target: any): any => {
     return target.attributes.childrenList;
   };
 
   /**
-   * @param {*} oldNode 要被插入的节点
-   * @param {*} newNode 要插入的节点
+   * 点击选中节点
+   * @param {*} e 鼠标事件
    */
-  function insertAfter(newNode: any, oldNode: any) {
-    if (oldNode != oldNode.parentNode.lastElementChild) {
-      // 判断  如果不是父节点的最后一个子节点执行的语句
-      oldNode.parentNode.insertBefore(newNode, oldNode.nextElementSibling);
-    } else {
-      // 如果是最后一个子节点,那么就直接添加到最后一个;
-      oldNode.parentNode.appendChild(newNode);
-    }
-  }
-
-  //点击选中节点进行拖拽
   const onclickToDrag = (e: any) => {
-    ghostEl = null;
-    dragData.isDraging = false;
-    if (container?.classList) container.classList.remove("chosen-container");
+    //如果点击的区域是整个编辑区域的话
     if (e.target.classList.contains("Editorcontainer")) {
       container = e.target;
       e.target.classList.add("chosen-container");
       dragData.selectedComponent = null;
       dragData.selectKey = null;
-      return; //如果点击的是编辑区域就直接结束函数
+      return;
     }
-    dragData.isDrag = true;
-    dragEl = findDragEl(e.target); //获取拖拽节点
-    dragData.selectKey = dragEl.attributes["data-id"].nodeValue;
 
+    dragEl = findDragEl(e.target); //获取拖拽节点
+    oldContainer = container = findParentContainer(dragEl.parentNode); //获取当前正在拖拽的容器
     dragEl.classList.add("chosenEl");
-    container = findParentContainer(dragEl.parentNode); //获取当前正在拖拽的容器
-    dragData.containerData = findVnodeProps(container); //获取json子数据
+    container.classList.add("chosen-container");
     dragChildList = [...container.children]; //获取当前容器所有子组件
-    oldIndex = dragChildList.indexOf(dragEl); //获取拖拽组件在当前容器的位置
-    newIndex = oldIndex;
-    oldDragData = dragData.containerData[oldIndex];
-    dragData.selectedComponent = reactive(oldDragData);
+    newIndex = oldIndex = dragChildList.indexOf(dragEl); //获取拖拽组件在当前容器的位置
+
+    dragData.isDrag = true;
+    dragData.selectKey = dragEl.attributes["data-id"].nodeValue;
+    dragData.containerData = findVnodeProps(container); //获取json子数据
+    dragData.selectedComponent = reactive(dragData.containerData[oldIndex]);
     dragData.selectedIndex = oldIndex;
 
-    container.classList.add("chosen-container");
-    oldContainer = container;
-    console.dir(dragEl);
     dragEl.onmousedown = (e: any) => {
-      const { clientY, clientX } = e;
-      const { top, left } = dragEl.getBoundingClientRect();
       console.log("正在交换组件中");
-
-      startX = clientX - left;
-      startY = clientY - top;
       dragData.isDraging = true;
-      createDragGhost(); //创建拖拽的影子节点
-
+      createDragGhost("ghostDrag", dragEl, e); //创建拖拽的影子节点
+      dragEl.style.setProperty("visibility", "hidden");
       document.body.addEventListener("mousemove", dragMousemove);
     };
     //销毁拖拽组件相关数据
@@ -324,17 +270,11 @@ function useDragger(): any {
   };
 
   const dragMousemove = (e: any) => {
-    //拖拽组件时的鼠标移动
-    if (!dragData.isDraging) return;
-    //影子组件移动
-    const { clientY, clientX } = e;
-    ghostEl.style.top = `${clientY - startY}px`;
-    ghostEl.style.left = `${clientX - startX}px`;
-
-    // let enterEl = findDragEl(e.target) // 找到可以交换顺序的节点
-    canChange = findDragEl(e.target); // 找到可以交换顺序的节点
-    simulateMovement(calcNewIndex(clientY, clientX));
+    DragGhostMove(e); //影子组件移动
+    // 找到可以交换顺序的节点
+    canChange = findDragEl(e.target);
     //遍历子节点，将目标节点（不是拖拽节点）与拖拽节点交换位置
+    simulateMovement(calcNewIndex(e.clientY, e.clientX));
   };
 
   // 找到当前拖拽行最大的高度
@@ -490,18 +430,35 @@ function useDragger(): any {
     else return findDragEl(target.parentNode);
   };
 
-  //创建拖拽的影子节点
-  const createDragGhost = () => {
-    const { top, left, width, height } = dragEl.getBoundingClientRect();
+  /**
+   * 创建拖拽的影子节点函数
+   * @param {string} className 影子节点类名
+   * @param {*} el 拖拽节点
+   * @param {*} e 鼠标事件
+   */
+  const createDragGhost = (className: string, el: any, e: any) => {
+    const { clientY, clientX } = e;
+    const { top, left, width, height } = el.getBoundingClientRect();
+    startX = clientX - left;
+    startY = clientY - top;
     ghostEl = document.createElement("div");
-    ghostEl.classList.add("ghostDrag");
+    ghostEl.classList.add(className);
     ghostEl.style.width = `${width}px`;
     ghostEl.style.height = `${height}px`;
-    ghostEl.innerHTML = dragEl.outerHTML;
+    ghostEl.innerHTML = el.outerHTML;
     document.body.appendChild(ghostEl);
     ghostEl.style.top = `${top}px`;
     ghostEl.style.left = `${left}px`;
-    dragEl.style.setProperty("visibility", "hidden"); // 设置
+  };
+
+  /**
+   *  拖拽节点移动函数
+   * @param {*} { clientY, clientX } 鼠标指针的x值和y值
+   */
+  const DragGhostMove = ({ clientY, clientX }: any) => {
+    //克隆组件时的鼠标移动
+    ghostEl.style.top = `${clientY - startY}px`;
+    ghostEl.style.left = `${clientX - startX}px`;
   };
 
   const deterWhetherToMoveUp = (fun: any): boolean => {
@@ -510,7 +467,7 @@ function useDragger(): any {
   };
 
   return {
-    mousedown,
+    cloneMousedown,
     mouseenter,
     mouseleave,
     onclickToDrag,

@@ -89,7 +89,7 @@ export default defineComponent({
                         component.category == "container" && (
                           <div
                             onMousedown={(e) =>
-                              usedragger.mousedown(component, e)
+                              usedragger.cloneMousedown(component, e)
                             }
                           >
                             {component.preview()}
@@ -105,7 +105,7 @@ export default defineComponent({
                         component.category == "common" && (
                           <div
                             onMousedown={(e) =>
-                              usedragger.mousedown(component, e)
+                              usedragger.cloneMousedown(component, e)
                             }
                           >
                             {component.preview()}
@@ -121,7 +121,7 @@ export default defineComponent({
                         component.category == "form" && (
                           <div
                             onMousedown={(e) =>
-                              usedragger.mousedown(component, e)
+                              usedragger.cloneMousedown(component, e)
                             }
                           >
                             {component.preview()}
