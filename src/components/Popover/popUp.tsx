@@ -3,7 +3,7 @@ import { defineComponent, ref } from "vue";
 import router from "../../router/index.ts";
 import SettingPages from "./settingPages.vue";
 import { sessionGetData } from "../../hooks/useStorage.ts";
-
+import userPic from "../../assets/user.jpg";
 export default defineComponent({
   setup() {
     // 我的主页
@@ -24,7 +24,7 @@ export default defineComponent({
         <div class="setting">
           <div class="setting-user">
             <div class="setting-user-portrait">
-              <img src="assets/user.jpg" alt="" />
+              <img src={userPic} />
             </div>
             <div class="setting-user-info" title={sessionGetData("username")}>
               {sessionGetData("username")}
