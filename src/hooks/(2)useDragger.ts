@@ -3,6 +3,8 @@ import dragStore from "../stores/dragStore.ts";
 import pinia from "../stores/index.ts";
 import deepcopy from "deepcopy";
 import { events } from "../utils/events.ts";
+let jsonData = null; //渲染的json数据
+console.log(jsonData);
 function useDragger(): any {
   const dragData = dragStore(pinia); //拖拽数据
   let ghostEl = null; //影子组件
@@ -16,6 +18,9 @@ function useDragger(): any {
   let newIndex = -1; //拖拽节点最后的位置
   let dragChildList = []; //拖拽节点当前容器所有的子节点
   let isSort = false; //是否排序
+  // let isAdd = false; //是否添加进其他容器
+  // let canChange = null; // 能进行交换节点或者容器
+  let inlineArr = []; // 记录当前容器的每行节点情况
 
   /**
    *初始化函数
@@ -30,7 +35,6 @@ function useDragger(): any {
     dragData.isClone = false;
     dragData.isDrag = false;
     dragData.isDraging = false;
-    dragChildList = [];
     document.body.removeEventListener("mousemove", DragGhostMove);
     document.body.removeEventListener("mousemove", dragMousemove);
   };
@@ -71,16 +75,25 @@ function useDragger(): any {
       if (dragEl) {
         dragEl.style.removeProperty("visibility"); // 容器处于结束后也需要取消隐藏
         document.body.removeEventListener("mousemove", dragMousemove); //解绑鼠标移动事件，防止报错
-
-        // // 节点间重新排序
+        // 如果处于拖拽状态就相应改变
+        if (dragData.isDraging) {
+          applyReorder();
+        }
+        // 节点间重新排序
         if (isSort) {
-          Array.from(container.children).forEach((el:any) => {
-            el.style.removeProperty("transform");
-            el.style.removeProperty("transition");
-          });
+          console.log("11111111");
           let childrenData = findVnodeProps(container); //获取json子数据
-          childrenData.splice(oldIndex, 1);
-          childrenData.splice(newIndex, 0, dragData.selectedComponent); //修改数据并重新渲染编辑区域
+          if (oldIndex != childrenData.length - 1) {
+            childrenData.splice(oldIndex, 1);
+            childrenData.splice(newIndex, 0, dragData.selectedComponent); //修改数据并重新渲染编辑区域
+          } else {
+            childrenData.splice(
+              newIndex,
+              0,
+              deepcopy(dragData.selectedComponent)
+            ); //修改数据并重新渲染编辑区域
+            childrenData.pop();
+          }
           isSort = false;
         }
 
@@ -220,8 +233,9 @@ function useDragger(): any {
     container = findParentContainer(dragEl.parentNode); //获取当前正在拖拽的容器
     dragEl.classList.add("chosenEl");
     container.classList.add("chosen-container");
-    newIndex = oldIndex = [].indexOf.call(container.children, dragEl); //获取拖拽组件在当前容器的位置
-    getDragChildList();
+    dragChildList = [...container.children]; //获取当前容器所有子组件
+    newIndex = oldIndex = dragChildList.indexOf(dragEl); //获取拖拽组件在当前容器的位置
+
     dragData.isDrag = true;
     dragData.selectKey = dragEl.attributes["data-id"].nodeValue;
     dragData.containerData = findVnodeProps(container); //获取json子数据
@@ -232,7 +246,7 @@ function useDragger(): any {
       console.log("正在交换组件中");
       dragData.isDraging = true;
       createDragGhost("ghostDrag", dragEl, e); //创建拖拽的影子节点
-      // dragEl.style.setProperty("visibility", "hidden");
+      dragEl.style.setProperty("visibility", "hidden");
       document.body.addEventListener("mousemove", dragMousemove);
     };
     //销毁拖拽组件相关数据
@@ -257,57 +271,153 @@ function useDragger(): any {
 
   const dragMousemove = (e: any) => {
     DragGhostMove(e); //影子组件移动
-    isSort = true;
-    console.log(dragChildList[1].left)
+    // 找到可以交换顺序的节点
+    // canChange = findDragEl(e.target);
+    //遍历子节点，将目标节点（不是拖拽节点）与拖拽节点交换位置
+    simulateMovement(calcNewIndex(e.clientY, e.clientX));
+  };
+
+  /**
+   * 找到当前拖拽行最大的高度
+   * @param {*} line
+   * @return {*} maxHeight
+   */
+  const findInlineMaxHeight = (line: number): number => {
+    let maxHeight = -1; // 记录当前拖拽节点处于的行中最大的节点高度
+    for (let i = 0; i < inlineArr[line].length; i++) {
+      maxHeight = Math.max(
+        maxHeight,
+        dragChildList[inlineArr[line][i]].offsetHeight
+      );
+    }
+    return maxHeight;
+  };
+
+  /**
+   * 总结容器行内的节点个数情况
+   */
+  const summarizeInlineNode = () => {
+    let containerWidth = container.offsetWidth; // 获取当前容器的宽度
+    let calcWidth = 0; // 计算当前行已填入节点的宽度
+    // let curInlineStart = 0; // 记录当前拖拽节点处于行的开始节点下标
+    // let curInlineEnd = 0; // 记录当前拖拽节点处于行的结束节点下标
+    let perInlineArr = []; // 每行的节点下标
     for (let i = 0; i < dragChildList.length; i++) {
-      if (
-        i !== newIndex &&
-        e.clientX > dragChildList[i].left &&
-        e.clientX < dragChildList[i].right &&
-        e.clientY > dragChildList[i].top &&
-        e.clientY < dragChildList[i].bottom
-      ) {
-        if (newIndex < i) {
-          for (let j = newIndex; j < i; j++) {
-            if (j < oldIndex) {
-              container.children[j].style.transform =
-                "translate3d(0px, 0px, 0)";
-            } else {
-              const x = dragChildList[j].left - dragChildList[j + 1].left;
-              const y = dragChildList[j].top - dragChildList[j + 1].top;
-              container.children[j + 1].style.transform =
-                "translate3d(" + x + "px, " + y + "px, 0)";
-            }
-          }
-        } else if (newIndex > i) {
-          for (let j = i; j < newIndex; j++) {
-            if (oldIndex <= j) {
-              container.children[j + 1].style.transform =
-                "translate3d(0px, 0px, 0)";
-            } else {
-              const x = dragChildList[j + 1].left - dragChildList[j].left;
-              const y = dragChildList[j + 1].top - dragChildList[j].top;
-              container.children[j].style.transform =
-                "translate3d(" + x + "px, " + y + "px, 0)";
-            }
-          }
-        }
-        const x = dragChildList[i].left - dragChildList[oldIndex].left;
-        const y = dragChildList[i].top - dragChildList[oldIndex].top;
-        dragEl.style.transform = "translate3d(" + x + "px, " + y + "px, 0)";
-        newIndex = i;
-        break;
+      perInlineArr.push(i);
+      calcWidth += dragChildList[i].offsetWidth;
+      // calcWidth > containerWidth已经找到一行了 需要重新开始计算
+      if (calcWidth > containerWidth) {
+        perInlineArr.pop();
+        inlineArr.push(perInlineArr);
+        perInlineArr = [];
+        // curInlineStart = i;
+        calcWidth = dragChildList[i].offsetWidth;
+        perInlineArr.push(i);
       }
+    }
+    if (perInlineArr.length != 0) {
+      inlineArr.push(perInlineArr);
     }
   };
 
-  const getDragChildList = () => {
-    dragChildList = [];
-    for (let item of container.children) {
-      item.style.setProperty("transition", `transform 300ms ease`);
-      dragChildList.push(item.getBoundingClientRect());
+  /**
+   * 计算要移动的组件的放置的最新位置(bug：超出范围会直接返回第一个的位置
+   * @param {number} mouseY 鼠标Y值
+   * @param {number} mouseX 鼠标X值
+   * @return {*} 当前节点所在的位置
+   */
+  const calcNewIndex = function (mouseY: number, mouseX: number):number {
+    inlineArr = [];
+    summarizeInlineNode(); // 算出当前容器的每行节点情况
+    let { top, left } = container.getBoundingClientRect();
+
+    let newIndexLine = 0; // 记录鼠标位置处于当前容器的节点的第几行
+    let newIndexRow = 0; // 记录鼠标位置处于 newIndexLine 的第几个节点位置
+    for (let i = 0; i < inlineArr.length; i++) {
+      let maxHeightTemp = findInlineMaxHeight(i);
+      if (mouseY > top && mouseY <= top + maxHeightTemp) {
+        newIndexLine = i;
+        break;
+      }
+      top += maxHeightTemp;
     }
-  }
+    let curOffsetWidth = 0;
+    for (let i = 0; i < inlineArr[newIndexLine].length; i++) {
+      curOffsetWidth = dragChildList[inlineArr[newIndexLine][i]].offsetWidth;
+      if (mouseX > left && mouseX <= left + curOffsetWidth) {
+        newIndexRow = i;
+        break;
+      }
+      left += curOffsetWidth;
+    }
+
+    return inlineArr[newIndexLine][newIndexRow]; // 把鼠标（即需要移动的组件）位于的放置的最新位置返回去
+  };
+
+  // 更新容器行内的节点个数情况
+  // const updateInlineNode = (curPos) => {
+  //   let containerWidth = container.offsetWidth; // 获取当前容器的宽度
+  //   let calcWidth = 0; // 计算当前行已填入节点的宽度
+  //   let noChange = true;
+  //   for (let i = 0; i < inlineArr.length; i++) {
+  //     for (let j = 0; j < inlineArr[i].length; j++) {
+  //       calcWidth += dragChildList[inlineArr[i][j]].offsetWidth;
+  //       dragChildList[inlineArr[i][j]].style.setProperty(
+  //         "transition",
+  //         `transform 300ms ease`
+  //       );
+  //       // dragChildList[inlineArr[i][j]].style.setProperty(
+  //       //   "transform",
+  //       //   `translate3d(${dragEl.offsetWidth}px,0,0)`
+  //       // );
+  //     }
+  //   }
+  // };
+
+  // 模拟移动组件
+  /**
+   * @param {*} curPos 被选中节点的位置
+   */
+  const simulateMovement = (curPos: number) => {
+    if (curPos === -1 || newIndex === curPos) return;
+    console.log("渲染中的节点移动");
+
+    // 渲染中的节点移动
+    dragChildList.forEach((el, index) => {
+      el.style.setProperty("transition", `transform 300ms ease`);
+      if (curPos > oldIndex && index > oldIndex && index <= curPos) {
+        el.style.setProperty(
+          "transform",
+          `translate3d(-${dragEl.offsetWidth}px,0,0)`
+        );
+      } else if (curPos <= oldIndex && index < oldIndex && index >= curPos) {
+        el.style.setProperty(
+          "transform",
+          `translate3d(${dragEl.offsetWidth}px,0,0)`
+        );
+      } else {
+        el.style.setProperty("transform", `translate3d(0,0,0)`);
+      }
+    });
+    // updateInlineNode(curPos);
+    newIndex = curPos; //获取拖拽组件在当前容器的位置
+  };
+
+  // 应用组件间的重新排序
+  const applyReorder = function () {
+    // console.log("当前处于要交换状态的节点下标为：" + oldIndex);
+    // console.log(dragChildList);
+    // console.log(canChange);
+    // console.log("能交换的节点的下标:" + dragChildList.indexOf(canChange));
+    dragEl.style.removeProperty("visibility");
+    dragChildList.forEach((el) => {
+      el.style.removeProperty("transform");
+      el.style.removeProperty("transition");
+    });
+    if (oldIndex !== newIndex) {
+      isSort = true;
+    }
+  };
 
   /**找到所选中的节点
    * @param {*} target 目标节点
@@ -368,5 +478,12 @@ function useDragger(): any {
     deterWhetherToMoveUp,
   };
 }
+/**
+ *设置渲染数据
+ * @param {Object} data 渲染json数据
+ */
+export const setJsonData = (data: Object): void => {
+  jsonData = reactive(data);
+};
 
 export const usedragger = useDragger();

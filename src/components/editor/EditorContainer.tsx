@@ -1,6 +1,6 @@
 import "@/sass/editor/EditorContainer.scss";
 import { defineComponent, onMounted, ref } from "vue";
-import { usedragger, setJsonData } from "../../hooks/useDragger";
+import { usedragger } from "../../hooks/useDragger";
 import { renderer } from "../../hooks/useRender.ts";
 
 export default defineComponent({
@@ -12,7 +12,6 @@ export default defineComponent({
 
     onMounted(() => {
       containerRef.value.attributes.childrenList = props.EditorData.body;
-      setJsonData(props.EditorData.body);
       const determineScope = () => {
         // let { clientX, clientY } = e; // 获取鼠标松开的坐标
         // let { top, left } = containerRef.getBoundingClientRect();
