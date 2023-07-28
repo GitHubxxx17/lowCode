@@ -1,12 +1,12 @@
-import { defineComponent, reactive, ref, watchEffect } from "vue";
+import { defineComponent, reactive, ref, watch, watchEffect } from "vue";
 import {
   BaseInput,
   BaseSelect,
   BaseSwitch,
   BaseAppearance,
   BaseSize,
+  BaseInputNumber,
 } from "../base/index";
-import { ElInputNumber } from "element-plus";
 export const InputAppearance = defineComponent({
   props: {
     option: { type: Object },
@@ -18,12 +18,12 @@ export const InputAppearance = defineComponent({
     const BasicState = reactive({
       width: {
         label: "宽度",
-        value: "",
+        value: props.option.style.width,
         placeholder: "请输入输入框宽度",
       },
       height: {
         label: "宽度",
-        value: "",
+        value: props.option.style.height,
         placeholder: "请输入输入框高度",
       },
     });
@@ -58,6 +58,7 @@ export const InputAppearance = defineComponent({
       options: [{ value: "大" }, { value: "中" }, { value: "小" }],
     });
 
+    //#region
     // const labelStyleOption = {
     //   writingStyle: true,
     //   marginAndPadding: true,
@@ -110,19 +111,11 @@ export const InputAppearance = defineComponent({
     //     },
     //   ],
     // });
-
-    // 基本初始化渲染
-    (() => {
-      // 宽度和高度
-      if (props.option.style.width) {
-        BasicState.width.value = props.option.style.width;
-      }
-      if (props.option.style.height) {
-        BasicState.height.value = props.option.style.height;
-      }
-    })();
+    //#endregion
 
     watchEffect(() => {
+      console.log(props);
+
       // 宽度和高度
       props.option.style.width = BasicState.width.value;
       props.option.style.height = BasicState.height.value;
@@ -198,12 +191,18 @@ export const InputProperty = defineComponent({
       //   label: "计数器",
       //   value: false,
       // },
+      maxLength: {
+        label: "最长输入长度",
+        value: 0,
+        min: 0,
+      },
+      minLength: {
+        label: "最小输入长度",
+        value: 0,
+        min: 0,
+      },
     });
 
-    // 最大输入字数
-    const maxNum = ref(1);
-    // 最小输入字数
-    const minNum = ref(1);
     // 状态
     const inputState = reactive({
       hide: {
@@ -256,9 +255,12 @@ export const InputProperty = defineComponent({
       // 可清除
       BasicState.clearable.value = props.option.clearable;
       // 最长输入长度
-      maxNum.value = props.option.maxlength;
+      BasicState.maxLength.value = props.option.maxlength;
       // 最小输入长度
-      minNum.value = props.option.minlength;
+      BasicState.minLength.value = props.option.minlength;
+      if (BasicState.maxLength.value && BasicState.maxLength.value != 0) {
+        props.option.showWordLimit = true;
+      }
     })();
 
     // 状态初始化渲染
@@ -282,15 +284,21 @@ export const InputProperty = defineComponent({
       }
       // 默认值
       props.option.value = BasicState.defaultValue.value;
-      console.log(props.option.defaultValue);
       // 占位提示
       props.option.placeholder = BasicState.placeholderPrompt.value;
       // 可清除
       props.option.clearable = BasicState.clearable.value;
+
       // 最长输入长度
-      props.option.maxlength = maxNum.value;
+      props.option.maxlength = BasicState.maxLength.value;
       // 最小输入长度
-      props.option.minlength = minNum.value;
+      props.option.minlength = BasicState.minLength.value;
+
+      if (BasicState.maxLength.value && BasicState.maxLength.value > 0) {
+        props.option.showWordLimit = true;
+      } else {
+        props.option.showWordLimit = false;
+      }
 
       // 隐藏
       props.option.hidden = inputState.hide.value;
@@ -315,22 +323,24 @@ export const InputProperty = defineComponent({
               <BaseInput option={BasicState.placeholderPrompt}></BaseInput>
               <BaseSwitch option={BasicState.clearable}></BaseSwitch>
               {/* <BaseSwitch option={BasicState.countor}></BaseSwitch> */}
-              <div class="elCollapseItem base-settings flexSelectContainer">
+              {/* <div class="elCollapseItem base-settings flexSelectContainer">
                 <p>最大输入长度</p>
                 <ElInputNumber
                   v-model={maxNum.value}
                   class="mx-4"
                   controls-position="right"
                 />
-              </div>
-              <div class="elCollapseItem base-settings flexSelectContainer">
+              </div> */}
+              <BaseInputNumber option={BasicState.maxLength}></BaseInputNumber>
+              <BaseInputNumber option={BasicState.minLength}></BaseInputNumber>
+              {/* <div class="elCollapseItem base-settings flexSelectContainer">
                 <p>最小输入长度</p>
                 <ElInputNumber
                   v-model={minNum.value}
                   class="mx-4"
                   controls-position="right"
                 />
-              </div>
+              </div> */}
             </elCollapseItem>
             <elCollapseItem title="状态" name="state">
               <BaseSwitch option={inputState.hide}></BaseSwitch>

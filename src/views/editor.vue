@@ -341,4 +341,3 @@ const shortcuts = [
   }
 }
 </style>
-../components/Popover/popUp.tsx

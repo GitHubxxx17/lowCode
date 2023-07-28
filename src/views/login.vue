@@ -44,8 +44,8 @@ const changeModel = () => {
 
 // 表单的数据绑定对象
 let form = reactive({
-  username: "admin",
-  password: "123456",
+  username: "",
+  password: "",
   checkPassword: "",
 });
 

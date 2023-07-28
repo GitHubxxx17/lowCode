@@ -60,6 +60,10 @@ const selectBtn = (index: number) => {
 .ErComponent {
   width: 280px;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 
   // 导航栏
   &-nav {
