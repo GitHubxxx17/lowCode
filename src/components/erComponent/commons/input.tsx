@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref, watch, watchEffect } from "vue";
+import { defineComponent, reactive, watchEffect } from "vue";
 import {
   BaseInput,
   BaseSelect,
@@ -287,8 +287,9 @@ export const InputProperty = defineComponent({
       // 占位提示
       props.option.placeholder = BasicState.placeholderPrompt.value;
       // 可清除
-      props.option.clearable = BasicState.clearable.value;
-
+      if (BasicState.clearable.value)
+        props.option.clearable = BasicState.clearable.value;
+      else delete props.option.clearable;
       // 最长输入长度
       props.option.maxlength = BasicState.maxLength.value;
       // 最小输入长度
@@ -301,13 +302,20 @@ export const InputProperty = defineComponent({
       }
 
       // 隐藏
-      props.option.hidden = inputState.hide.value;
+      if (inputState.hide.value) props.option.hidden = inputState.hide.value;
+      else delete props.option.hidden;
       // 只读
-      props.option.readonly = inputState.onlyRead.value;
+      if (inputState.onlyRead.value)
+        props.option.readonly = inputState.onlyRead.value;
+      else delete props.option.readonly;
       // 禁用
-      props.option.disabled = inputState.disable.value;
+      if (inputState.disable.value)
+        props.option.disabled = inputState.disable.value;
+      else delete props.option.disabled;
       // 自动对焦
-      props.option.autofocus = inputState.autofocus.value;
+      if (inputState.autofocus.value)
+        props.option.autofocus = inputState.autofocus.value;
+      else delete props.option.autofocus;
     });
 
     return () => {

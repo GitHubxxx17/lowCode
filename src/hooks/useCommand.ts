@@ -1,5 +1,5 @@
 import { events } from "../utils/events.ts";
-import { onUnmounted } from "vue";
+import { onUnmounted, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import mainStore from "../stores/mainStore.ts";
 import dragStore from "../stores/dragStore.ts";
@@ -7,6 +7,7 @@ import pinia from "../stores/index.ts";
 import deepcopy from "deepcopy";
 import { localSaveData, localGetData } from "./useStorage.ts";
 import { updateEditData } from "../request/api/home";
+import { addMap } from "./useCreateMap.ts";
 
 //命令
 interface command {
@@ -132,9 +133,9 @@ export function useCommand() {
             let res = await updateEditData({
               jsonData: JSON.stringify(mainData.EditorData),
               id: localGetData("id"),
-              title:mainData.title
+              title: mainData.title,
             });
-            if(res.data?.code == 200){
+            if (res.data?.code == 200) {
               ElMessage.success({ message: "保存成功", duration: 2000 });
             }
           },
@@ -161,19 +162,20 @@ export function useCommand() {
       keyboard: "delete",
       pushQueue: true,
       execute() {
-        let before = deepcopy(mainData.EditorData);
+        let key = dragData.selectKey;
+        let parent = mainData.EditorDataMap.get(key).parent;
+        let index = mainData.EditorDataMap.get(parent).children.findIndex(
+          (item: string) => item == key
+        );
         if (dragData.isDrag) {
           dragData.destructionOfDrag();
-          dragData.containerData.splice(dragData.selectedIndex, 1);
         }
-        let after = deepcopy(mainData.EditorData);
-        console.log(before, after);
         return {
           redo() {
-            mainData.EditorData = after;
+            mainData.EditorDataMap.get(parent).children.splice(index, 1);
           },
           undo() {
-            mainData.EditorData = before;
+            mainData.EditorDataMap.get(parent).children.splice(index, 0, key);
           },
         };
       },
@@ -249,14 +251,22 @@ export function useCommand() {
         };
       },
       execute() {
-        let before = this.before;
-        let after = deepcopy(mainData.EditorData);
+        let parent = dragData.selectParent;
+        let selectedMaterial = dragData.selectedMaterial;
+        let defaultData = deepcopy(dragData.selectedMaterial.defaultData);
+        let index = mainData.EditorDataMap.get(parent).children.length;
+        let id = null;
         return {
           redo() {
-            mainData.EditorData = after;
+            id = addMap(selectedMaterial.type, {
+              ...defaultData,
+              parent: parent,
+            });
+            mainData.EditorDataMap.get(parent).children.push(id); //修改数据并重新渲染编辑区域
           },
           undo() {
-            mainData.EditorData = before;
+            mainData.EditorDataMap.get(parent).children.splice(index, 1);
+            mainData.EditorDataMap.delete(id);
           },
         };
       },
@@ -279,8 +289,8 @@ export function useCommand() {
 
   const register = (command: command) => {
     commands[command.name] = () => {
-      //处于拖拽中或者克隆中时禁止触发命令
-      if (dragData.isDraging || dragData.isClone) return;
+      //处于拖拽中时禁止触发命令
+      if (dragData.isDraging) return;
       const { redo, undo } = command.execute();
       redo();
       if (!command.pushQueue) return; //不需要放入队列的跳过

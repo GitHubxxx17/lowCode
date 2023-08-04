@@ -21,6 +21,7 @@ mainData.title = localGetData("title") ? localGetData("title") : "新项目";
 mainData.EditorData = localGetData("data")
   ? localGetData("data")
   : reactive(data);
+mainData.getMap();
 //挂载命令
 const { commands } = useCommand();
 
@@ -104,20 +105,20 @@ const shortcuts = [
     </header>
     <section class="editor-body">
       <div class="editor-body-left">
-        <EditorLeft :EditorData="mainData.EditorData"></EditorLeft>
+        <EditorLeft :EditorData="mainData.EditorDataMap"></EditorLeft>
       </div>
       <div class="editor-body-container">
         <div class="editor-body-container-top"></div>
         <div class="editor-body-container-content">
           <div class="editor-body-container-content_inner" ref="editArea">
             <EditorContainer
-              :EditorData="mainData.EditorData"
+              :EditorData="mainData.EditorDataMap"
             ></EditorContainer>
           </div>
         </div>
       </div>
       <div class="editor-body-right">
-        <EditorRight :EditorData="mainData.EditorData"></EditorRight>
+        <EditorRight :EditorData="mainData.EditorDataMap"></EditorRight>
       </div>
     </section>
   </div>

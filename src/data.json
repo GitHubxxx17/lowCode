@@ -44,9 +44,8 @@
                     "defaultValue":"123",
                     "placeholder": "",
                     "showPassword": false,
-                    "clearable": false,
-                    "maxlength": "",
-                    "minlength": "",
+                    "maxlength": 0,
+                    "minlength": 0,
                     "showWordLimit": true,
                     "style": {
                       "position": "relative",

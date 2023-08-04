@@ -1,10 +1,11 @@
-import { reactive, render } from "vue";
+import {  render } from "vue";
 import dragStore from "../stores/dragStore.ts";
+import mainStore from "../stores/mainStore.ts";
 import pinia from "../stores/index.ts";
-import deepcopy from "deepcopy";
 import { events } from "../utils/events.ts";
 function useDragger(): any {
   const dragData = dragStore(pinia); //拖拽数据
+  let mainData = mainStore(pinia);
   let ghostEl = null; //影子组件
   let container = null; //父容器
   let renderEl = null; //渲染节点
@@ -60,11 +61,10 @@ function useDragger(): any {
     //当处于克隆节点时
     if (dragData.isClone) {
       if (container) {
-        let childrenData = findVnodeProps(container); //获取json子数据
-        childrenData.push(deepcopy(dragData.selectedMaterial.defaultData)); //修改数据并重新渲染编辑区域
+        dragData.selectParent = container.attributes["data-id"].nodeValue
       }
-      dragData.selectedMaterial = null;
       events.emit("cloneEnd");
+      dragData.selectedMaterial = null;
     }
     //当处于拖拽节点时
     if (dragData.isDrag) {
@@ -74,13 +74,14 @@ function useDragger(): any {
 
         // // 节点间重新排序
         if (isSort) {
-          Array.from(container.children).forEach((el:any) => {
+          Array.from(container.children).forEach((el: any) => {
             el.style.removeProperty("transform");
             el.style.removeProperty("transition");
           });
-          let childrenData = findVnodeProps(container); //获取json子数据
+          let parent = mainData.EditorDataMap.get(dragData.selectKey).parent; //获取json子数据
+          let childrenData = mainData.EditorDataMap.get(parent).children;
           childrenData.splice(oldIndex, 1);
-          childrenData.splice(newIndex, 0, dragData.selectedComponent); //修改数据并重新渲染编辑区域
+          childrenData.splice(newIndex, 0, dragData.selectKey); //修改数据并重新渲染编辑区域
           isSort = false;
         }
 
@@ -211,7 +212,6 @@ function useDragger(): any {
     if (e.target.classList.contains("Editorcontainer")) {
       container = e.target;
       e.target.classList.add("chosen-container");
-      dragData.selectedComponent = null;
       dragData.selectKey = null;
       return;
     }
@@ -224,9 +224,6 @@ function useDragger(): any {
     getDragChildList();
     dragData.isDrag = true;
     dragData.selectKey = dragEl.attributes["data-id"].nodeValue;
-    dragData.containerData = findVnodeProps(container); //获取json子数据
-    dragData.selectedComponent = reactive(dragData.containerData[oldIndex]);
-    dragData.selectedIndex = oldIndex;
 
     dragEl.onmousedown = (e: any) => {
       console.log("正在交换组件中");
@@ -239,7 +236,6 @@ function useDragger(): any {
     dragData.destructionOfDrag = () => {
       if (dragData.isDrag) {
         dragData.selectKey = null;
-        dragData.selectedComponent = null;
         if (ghostEl) ghostEl.remove(); //移除影子（后面得改成隐藏和显示）
         if (dragEl) {
           dragEl.style.removeProperty("visibility"); // 容器处于结束后也需要取消隐藏
@@ -258,7 +254,6 @@ function useDragger(): any {
   const dragMousemove = (e: any) => {
     DragGhostMove(e); //影子组件移动
     isSort = true;
-    console.log(dragChildList[1].left)
     for (let i = 0; i < dragChildList.length; i++) {
       if (
         i !== newIndex &&
@@ -307,7 +302,7 @@ function useDragger(): any {
       item.style.setProperty("transition", `transform 300ms ease`);
       dragChildList.push(item.getBoundingClientRect());
     }
-  }
+  };
 
   /**找到所选中的节点
    * @param {*} target 目标节点

@@ -1,6 +1,7 @@
 import { defineComponent } from "vue";
 import pinia from "../../../stores/index.ts";
 import dragStore from "../../../stores/dragStore.ts";
+import mainStore from "../../../stores/mainStore.ts";
 export default defineComponent({
   props: {
     label: { type: String },
@@ -9,6 +10,7 @@ export default defineComponent({
   },
   setup(props) {
     const dragData = dragStore(pinia); //拖拽数据
+    const mainData = mainStore(pinia); //拖拽数据
     // 初始化渲染
     (() => {
       if (props.setting.icon && props.setting.iconText) {
@@ -43,10 +45,10 @@ export default defineComponent({
       props.setting.isFill = !props.setting.isFill;
       props.setting.clearable = !props.setting.clearable;
       if (props.label == "左侧图标") {
-        dragData.selectedComponent.icon.leftIcon = "";
+        mainData.EditorDataMap.get(dragData.selectKey).icon.leftIcon = "";
       }
       if (props.label == "右侧图标") {
-        dragData.selectedComponent.icon.rightIcon = "";
+        mainData.EditorDataMap.get(dragData.selectKey).icon.rightIcon = "";
       }
       e.stopPropagation();
     };
@@ -72,10 +74,10 @@ export default defineComponent({
       props.setting.icon = item;
       props.setting.iconText = item.replace("icon-", "");
       if (props.label == "左侧图标") {
-        dragData.selectedComponent.icon.leftIcon = item;
+        mainData.EditorDataMap.get(dragData.selectKey).icon.leftIcon = item;
       }
       if (props.label == "右侧图标") {
-        dragData.selectedComponent.icon.rightIcon = item;
+        mainData.EditorDataMap.get(dragData.selectKey).icon.rightIcon = item;
       }
     };
 

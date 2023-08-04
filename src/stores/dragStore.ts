@@ -8,6 +8,7 @@ const dragStore = defineStore("dragStore", {
       isDrag: false, //是否处于拖拽
       isDraging: false, //是否处于拖拽中
       selectKey: null, // 记录选中的节点类型
+      selectParent:null,//选择的父节点
       selectedComponent: null, //选中的组件
       containerData: null, //选中组件的父节点数据
       selectedIndex: null, //选中组件的下标

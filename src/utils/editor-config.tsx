@@ -15,7 +15,7 @@ const componentsConfig = [
         ...props,
         text: "容器",
         class: "container-ordinary",
-        "data-id": this.type,
+        "data-id": props.id,
       };
       return <Container {...props}></Container>;
     },
@@ -39,7 +39,7 @@ const componentsConfig = [
         ...props,
         text: "自由容器",
         class: "container-free",
-        "data-id": this.type,
+        "data-id": props.id,
       };
       return <Container {...props}></Container>;
     },
@@ -60,7 +60,7 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       return (
-        <div class="cannotPreview" data-id={this.type}>
+        <div class="cannotPreview" data-id={props.id}>
           <span style={props.style} datatype="text">
             {props.children ? props.children : "渲染文字"}
           </span>
@@ -85,7 +85,7 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       return (
-        <div class="cannotPreview" data-id={this.type}>
+        <div class="cannotPreview" data-id={props.id}>
           <ElButton
             style={props.style}
             class="baseButton"
@@ -130,7 +130,7 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       return (
-        <div class="cannotPreview" data-id={this.type}>
+        <div class="cannotPreview" data-id={props.id}>
           <el-Input
             v-model={props.value}
             style={props.style}
@@ -158,8 +158,8 @@ const componentsConfig = [
       placeholder: "请输入", // 占位提示
       showPassword: false, // 是否可以隐藏密码
       clearable: false, // 是否可以清除
-      maxlength: "", // 最长输入长度
-      minlength: "", // 最小输入长度
+      maxlength: 0, // 最长输入长度
+      minlength: 0, // 最小输入长度
       showWordLimit: false, // 是否显示输入字数统计，只在 type = "text" 或 type = "textarea" 时有效
       disabled: false, // 是否可清空
       readonly: false, // 原生属性，是否只读
@@ -179,7 +179,7 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       return (
-        <div class="cannotPreview" data-id={this.type}>
+        <div class="cannotPreview" data-id={props.id}>
           <ElSelect
             style={props.style}
             filterable={props.filterable ? props.filterable : false}
@@ -212,7 +212,7 @@ const componentsConfig = [
     category: "form",
     render(props: any) {
       return (
-        <div class="cannotPreview" style={props.style.box} data-id={this.type}>
+        <div class="cannotPreview" style={props.style.box} data-id={props.id}>
           <div style={props.style.title}>
             {props.title ? props.title : "文本"}
           </div>
@@ -247,7 +247,7 @@ const componentsConfig = [
     category: "form",
     render(props: any) {
       return (
-        <div class="cannotPreview" style={props.style.box} data-id={this.type}>
+        <div class="cannotPreview" style={props.style.box} data-id={props.id}>
           <div style={props.style.title}>
             {props.title ? props.title : "多行文本"}
           </div>

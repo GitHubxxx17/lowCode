@@ -279,6 +279,13 @@ export default defineComponent({
       flexAttribute: ["", "", "", ""],
       flexDirectionMap: new Map(),
     });
+    const displayValueProcessing = (i: number) => {
+      displayType.flexList[i].list.some((item) => {
+        if (item.attribute == displayType.flexAttribute[i]) {
+          displayType.flexList[i].value = item.value;
+        }
+      });
+    };
     //处理显示对齐
     (() => {
       if (props.option.style.display) {
@@ -287,14 +294,25 @@ export default defineComponent({
           displayType.alignmentLabel = "flex布局设置";
           displayType.options[3].active = true;
           displayType.flexisShow = true;
-          if (props.option.style.flexDirection)
+          if (props.option.style.flexDirection) {
             displayType.flexAttribute[0] = props.option.style.flexDirection;
-          if (props.option.style.justifyContent)
+            displayValueProcessing(0);
+          }
+
+          if (props.option.style.justifyContent) {
             displayType.flexAttribute[1] = props.option.style.justifyContent;
-          if (props.option.style.alignItems)
+            displayValueProcessing(1);
+          }
+
+          if (props.option.style.alignItems) {
             displayType.flexAttribute[2] = props.option.style.alignItems;
-          if (props.option.style.flexWrap)
+            displayValueProcessing(2);
+          }
+
+          if (props.option.style.flexWrap) {
             displayType.flexAttribute[3] = props.option.style.flexWrap;
+            displayValueProcessing(3);
+          }
         } else {
           if (props.option.style.textAlign) {
             let index = 0;
