@@ -8,7 +8,7 @@ import { ElMessage } from "element-plus";
 
 const dragData = dragStore(pinia);
 const mainData = mainStore(pinia);
-
+mainData.setEditorData();
 //复制数据到剪切板
 const copyData = () => {
   const textArea = document.createElement("textarea");

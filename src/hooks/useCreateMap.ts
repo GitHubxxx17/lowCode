@@ -1,5 +1,7 @@
 import mainStore from "../stores/mainStore.ts";
 import pinia from "../stores/index.ts";
+import deepcopy from "deepcopy";
+import { reactive } from "vue";
 
 const EditorDataMap = new Map();
 
@@ -19,7 +21,7 @@ export const useCreateMap = (data: any) => {
 export const addMap = (key: string, data: any): string => {
   const mainData = mainStore(pinia);
   let id: string = key + "-" + getUUID();
-  mainData.EditorDataMap.set(id, data);
+  mainData.EditorDataMap.set(id, reactive(data));
   return id;
 };
 
@@ -36,19 +38,43 @@ const buildMap = (data: any, parent: string): string => {
     data.body.forEach((item: any) => {
       children.push(buildMap(item, parent));
     });
-    EditorDataMap.set(parent, { ...data, children: children, body: "" });
+    EditorDataMap.set(parent, reactive({ ...data, children: children, body: "" }));
   } else {
     if (Array.isArray(data.children)) {
       data.children.forEach((item: any) => {
         children.push(buildMap(item, id));
       });
-      EditorDataMap.set(id, { parent: parent, ...data, children });
+      EditorDataMap.set(id, reactive({ parent: parent, ...data, children }));
     } else {
-      EditorDataMap.set(id, { parent: parent, ...data });
+      EditorDataMap.set(id, reactive({ parent: parent, ...data }));
     }
   }
   return id;
 };
+
+export const parseMapToJson = (EditorDataMap:any):any => {
+  let EditorData = {};
+  const parseMap = (key:string):any => {
+      let data = deepcopy(EditorDataMap.get(key));
+      let children = [];
+      if(Array.isArray(data.children)){
+        data.children.map((child:string)=>{
+          children.push(parseMap(child));
+        })
+        if(key == 'page'){
+          data.body = children;
+          delete data.children;
+        }else{
+          data.children = children;
+        }
+      }
+      delete data.parent;
+      return data;
+  }
+  EditorData = parseMap('page');
+  console.log(EditorData);
+  return EditorData;
+}
 
 /**
  *  生成唯一的uuid

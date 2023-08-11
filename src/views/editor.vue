@@ -21,7 +21,7 @@ mainData.title = localGetData("title") ? localGetData("title") : "新项目";
 mainData.EditorData = localGetData("data")
   ? localGetData("data")
   : reactive(data);
-mainData.getMap();
+mainData.setMap();
 //挂载命令
 const { commands } = useCommand();
 
@@ -292,8 +292,10 @@ const shortcuts = [
       flex: 1;
       display: flex;
       flex-direction: column;
+      position: relative;
 
       &-top {
+        position: absolute;
         width: 100%;
         height: 42px;
         background-color: #fff;
@@ -302,7 +304,7 @@ const shortcuts = [
       &-content {
         width: 100%;
         height: 100%;
-        padding: 24px 16px 16px 24px;
+        padding: 66px 16px 16px 24px;
         flex: 1;
         background-color: #efeff1;
 

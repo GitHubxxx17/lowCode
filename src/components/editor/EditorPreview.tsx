@@ -1,7 +1,7 @@
 import "@/sass/editor/EditorContainer.scss";
 import "@/sass/editor/EditorPreview.scss";
 import { defineComponent } from "vue";
-import { renderer } from "../../hooks/useRender.ts";
+import { mapRenderer } from "../../hooks/useRender.ts";
 
 export default defineComponent({
   props: {
@@ -12,7 +12,7 @@ export default defineComponent({
       return (
         <div class="EditorPreview">
           <div id="body" style={props.EditorData.style}>
-            {renderer(props.EditorData.body)}
+          {mapRenderer('page')}
           </div>
           <div class="EditorPreview-leftMessage">按ESC可退出预览</div>
         </div>

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { useCreateMap } from "../hooks/useCreateMap";
+import { useCreateMap,parseMapToJson } from "../hooks/useCreateMap";
 //拖拽数据
 const mainStore = defineStore("mainStore", {
   state: () => {
@@ -12,8 +12,11 @@ const mainStore = defineStore("mainStore", {
     };
   },
   actions: {
-    getMap(){
+    setMap(){
       this.EditorDataMap = useCreateMap(this.EditorData);
+    },
+    setEditorData(){
+      this.EditorData = parseMapToJson(this.EditorDataMap);
     }
   },
 });

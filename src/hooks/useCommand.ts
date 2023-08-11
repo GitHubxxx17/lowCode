@@ -35,7 +35,7 @@ export function useCommand() {
       execute() {
         return {
           redo() {
-            mainData.copyData = dragData.selectedComponent;
+            mainData.copyData = dragData.selectKey;
           },
         };
       },
@@ -46,21 +46,41 @@ export function useCommand() {
       keyboard: "ctrl+v",
       pushQueue: true,
       execute() {
-        let before = deepcopy(mainData.EditorData);
-        if (mainData.copyData && dragData.containerData) {
-          dragData.containerData.splice(
-            dragData.selectedIndex + 1,
-            0,
-            deepcopy(mainData.copyData)
-          );
-        }
-        let after = deepcopy(mainData.EditorData);
+        let copyData = mainData.copyData; //复制的keys
+        let key = dragData.selectKey; //当前选中的keys
+        let parent = mainData.EditorDataMap.get(key)?.parent || 'page'; //当前选中的keys的父容器key
+        let index = mainData.EditorDataMap.get(parent).children.findIndex(
+          (item: string) => item == key
+        ); //当前选中的keys所在容器的位置
+        let data = mainData.EditorDataMap.get(copyData); //复制的key的数据 
+        let addKeys = []; //粘贴后添加上去的key
         return {
           redo() {
-            mainData.EditorData = after;
+            /**
+             * 复制所以节点
+             * @param {string} keys 需要复制的keys
+             * @param {string} parent 需要复制的keys的父容器
+             * @param {*} data 需要复制的keys的数据
+             * @return {*} 返回复制后的keys
+             */
+            function toCopy(keys:string,parent:string,data:any){
+              data.parent = parent;
+              let id = addMap(keys.replace(/-[^-]*$/, ''),deepcopy(data))
+              addKeys.push(id);
+              if(Array.isArray(data.children)){
+                mainData.EditorDataMap.get(id).children = data.children.map((child:string)=>{
+                  return toCopy(child,id,mainData.EditorDataMap.get(child))
+                })
+              }
+              return id;
+            }
+            mainData.EditorDataMap.get(parent).children.splice(index+1,0,toCopy(copyData,parent,data));
           },
           undo() {
-            mainData.EditorData = before;
+            mainData.EditorDataMap.get(parent).children.splice(index+1,1);
+            addKeys.forEach((keys:string)=>{
+              mainData.EditorDataMap.delete(keys);
+            })
           },
         };
       },
@@ -104,19 +124,21 @@ export function useCommand() {
       keyboard: "ctrl+x",
       pushQueue: true,
       execute() {
-        let before = deepcopy(mainData.EditorData);
+        mainData.copyData = dragData.selectKey;
+        let key = dragData.selectKey;
+        let parent = mainData.EditorDataMap.get(key)?.parent || 'page';
+        let index = mainData.EditorDataMap.get(parent).children.findIndex(
+          (item: string) => item == key
+        );
         if (dragData.isDrag) {
-          mainData.copyData = dragData.selectedComponent;
           dragData.destructionOfDrag();
-          dragData.containerData.splice(dragData.selectedIndex, 1);
         }
-        let after = deepcopy(mainData.EditorData);
         return {
           redo() {
-            mainData.EditorData = after;
+            mainData.EditorDataMap.get(parent).children.splice(index, 1);
           },
           undo() {
-            mainData.EditorData = before;
+            mainData.EditorDataMap.get(parent).children.splice(index, 0, key);
           },
         };
       },
@@ -128,6 +150,7 @@ export function useCommand() {
       execute() {
         return {
           async redo() {
+            mainData.setEditorData();
             localSaveData("title", mainData.title);
             localSaveData("data", mainData.EditorData);
             let res = await updateEditData({
@@ -163,7 +186,7 @@ export function useCommand() {
       pushQueue: true,
       execute() {
         let key = dragData.selectKey;
-        let parent = mainData.EditorDataMap.get(key).parent;
+        let parent = mainData.EditorDataMap.get(key).parent || 'page';
         let index = mainData.EditorDataMap.get(parent).children.findIndex(
           (item: string) => item == key
         );
@@ -188,6 +211,7 @@ export function useCommand() {
         return {
           redo() {
             if (!mainData.isPreview) {
+              mainData.setEditorData();
               mainData.isPreview = true;
               ElMessage.success({ message: "已进入预览模式", duration: 2000 });
             }

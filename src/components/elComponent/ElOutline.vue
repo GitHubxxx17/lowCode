@@ -4,6 +4,7 @@ import mainStore from "../../stores/mainStore.ts";
 import pinia from "../../stores/index.ts";
 const config: any = inject("editorConfig"); //组件配置
 const mainData = mainStore(pinia);
+mainData.setEditorData();
 const getOutlineData = (data: any, id: number = 2) => {
   let newId = id || 2;
   if (Array.isArray(data)) {

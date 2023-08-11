@@ -183,14 +183,15 @@ const componentsConfig = [
           <ElSelect
             style={props.style}
             filterable={props.filterable ? props.filterable : false}
-            placeholder={props.placeholder ? props.placeholder : '请选择'}
+            placeholder={props.placeholder ? props.placeholder : "请选择"}
             v-model={props.defaultValue}
           >
-            {props.selectData && props.selectData.map((item: any) => {
-              return (
-                <el-option key={item.value} value={item.value}></el-option>
-              );
-            })}
+            {props.selectData &&
+              props.selectData.map((item: any) => {
+                return (
+                  <el-option key={item.value} value={item.value}></el-option>
+                );
+              })}
           </ElSelect>
         </div>
       );
@@ -202,7 +203,7 @@ const componentsConfig = [
         zIndex: 1,
       },
       children: "",
-      defaultValue:''
+      defaultValue: "",
     },
   },
   {
@@ -217,6 +218,7 @@ const componentsConfig = [
             {props.title ? props.title : "文本"}
           </div>
           <ElInput
+            modelValue={props.value}
             style={props.style.input}
             placeholder={
               props.inputBoxPlaceholder ? props.inputBoxPlaceholder : ""
@@ -228,6 +230,7 @@ const componentsConfig = [
       );
     },
     defaultData: {
+      value:'',
       type: "textBox",
       title: "文本",
       style: {
@@ -251,19 +254,21 @@ const componentsConfig = [
           <div style={props.style.title}>
             {props.title ? props.title : "多行文本"}
           </div>
-          <ElInput
+          <el-input
+            v-model={props.value}
             style={props.style.input}
             type="textarea"
             placeholder={
               props.inputBoxPlaceholder ? props.inputBoxPlaceholder : ""
             }
             clearable={props.clearable ? props.clearable : false}
-            autosize={props.autosize}
-          ></ElInput>
+            rows={props.autosize.minRows}
+          ></el-input>
         </div>
       );
     },
     defaultData: {
+      value:'',
       type: "multilineText",
       title: "多行文本",
       style: {
@@ -339,3 +344,7 @@ const previewComponent = defineComponent({
     };
   },
 });
+
+
+
+
