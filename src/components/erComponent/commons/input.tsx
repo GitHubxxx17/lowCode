@@ -20,11 +20,13 @@ export const InputAppearance = defineComponent({
         label: "宽度",
         value: props.option.style.width,
         placeholder: "请输入输入框宽度",
+        oldValue: "",
       },
       height: {
-        label: "宽度",
+        label: "高度",
         value: props.option.style.height,
         placeholder: "请输入输入框高度",
+        oldValue: "",
       },
     });
 
@@ -114,8 +116,6 @@ export const InputAppearance = defineComponent({
     //#endregion
 
     watchEffect(() => {
-      console.log(props);
-
       // 宽度和高度
       props.option.style.width = BasicState.width.value;
       props.option.style.height = BasicState.height.value;
@@ -291,15 +291,14 @@ export const InputProperty = defineComponent({
         props.option.clearable = BasicState.clearable.value;
       else delete props.option.clearable;
       // 最长输入长度
-      if(BasicState.maxLength.value != 0){
+      if (BasicState.maxLength.value != 0) {
         props.option.maxlength = BasicState.maxLength.value;
-      }else delete props.option.maxlength
-      
+      } else delete props.option.maxlength;
+
       // 最小输入长度
-      if(BasicState.minLength.value != 0){
+      if (BasicState.minLength.value != 0) {
         props.option.minlength = BasicState.minLength.value;
-      }else delete props.option.minlength
-      
+      } else delete props.option.minlength;
 
       if (BasicState.maxLength.value && BasicState.maxLength.value > 0) {
         props.option.showWordLimit = true;

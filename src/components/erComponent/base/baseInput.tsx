@@ -13,6 +13,8 @@ export default defineComponent({
           props.option.label == "宽度" ||
           props.option.label == "高度"
         ) {
+          console.log(obj);
+
           if (newValue == "") {
             obj[key] = "0px";
           } else if (/^\d+$/.test(newValue)) {
@@ -27,12 +29,18 @@ export default defineComponent({
           }
         }
       };
-
+      //保存改变前的数值
       const saveOldValue = (oldValue: string, obj: any) => {
-        //保存改变前的数值
-        if (obj.oldValue) obj.oldValue = oldValue;
+        if (
+          props.option.label == "左侧图标尺寸" ||
+          props.option.label == "右侧图标尺寸" ||
+          props.option.label == "宽度" ||
+          props.option.label == "高度"
+        ) {
+          obj.oldValue = oldValue;
+        }
       };
-      
+
       return (
         <div class="elCollapseItem base-settings">
           <p>{props.option.label}</p>

@@ -84,10 +84,9 @@ export const ButtonAppearance = defineComponent({
         label: "右侧图标尺寸",
         value: "",
         placeholder: "请输入尺寸",
+        oldValue: "",
       },
     });
-
-    console.log(props.option);
 
     // 基本初始化渲染
     (() => {
