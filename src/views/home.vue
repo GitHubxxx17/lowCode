@@ -163,7 +163,7 @@ onMounted(() => {
   </el-dialog>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .home {
   width: 100vw;
   height: 100vh;

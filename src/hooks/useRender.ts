@@ -17,11 +17,11 @@ export const renderer = (nodes: any): any => {
     //判断节点是否为数组
     return nodes.map((node) => {
       let children = renderer(node.children); //利用递归获取子节点
-      let nodeprops: nodeProps = {
+      let nodeprops: nodeProps = reactive({
         ...node,
         children: children,
         style: node.style,
-      }; //配置
+      }); //配置
       if (node.type.includes("container")) {
         nodeprops.childrenList = node.children; //如果为容器就将子组件的数据添加进去
       }

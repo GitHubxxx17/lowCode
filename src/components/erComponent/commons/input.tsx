@@ -255,9 +255,9 @@ export const InputProperty = defineComponent({
       // 可清除
       BasicState.clearable.value = props.option.clearable;
       // 最长输入长度
-      BasicState.maxLength.value = props.option.maxlength;
+      BasicState.maxLength.value = props.option.maxlength || 0;
       // 最小输入长度
-      BasicState.minLength.value = props.option.minlength;
+      BasicState.minLength.value = props.option.minlength || 0;
       if (BasicState.maxLength.value && BasicState.maxLength.value != 0) {
         props.option.showWordLimit = true;
       }
@@ -291,9 +291,15 @@ export const InputProperty = defineComponent({
         props.option.clearable = BasicState.clearable.value;
       else delete props.option.clearable;
       // 最长输入长度
-      props.option.maxlength = BasicState.maxLength.value;
+      if(BasicState.maxLength.value != 0){
+        props.option.maxlength = BasicState.maxLength.value;
+      }else delete props.option.maxlength
+      
       // 最小输入长度
-      props.option.minlength = BasicState.minLength.value;
+      if(BasicState.minLength.value != 0){
+        props.option.minlength = BasicState.minLength.value;
+      }else delete props.option.minlength
+      
 
       if (BasicState.maxLength.value && BasicState.maxLength.value > 0) {
         props.option.showWordLimit = true;

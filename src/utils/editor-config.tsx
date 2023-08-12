@@ -1,8 +1,14 @@
 //列表区显示所有物料
 //type对应组件的映射关系
 import { createVNode, defineComponent } from "vue";
-import { ElButton, ElInput, ElSelect } from "element-plus";
+import { ElButton } from "element-plus";
 import Container from "../components/renderer/container";
+import {
+  RdInput,
+  RdSelect,
+  RdtextBox,
+  RdmultilineText,
+} from "../components/renderer/index";
 
 const componentsConfig = [
   {
@@ -131,22 +137,7 @@ const componentsConfig = [
     render(props: any) {
       return (
         <div class="cannotPreview" data-id={props.id}>
-          <el-Input
-            v-model={props.value}
-            style={props.style}
-            size={props.size}
-            type={props.inputStyle}
-            placeholder={props.placeholder}
-            showPassword={props.showPassword}
-            clearable={props.clearable}
-            maxlength={props.maxlength}
-            minlength={props.minlength}
-            show-word-limit={props.showWordLimit}
-            disabled={props.disabled}
-            readonly={props.readonly}
-            autofocus={props.autofocus}
-            hidden={props.hidden}
-          ></el-Input>
+          <RdInput option={props}></RdInput>
         </div>
       );
     },
@@ -158,13 +149,10 @@ const componentsConfig = [
       placeholder: "请输入", // 占位提示
       showPassword: false, // 是否可以隐藏密码
       clearable: false, // 是否可以清除
-      maxlength: 0, // 最长输入长度
-      minlength: 0, // 最小输入长度
       showWordLimit: false, // 是否显示输入字数统计，只在 type = "text" 或 type = "textarea" 时有效
       disabled: false, // 是否可清空
       readonly: false, // 原生属性，是否只读
       autofocus: false, //原生属性，自动获取焦点
-      hidden: false, // 是否隐藏
       style: {
         position: "relative",
         zIndex: 1,
@@ -180,19 +168,7 @@ const componentsConfig = [
     render(props: any) {
       return (
         <div class="cannotPreview" data-id={props.id}>
-          <ElSelect
-            style={props.style}
-            filterable={props.filterable ? props.filterable : false}
-            placeholder={props.placeholder ? props.placeholder : "请选择"}
-            v-model={props.defaultValue}
-          >
-            {props.selectData &&
-              props.selectData.map((item: any) => {
-                return (
-                  <el-option key={item.value} value={item.value}></el-option>
-                );
-              })}
-          </ElSelect>
+          <RdSelect option={props}></RdSelect>
         </div>
       );
     },
@@ -214,23 +190,12 @@ const componentsConfig = [
     render(props: any) {
       return (
         <div class="cannotPreview" style={props.style.box} data-id={props.id}>
-          <div style={props.style.title}>
-            {props.title ? props.title : "文本"}
-          </div>
-          <ElInput
-            modelValue={props.value}
-            style={props.style.input}
-            placeholder={
-              props.inputBoxPlaceholder ? props.inputBoxPlaceholder : ""
-            }
-            clearable={props.clearable ? props.clearable : false}
-            type={props.inputType ? props.inputType : "text"}
-          ></ElInput>
+          <RdtextBox option={props}></RdtextBox>
         </div>
       );
     },
     defaultData: {
-      value:'',
+      value: "",
       type: "textBox",
       title: "文本",
       style: {
@@ -251,24 +216,12 @@ const componentsConfig = [
     render(props: any) {
       return (
         <div class="cannotPreview" style={props.style.box} data-id={props.id}>
-          <div style={props.style.title}>
-            {props.title ? props.title : "多行文本"}
-          </div>
-          <el-input
-            v-model={props.value}
-            style={props.style.input}
-            type="textarea"
-            placeholder={
-              props.inputBoxPlaceholder ? props.inputBoxPlaceholder : ""
-            }
-            clearable={props.clearable ? props.clearable : false}
-            rows={props.autosize.minRows}
-          ></el-input>
+          <RdmultilineText option={props}></RdmultilineText>
         </div>
       );
     },
     defaultData: {
-      value:'',
+      value: "",
       type: "multilineText",
       title: "多行文本",
       style: {
@@ -344,7 +297,3 @@ const previewComponent = defineComponent({
     };
   },
 });
-
-
-
-

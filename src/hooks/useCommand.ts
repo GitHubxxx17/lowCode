@@ -1,5 +1,5 @@
 import { events } from "../utils/events.ts";
-import { onUnmounted, reactive } from "vue";
+import { onUnmounted } from "vue";
 import { ElMessage } from "element-plus";
 import mainStore from "../stores/mainStore.ts";
 import dragStore from "../stores/dragStore.ts";
@@ -57,13 +57,13 @@ export function useCommand() {
         return {
           redo() {
             /**
-             * 复制所以节点
+             * 复制所有节点
              * @param {string} keys 需要复制的keys
              * @param {string} parent 需要复制的keys的父容器
              * @param {*} data 需要复制的keys的数据
              * @return {*} 返回复制后的keys
              */
-            function toCopy(keys:string,parent:string,data:any){
+            function toCopy(keys:string,parent:string,data:any):string{
               data.parent = parent;
               let id = addMap(keys.replace(/-[^-]*$/, ''),deepcopy(data))
               addKeys.push(id);
