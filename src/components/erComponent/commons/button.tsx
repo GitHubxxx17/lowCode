@@ -78,6 +78,7 @@ export const ButtonAppearance = defineComponent({
         label: "左侧图标尺寸",
         value: "",
         placeholder: "请输入尺寸",
+        oldValue: "",
       },
       rightIconSize: {
         label: "右侧图标尺寸",
@@ -150,6 +151,7 @@ export const ButtonAppearance = defineComponent({
       // 左右侧图标尺寸
       if (showLeftIconSize) {
         props.option.icon.leftIconSize = buttonAppearState.leftIconSize.value;
+        console.log(buttonAppearState.leftIconSize);
       } else {
         props.option.icon.leftIconSize = "";
       }
