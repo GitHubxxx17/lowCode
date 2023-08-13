@@ -53,7 +53,7 @@
 .cannotPreview {
     position: relative;
     display: inline-block;
-    user-select: none;
+    user-select: none !important; 
 
     &::after {
         z-index: 1000000000;
