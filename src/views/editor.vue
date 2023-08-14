@@ -32,14 +32,17 @@ const state = reactive({
 });
 
 const editorTitle = ref(null);
+const isFocus = ref(false);
 // 如果项目名为空的话不失焦
 const keepFocus = (value) => {
+  isFocus.value = false;
   if (value.trim() == "") {
     editorTitle.value.focus();
     ElMessage.warning({ message: "标题不能为空", duration: 1000 });
   }
 };
 
+// 当标题为空时不取消聚焦
 watch(
   () => mainData.title,
   (newVal) => {
@@ -49,6 +52,7 @@ watch(
   }
 );
 
+// 快捷键
 const shortcuts = [
   { label: "复制", key: "Ctrl+C" },
   { label: "粘贴", key: "Ctrl+V" },
@@ -64,6 +68,7 @@ const shortcuts = [
 
 // 获取面包屑数据
 const getBreadcrumbData = (nodes: any) => {
+  console.log(nodes);
   let isFind = false;
   const traverseNodes = (key) => {
     let temp = mainData.EditorDataMap.get(key);
@@ -101,6 +106,8 @@ const getBreadcrumbData = (nodes: any) => {
     }
   }
 };
+
+// 监听 dragData.selectKey 的实时变化实现面包屑的实时变化
 watch(
   () => dragData.selectKey,
   () => {
@@ -108,6 +115,40 @@ watch(
       getBreadcrumbData(mainData.EditorDataMap.get("page").children);
     else {
       mainData.Breadcrumb = ["页面"];
+    }
+  }
+);
+
+// 保存数据
+const saveData = reactive({
+  icon: "icon-duigouzhong",
+  context: "所有更改已保存",
+});
+
+watch(
+  () => mainData.isSucessSave,
+  (newVal) => {
+    if (newVal) {
+      saveData.icon = "icon-duigouzhong";
+      saveData.context = "已保存";
+    }
+  }
+);
+watch(
+  () => mainData.isNeedSave,
+  (newVal) => {
+    if (newVal) {
+      saveData.icon = "icon-weixuanzhong";
+      saveData.context = "未保存";
+    }
+  }
+);
+watch(
+  () => mainData.isLoading,
+  (newVal) => {
+    if (newVal) {
+      saveData.icon = "icon-weixuanzhong";
+      saveData.context = "正在保存";
     }
   }
 );
@@ -123,13 +164,43 @@ watch(
         <h2>codeFlow</h2>
       </div>
       <div class="editor-header-mid">
-        <div class="editor-header-mid-title">
+        <div class="editor-header-mid-title" :class="{ active: isFocus }">
           <input
             type="text"
             v-model="mainData.title"
             ref="editorTitle"
             @blur="keepFocus(mainData.title)"
+            @focus="isFocus = true"
           />
+          <div class="isSave">
+            <div class="svg" v-if="mainData.isLoading">
+              <svg class="circle" viewBox="0 0 1024 1024">
+                <circle
+                  class="loading-circle"
+                  cx="512"
+                  cy="512"
+                  r="330"
+                  fill="none"
+                  stroke="url(#gradient)"
+                  stroke-width="60"
+                />
+                <defs>
+                  <linearGradient id="gradient">
+                    <stop offset="0%" stop-color="#ffffff" />
+                    <stop offset="18%" stop-color="#ffffff" />
+                    <stop offset="18%" stop-color="#000000" />
+                    <stop offset="100%" stop-color="#000000" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <i
+              class="icon iconfont"
+              :class="saveData.icon"
+              v-if="!mainData.isLoading"
+            ></i>
+            <span>{{ saveData.context }}</span>
+          </div>
         </div>
       </div>
       <div class="editor-header-right">
@@ -222,7 +293,79 @@ watch(
     border-bottom: 1px solid #e8e9eb;
 
     &-mid {
-      min-width: 50px;
+      min-width: 180px;
+
+      &-title {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .isSave {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 12px;
+          color: #9aa5c6;
+          background-color: #fff;
+
+          .svg {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 18px; /* 调整高度以适应加载圆 */
+            margin: 0 5px;
+            .circle {
+              width: 18px;
+              height: 18px;
+            }
+
+            .loading-circle {
+              animation: rotateStroke 2s linear infinite,
+                dash 2s linear infinite;
+              transform-origin: center;
+              stroke-dasharray: 12 40; /* 调整虚线模式 */
+              stroke-dashoffset: 0;
+            }
+
+            @keyframes rotateStroke {
+              0% {
+                transform: rotate(0deg);
+              }
+              100% {
+                transform: rotate(360deg);
+              }
+            }
+
+            @keyframes dash {
+              0% {
+                stroke-dashoffset: 0;
+              }
+              100% {
+                stroke-dashoffset: -12;
+              }
+            }
+          }
+
+          span {
+            white-space: nowrap; /* 防止换行 */
+            overflow: hidden; /* 溢出隐藏 */
+            text-overflow: ellipsis; /* 显示省略号 */
+          }
+
+          .icon-weixuanzhong,
+          .icon-duigouzhong,
+          .icon-yuanxingdacha {
+            font-size: 18px;
+            margin: 0 5px;
+            color: #9aa5c6;
+          }
+
+          .icon-yuanxingdacha {
+            font-size: 12px;
+          }
+        }
+      }
+
       input {
         width: auto;
         max-width: 150px;
@@ -230,11 +373,10 @@ watch(
         font-size: 18px;
         border: none;
         padding: 5px;
-        text-align: center;
-
-        &:focus {
-          border-bottom: 1px solid #2468f2;
-        }
+        text-align: right;
+      }
+      .active {
+        border-bottom: 1px solid #2468f2;
       }
     }
 
@@ -245,6 +387,7 @@ watch(
     }
 
     &-left {
+      min-width: 200px;
       &-exit {
         display: flex;
         align-items: center;
@@ -281,6 +424,7 @@ watch(
     }
 
     &-right {
+      min-width: 240px;
       &-shortcut {
         display: flex;
         align-items: center;
@@ -369,14 +513,19 @@ watch(
         display: flex;
         padding: 0 20px;
         align-items: center;
-
-        .el-breadcrumb__inner .el-breadcrumb-button {
-          font-size: 12px !important;
-          color: #151b26 !important;
-        }
-        .el-breadcrumb__inner .el-breadcrumb-button:hover {
-          font-weight: 900 !important;
-          color: #2468f2 !important;
+        .el-breadcrumb {
+          flex: 1;
+          line-height: 30px;
+          overflow: hidden;
+          height: 30px;
+          .el-breadcrumb__inner .el-breadcrumb-button {
+            font-size: 12px !important;
+            color: #151b26 !important;
+          }
+          .el-breadcrumb__inner .el-breadcrumb-button:hover {
+            font-weight: 900 !important;
+            color: #2468f2 !important;
+          }
         }
       }
 

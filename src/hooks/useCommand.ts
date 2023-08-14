@@ -156,6 +156,7 @@ export function useCommand() {
       execute() {
         return {
           async redo() {
+            mainData.isLoading = true;
             mainData.setEditorData();
             localSaveData("title", mainData.title);
             localSaveData("data", mainData.EditorData);
@@ -165,6 +166,9 @@ export function useCommand() {
               title: mainData.title,
             });
             if (res.data?.code == 200) {
+              mainData.isLoading = false;
+              mainData.isNeedSave = false;
+              mainData.isSucessSave = true;
               ElMessage.success({ message: "保存成功", duration: 2000 });
             }
           },
@@ -347,6 +351,9 @@ export function useCommand() {
         if (keyboard === keyString) {
           //执行相应的命令并阻止默认事件
           commands[name]();
+          if (keyString != "ctrl+s") {
+            mainData.isNeedSave = true; // 表示还没保存
+          }
           if (["c", "v", "x"].includes(keyCodes[keyCode]) && !dragData.isDrag)
             return;
           e.preventDefault();

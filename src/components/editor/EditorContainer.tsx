@@ -42,12 +42,13 @@ export default defineComponent({
 
             // 找出该节点（childNode）的 classList，
             // 如果他不是组件则进行不递归，继续遍历剩余节点
-            let childrenList = childNode.children[0].classList
+            let childrenList = childNode.children[0]?.classList
               ? [...childNode.children[0].classList]
               : "";
             if (
-              childrenList.includes("cannotPreview") ||
-              childrenList.includes("container-ordinary")
+              childrenList &&
+              (childrenList.includes("cannotPreview") ||
+                childrenList.includes("container-ordinary"))
             ) {
               return traverseNodes(childNode.children);
             } else {

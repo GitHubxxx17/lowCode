@@ -12,7 +12,7 @@ const dragStore = defineStore("dragStore", {
       selectedComponent: null, //选中的组件
       containerData: null, //选中组件的父节点数据
       selectedIndex: null, //选中组件的下标
-      dragEl: null,
+      dragEl: null, // 表示选中的节点
     };
   },
   actions: {

@@ -13,6 +13,17 @@ app.use(pinia);
 app.use(ElementPlus);
 // 挂载路由模块
 app.use(router);
+const vContextmenu = {
+  mounted(el, binding) {
+    el.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+      binding.value(event);
+    });
+  },
+};
+
+// 注册自定义指令
+app.directive("contextmenu", vContextmenu);
 app.mount("#app");
 
 export default app;

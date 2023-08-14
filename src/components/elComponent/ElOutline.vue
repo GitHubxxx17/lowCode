@@ -3,6 +3,7 @@ import { ref, reactive, inject, onMounted, watch } from "vue";
 import mainStore from "../../stores/mainStore.ts";
 import dragStore from "../../stores/dragStore";
 import pinia from "../../stores/index.ts";
+import ElSearch from "./ElSearch.tsx";
 
 const config: any = inject("editorConfig"); //组件配置
 const mainData = mainStore(pinia);
@@ -31,7 +32,6 @@ const getOutlineData = (key: any, id: number = 2) => {
 };
 
 const state: any = reactive({
-  inputIsFocus: false,
   data: [
     {
       id: 1,
@@ -45,21 +45,27 @@ const state: any = reactive({
     "node-key": "node-key",
     label: "label",
   },
-  filterText: "",
+  search: {
+    value: "",
+    searchKey: "componentSearch",
+    searchDefault: {
+      label: "常见组件节点标签",
+      list: ["页面", "容器", "输入框", "按钮"],
+    },
+    placeholder: "输入关键字过滤组件节点标签",
+  },
 });
 
 // 跟踪聚焦
 const trackingFocus = (node) => {
+  console.log("change");
   dragData.selectKey = node["node-key"];
 };
 
-//点击input
-const searchFocus = (): void => {
-  state.inputIsFocus = true;
-};
-//取消input焦点
-const searchBlur = (): void => {
-  state.inputIsFocus = false;
+// 搜索过滤节点
+const filterNode = (value, data) => {
+  if (!value) return true;
+  return data.label.indexOf(value) !== -1;
 };
 
 watch(
@@ -71,6 +77,13 @@ watch(
       mainData.Breadcrumb = ["页面"];
       elOutlineTree.value.setCurrentKey("page", false);
     }
+  }
+);
+
+watch(
+  () => state.search.value,
+  () => {
+    elOutlineTree.value.filter(state.search.value);
   }
 );
 
@@ -87,23 +100,7 @@ onMounted(() => {
 <template>
   <div class="ElOutline">
     <div class="ElOutline-top">
-      <div
-        :class="{
-          'ElComponent-top-input-focus': state.inputIsFocus,
-          'ElComponent-top-input': true,
-        }"
-      >
-        <input
-          type="text"
-          placeholder="查找节点"
-          @focus="searchFocus"
-          @blur="searchBlur"
-          v-model="state.filterText"
-        />
-        <span>
-          <i class="icon iconfont icon-search"></i>
-        </span>
-      </div>
+      <ElSearch :search="state.search"></ElSearch>
     </div>
     <div class="ElOutline-content">
       <el-tree
@@ -111,6 +108,7 @@ onMounted(() => {
         class="filter-tree"
         :data="state.data"
         :props="state.defaultProps"
+        :filter-node-method="filterNode"
         node-key="node-key"
         highlight-current
         default-expand-all

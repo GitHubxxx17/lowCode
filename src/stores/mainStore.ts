@@ -9,6 +9,9 @@ const mainStore = defineStore("mainStore", {
       EditorData: null, //json数据
       copyData: null, //复制的数据
       EditorDataMap: null,
+      isLoading: false, // 正在保存
+      isSucessSave: false, // 成功保存
+      isNeedSave: false, // 需要保存
       Breadcrumb: ["页面"],
     };
   },
