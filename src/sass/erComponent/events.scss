@@ -1,4 +1,7 @@
-.addEvents {
+.events {
+  width: 100%;
+  position: relative;
+  &-addEvents {
     margin: 10px 15px;
     height: 32px;
     border-radius: 5px;
@@ -8,15 +11,118 @@
     line-height: 32px;
     user-select: none;
     cursor: pointer;
-    transition: all .2s;
+    transition: all 0.2s;
 
     span {
-        width: 100%;
-        height: 100%;
+      width: 100%;
+      height: 100%;
     }
 
     &:hover {
-        border: 1px solid #5786fb;
-        color: #5786fb;
+      border: 1px solid #5786fb;
+      color: #5786fb;
     }
+    &-list {
+      width: 262px;
+      z-index: 100;
+      position: absolute;
+      top: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #fff;
+      box-shadow: rgba(62, 72, 99, 0.06) 0px 4px 5px 0px,
+        rgba(62, 72, 99, 0.05) 0px 1px 10px 0px,
+        rgba(62, 72, 99, 0.04) 0px 2px 4px -1px;
+      transition: all 0.4s;
+      li {
+        cursor: pointer;
+        font-size: 14px;
+        width: 100%;
+        height: 28px;
+        line-height: 28px;
+        text-align: center;
+        
+
+        &:hover {
+          background-color: #f4f4f4;
+          color: #5786fb;
+        }
+      }
+
+      .disabled {
+        cursor: no-drop;
+        color: #817f7f !important;
+      }
+    }
+  }
+
+  &-elCollapseItem {
+    position: relative;
+    border-top: 1px solid #ebeef5;
+  }
+
+  &-nav {
+    position: absolute;
+    top: 12px;
+    right: 30px;
+
+    .icon-tianjia {
+        margin-right: 8px;
+    }
+  }
+
+  &-list {
+    width: 100%;
+    padding: 0 10px;
+    &-item {
+      padding: 0 10px;
+      border-radius: 5px;
+      background-color: #f3f3f3;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 10px;
+
+      &-header {
+        position: relative;
+        width: 100%;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+
+        .icon {
+          font-size: 14px;
+        }
+
+        .icon-xiugai {
+            font-size: 15px;
+            margin-right: 8px;
+        }
+      }
+
+
+      &-content {
+        line-height: 25px;
+        padding-bottom: 10px;
+        font-size: 12px;
+      }
+      .el-select {
+        width: 250px;
+      }
+    }
+  }
+
+  &-config {
+    width: 100%;
+    height: 700px;
+    border: 1px solid #e3e3e3;
+    border-radius: 5px;
+
+    &-menu {
+        width: 20%;
+    }
+  }
 }

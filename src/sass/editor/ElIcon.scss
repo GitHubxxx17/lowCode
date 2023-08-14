@@ -83,7 +83,7 @@
 
     .el-input-number[data-unit]::after {
       content: attr(data-unit);
-      position: absolute;
+      position: absolute; 
       top: -2px;
       right: 25px;
       color: #8d8d8d;
