@@ -9,6 +9,7 @@ import {
   RdtextBox,
   RdmultilineText,
 } from "../components/renderer/index";
+import IconConfig from "./IconConfig";
 
 const componentsConfig = [
   {
@@ -245,6 +246,7 @@ interface componentConfig {
   type: string; //类型
   category: String; //类别
   defaultData: Object; //默认数据
+  display: boolean; //预览搜索显示
   preview: () => any; //返回预览组件函数
   render: (props: any) => any; //返回渲染组件函数
 }
@@ -252,23 +254,32 @@ interface componentConfig {
 class createEditorConfig {
   public componentList: Array<componentConfig>; //组件数组
   public componentMap: Map<string, componentConfig>; //组件映射表
+  public iconList: Array<componentConfig>; //图标数组
 
   constructor(
     componentList: Array<componentConfig> = [],
-    componentMap: Map<string, componentConfig> = new Map()
+    componentMap: Map<string, componentConfig> = new Map(),
+    iconList: Array<componentConfig> = []
   ) {
     this.componentList = componentList;
     this.componentMap = componentMap;
+    this.iconList = iconList;
   }
 
-  register(component: componentConfig) {
+  register(component: componentConfig, isIcon: boolean = false) {
     //注册组件
-    this.componentList.push(component);
+    if (isIcon) {
+      this.iconList.push(component);
+    } else {
+      this.componentList.push(component);
+    }
+
     this.componentMap.set(component.type, component);
   }
 }
 
 export const editorConfig = new createEditorConfig();
+//注册组件
 for (let block of componentsConfig) {
   //遍历声明的组件并注册
   editorConfig.register({
@@ -276,9 +287,47 @@ for (let block of componentsConfig) {
     type: block.type,
     category: block.category,
     defaultData: block.defaultData,
+    display: true,
     preview: () => createVNode(previewComponent, { block }),
     render: (props) => block.render(props),
   });
+}
+//注册图标
+for (let item of IconConfig) {
+  editorConfig.register(
+    {
+      label: item.label,
+      type: "icon",
+      category: "icon",
+      display: true,
+      defaultData: {
+        icon: item.icon,
+        type: "icon",
+        style: {
+          position: "relative",
+          fontSize: "16px",
+          color: "black",
+          zIndex: 1,
+        },
+        children: "",
+      },
+      preview: () => {
+        return (
+          <span datatype="icon" class="iconSpan">
+            <i class={item.icon}></i>
+          </span>
+        );
+      },
+      render: (props: any) => {
+        return (
+          <div class="cannotPreview" data-id={props.id}>
+            <i class={props.icon} style={props.style}></i>
+          </div>
+        );
+      },
+    },
+    true
+  );
 }
 
 //预览组件

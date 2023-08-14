@@ -35,6 +35,11 @@ import {
   MultilineTextProperty,
 } from "../components/erComponent/form/multilineText";
 
+import {
+  IconAppearance,
+  IconProperty
+}from "../components/erComponent/erIcon/icon";
+
 
 interface ErcomponentConfig {
   type: string; //类型
@@ -114,6 +119,15 @@ const ErcomponentConfigList = [
     },
     appearances(selectedComponent:Object) {
       return <MultilineTextAppearance option={selectedComponent}></MultilineTextAppearance>;
+    },
+  },
+  {
+    type: "icon",
+    Properties(selectedComponent:Object) {
+      return <IconProperty option={selectedComponent}></IconProperty>;
+    },
+    appearances(selectedComponent:Object) {
+      return <IconAppearance option={selectedComponent}></IconAppearance>;
     },
   },
 ];

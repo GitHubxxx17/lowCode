@@ -1,4 +1,4 @@
-import { defineComponent } from "vue";
+import { defineComponent, inject } from "vue";
 import pinia from "../../../stores/index.ts";
 import dragStore from "../../../stores/dragStore.ts";
 import mainStore from "../../../stores/mainStore.ts";
@@ -11,6 +11,8 @@ export default defineComponent({
   setup(props) {
     const dragData = dragStore(pinia); //拖拽数据
     const mainData = mainStore(pinia); //拖拽数据
+    const config: any = inject("editorConfig"); //组件配置
+
     // 初始化渲染
     (() => {
       if (props.setting.icon && props.setting.iconText) {
@@ -20,7 +22,7 @@ export default defineComponent({
     })();
 
     // 点击显示列表
-    const showIconList = (e:any) => {
+    const showIconList = (e: any) => {
       if (props.setting.isShowList) {
         props.setting.isShowList = false;
       } else {
@@ -40,7 +42,7 @@ export default defineComponent({
     };
 
     // 点击清除
-    const handleIsFill = (e:any) => {
+    const handleIsFill = (e: any) => {
       props.setting.isShowList = false;
       props.setting.isFill = !props.setting.isFill;
       props.setting.clearable = !props.setting.clearable;
@@ -54,20 +56,12 @@ export default defineComponent({
     };
 
     // 选择的按钮列表
-    const iconNames = [
-      "icon-yuanxingdacha",
-      "icon-xiaolian",
-      "icon-a-Displayinline",
-      "icon-yuanxingdacha",
-      "icon-xiaolian",
-      "icon-a-Displayinline",
-      "icon-yuanxingdacha",
-      "icon-xiaolian",
-      "icon-a-Displayinline",
-    ];
+    const iconNames = config.iconList.map((item:any)=>{
+      return item.defaultData.icon.split(' ')[2]
+    })
 
     // 选择按钮
-    const selectIcon = (item:string) => {
+    const selectIcon = (item: string) => {
       props.setting.isShowList = false;
       props.setting.clearable = true;
       props.setting.isFill = true;
@@ -78,6 +72,11 @@ export default defineComponent({
       }
       if (props.label == "右侧图标") {
         mainData.EditorDataMap.get(dragData.selectKey).icon.rightIcon = item;
+      }
+      if (props.label == "修改图标") {
+        mainData.EditorDataMap.get(
+          dragData.selectKey
+        ).icon = `icon iconfont ${item}`;
       }
     };
 
@@ -105,7 +104,7 @@ export default defineComponent({
           </div>
           <ul class="flexSelectUl" v-show={props.setting.isShowList}>
             {iconNames.map((item: any) => (
-              <li class="flexSelectUl-option" onClick={_ => selectIcon(item)}>
+              <li class="flexSelectUl-option" onClick={(_) => selectIcon(item)}>
                 <span class={["icon iconfont", item]}></span>
               </li>
             ))}

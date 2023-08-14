@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import ElComponent from "../elComponent/ElComponent.tsx";
+import ElIcon from "../elComponent/ElIcon.tsx";
 import ElJsonViewer from "../elComponent/ElJsonViewer.vue";
 import ElOutline from "../elComponent/ElOutline.vue";
 interface btn {
@@ -42,6 +43,7 @@ const onClickBtn = (index: number) => {
     </div>
     <div class="EditorLeft-content">
       <ElComponent v-if="bottons[0].active"></ElComponent>
+      <ElIcon v-if="bottons[1].active"></ElIcon>
       <ElOutline v-if="bottons[2].active"></ElOutline>
       <ElJsonViewer v-if="bottons[3].active"></ElJsonViewer>
     </div>
