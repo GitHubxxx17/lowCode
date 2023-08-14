@@ -40,18 +40,21 @@ export default defineComponent({
       activeName: reactive(["layoutContainer", "commonComponents", "form"]), //折叠模板默认展开标识
     });
 
-    const buttons: Array<btn> = reactive([
-      //标签按钮
-      { label: "系统组件", active: true },
-      { label: "自定义组件", active: false },
-    ]);
-
-
-    const onClickBtn = (index: number) => {
-      buttons.forEach((item, i) => {
-        if (i === index) {
-          item.active = true;
-          return;
+    //将组件列表进行分类
+    (() => {
+      config.componentList.map((item: any) => {
+        switch (item.category) {
+          case "container":
+            state.componentList.container.list.push(item);
+            break;
+          case "common":
+            state.componentList.common.list.push(item);
+            break;
+          case "form":
+            state.componentList.form.list.push(item);
+            break;
+          default:
+            break;
         }
       });
     })();
