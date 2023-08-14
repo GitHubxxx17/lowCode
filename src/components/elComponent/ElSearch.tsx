@@ -1,4 +1,4 @@
-import { defineComponent, reactive, ref, watch } from "vue";
+import { defineComponent, onUnmounted, reactive, ref, watch } from "vue";
 import { localSaveData, localGetData } from "../../hooks/useStorage";
 import "@/sass/editor/ElSearch.scss";
 
@@ -34,6 +34,10 @@ export default defineComponent({
       state.inputIsFocus = false;
     };
     window.addEventListener("click", searchBlur);
+
+    onUnmounted(()=>{
+      window.removeEventListener("click", searchBlur);
+    })
 
     //保存记录
     const saveRecords = () => {
