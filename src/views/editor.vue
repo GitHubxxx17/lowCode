@@ -13,10 +13,12 @@ import mainStore from "../stores/mainStore.ts";
 import pinia from "../stores/index.ts";
 import { ElMessage, ElPopover } from "element-plus";
 import { localGetData } from "../hooks/useStorage.ts";
+import dragStore from "../stores/dragStore";
 
 provide("editorConfig", editorConfig);
 provide("erConfig", erConfig);
 const mainData = mainStore(pinia);
+const dragData = dragStore(pinia);
 mainData.title = localGetData("title") ? localGetData("title") : "新项目";
 mainData.EditorData = localGetData("data")
   ? localGetData("data")
@@ -59,6 +61,56 @@ const shortcuts = [
   { label: "退出预览", key: "ESC" },
   { label: "导出", key: "Ctrl+E" },
 ];
+
+// 获取面包屑数据
+const getBreadcrumbData = (nodes: any) => {
+  let isFind = false;
+  const traverseNodes = (key) => {
+    let temp = mainData.EditorDataMap.get(key);
+    let label: any = editorConfig.componentMap.get(temp.type).label;
+    mainData.Breadcrumb.push(label);
+    let childrens = mainData.EditorDataMap.get(key).children;
+    // 如果获取当前节点的children是数组才需要进行递归
+    if (Array.isArray(childrens)) {
+      for (let i = 0; i < childrens.length; i++) {
+        if (!isFind) {
+          traverseNodes(childrens[i]);
+        } else {
+          break;
+        }
+      }
+    } else {
+      // 当前的 key 等于 dragData.selectKey 说明找到了
+      if (key == dragData.selectKey) {
+        isFind = true;
+        return;
+      } else {
+        mainData.Breadcrumb.pop();
+        return;
+      }
+    }
+  };
+  if (Array.isArray(nodes)) {
+    for (let i = 0; i < nodes.length; i++) {
+      if (!isFind) {
+        mainData.Breadcrumb = ["页面"];
+        traverseNodes(nodes[i]);
+      } else {
+        break;
+      }
+    }
+  }
+};
+watch(
+  () => dragData.selectKey,
+  () => {
+    if (dragData.selectKey != "page")
+      getBreadcrumbData(mainData.EditorDataMap.get("page").children);
+    else {
+      mainData.Breadcrumb = ["页面"];
+    }
+  }
+);
 </script>
 
 <template>
@@ -108,7 +160,21 @@ const shortcuts = [
         <EditorLeft :EditorData="mainData.EditorDataMap"></EditorLeft>
       </div>
       <div class="editor-body-container">
-        <div class="editor-body-container-top"></div>
+        <div class="editor-body-container-top">
+          <el-breadcrumb separator=">">
+            <el-breadcrumb-item
+              v-for="item in mainData.Breadcrumb"
+              @click="
+                () => {
+                  console.log(1);
+                }
+              "
+              ><span class="el-breadcrumb-button">
+                {{ item }}</span
+              ></el-breadcrumb-item
+            >
+          </el-breadcrumb>
+        </div>
         <div class="editor-body-container-content">
           <div class="editor-body-container-content_inner" ref="editArea">
             <EditorContainer
@@ -164,6 +230,7 @@ const shortcuts = [
         font-size: 18px;
         border: none;
         padding: 5px;
+        text-align: center;
 
         &:focus {
           border-bottom: 1px solid #2468f2;
@@ -299,6 +366,18 @@ const shortcuts = [
         width: 100%;
         height: 42px;
         background-color: #fff;
+        display: flex;
+        padding: 0 20px;
+        align-items: center;
+
+        .el-breadcrumb__inner .el-breadcrumb-button {
+          font-size: 12px !important;
+          color: #151b26 !important;
+        }
+        .el-breadcrumb__inner .el-breadcrumb-button:hover {
+          font-weight: 900 !important;
+          color: #2468f2 !important;
+        }
       }
 
       &-content {

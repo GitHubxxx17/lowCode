@@ -1,4 +1,4 @@
-import {  render } from "vue";
+import { watch, render } from "vue";
 import dragStore from "../stores/dragStore.ts";
 import mainStore from "../stores/mainStore.ts";
 import pinia from "../stores/index.ts";
@@ -18,6 +18,21 @@ function useDragger(): any {
   let dragChildList = []; //拖拽节点当前容器所有的子节点
   let isSort = false; //是否排序
 
+  watch(
+    () => dragData.dragEl,
+    () => {
+      dragEl ? dragEl.classList.remove("chosenEl") : "";
+      if (dragData.dragEl) {
+        dragEl = dragData.dragEl;
+        dragEl.classList.add("chosenEl");
+      }
+      container ? container.classList.remove("chosen-container") : "";
+      container = dragEl?.parentNode
+        ? findParentContainer(dragEl.parentNode)
+        : findParentContainer(container.parentNode); //获取当前正在拖拽的容器
+      container ? container.classList.add("chosen-container") : "";
+    }
+  );
   /**
    *初始化函数
    */
@@ -61,7 +76,7 @@ function useDragger(): any {
     //当处于克隆节点时
     if (dragData.isClone) {
       if (container) {
-        dragData.selectParent = container.attributes["data-id"].nodeValue
+        dragData.selectParent = container.attributes["data-id"].nodeValue;
       }
       events.emit("cloneEnd");
       dragData.selectedMaterial = null;
@@ -175,7 +190,10 @@ function useDragger(): any {
    * @return {*} 返回最近的父容器节点
    */
   const findParentContainer = (target: any): any => {
-    if (target.className.includes("container")) {
+    if (
+      target.className.includes("container") ||
+      target.className.includes("Editorcontainer")
+    ) {
       return target;
     } else {
       return findParentContainer(target.parentNode);

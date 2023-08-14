@@ -150,7 +150,6 @@ export const ButtonAppearance = defineComponent({
       // 左右侧图标尺寸
       if (showLeftIconSize) {
         props.option.icon.leftIconSize = buttonAppearState.leftIconSize.value;
-        console.log(buttonAppearState.leftIconSize);
       } else {
         props.option.icon.leftIconSize = "";
       }
@@ -204,7 +203,6 @@ export const ButtonProperty = defineComponent({
   },
   setup(props) {
     const activeNames: string[] = ["basic", "layout"];
-    console.log(props.option);
 
     const state = reactive({
       bindingField: {

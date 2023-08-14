@@ -1,57 +1,45 @@
 <script setup lang="ts">
-import { ref, reactive, inject, onMounted, watch } from "vue";
+import { reactive, inject } from "vue";
 import mainStore from "../../stores/mainStore.ts";
-import dragStore from "../../stores/dragStore";
 import pinia from "../../stores/index.ts";
-
 const config: any = inject("editorConfig"); //组件配置
 const mainData = mainStore(pinia);
-const dragData = dragStore(pinia);
-let elOutlineTree = ref(null);
-// 获取树节点数据
-const getOutlineData = (key: any, id: number = 2) => {
+console.log(mainData.EditorData);
+mainData.setEditorData();
+
+const getOutlineData = (data: any, id: number = 2) => {
   let newId = id || 2;
-  let parent = mainData.EditorDataMap.get(key).children;
-  if (Array.isArray(parent)) {
-    let children = [];
-    parent.forEach((item, i) => {
-      let temp = mainData.EditorDataMap.get(item);
-      let label = config.componentMap.get(temp.type).label;
-      children.push({
+  if (Array.isArray(data)) {
+    let arr = [];
+    data.forEach((item, i) => {
+      arr.push({
         id: newId + i,
-        "node-key": item,
-        label: label,
-        children: getOutlineData(item, id + parent.length),
+        label: config.componentMap.get(item.type).label,
+        children: getOutlineData(item.children, id + data.length),
       });
     });
-    return children;
+    console.log(arr);
+
+    return arr;
   } else {
     return [];
   }
 };
-
 const state: any = reactive({
   inputIsFocus: false,
   data: [
     {
       id: 1,
       label: "页面",
-      "node-key": "page",
-      children: getOutlineData("page"),
+      children: getOutlineData(mainData.EditorData.body),
     },
   ],
   defaultProps: {
     children: "children",
-    "node-key": "node-key",
     label: "label",
   },
   filterText: "",
 });
-
-// 跟踪聚焦
-const trackingFocus = (node) => {
-  dragData.selectKey = node["node-key"];
-};
 
 //点击input
 const searchFocus = (): void => {
@@ -61,27 +49,6 @@ const searchFocus = (): void => {
 const searchBlur = (): void => {
   state.inputIsFocus = false;
 };
-
-watch(
-  () => dragData.selectKey,
-  () => {
-    if (dragData.selectKey) {
-      elOutlineTree.value.setCurrentKey(dragData.selectKey, false);
-    } else {
-      mainData.Breadcrumb = ["页面"];
-      elOutlineTree.value.setCurrentKey("page", false);
-    }
-  }
-);
-
-onMounted(() => {
-  if (dragData.selectKey) {
-    elOutlineTree.value.setCurrentKey(dragData.selectKey, false);
-  } else {
-    mainData.Breadcrumb = ["页面"];
-    elOutlineTree.value.setCurrentKey("page", false);
-  }
-});
 </script>
 
 <template>
@@ -107,14 +74,10 @@ onMounted(() => {
     </div>
     <div class="ElOutline-content">
       <el-tree
-        ref="elOutlineTree"
         class="filter-tree"
         :data="state.data"
         :props="state.defaultProps"
-        node-key="node-key"
-        highlight-current
         default-expand-all
-        @current-change="trackingFocus"
       >
       </el-tree>
     </div>

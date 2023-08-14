@@ -48,11 +48,11 @@ export function useCommand() {
       execute() {
         let copyData = mainData.copyData; //复制的keys
         let key = dragData.selectKey; //当前选中的keys
-        let parent = mainData.EditorDataMap.get(key)?.parent || 'page'; //当前选中的keys的父容器key
+        let parent = mainData.EditorDataMap.get(key)?.parent || "page"; //当前选中的keys的父容器key
         let index = mainData.EditorDataMap.get(parent).children.findIndex(
           (item: string) => item == key
         ); //当前选中的keys所在容器的位置
-        let data = mainData.EditorDataMap.get(copyData); //复制的key的数据 
+        let data = mainData.EditorDataMap.get(copyData); //复制的key的数据
         let addKeys = []; //粘贴后添加上去的key
         return {
           redo() {
@@ -63,24 +63,30 @@ export function useCommand() {
              * @param {*} data 需要复制的keys的数据
              * @return {*} 返回复制后的keys
              */
-            function toCopy(keys:string,parent:string,data:any):string{
+            function toCopy(keys: string, parent: string, data: any): string {
               data.parent = parent;
-              let id = addMap(keys.replace(/-[^-]*$/, ''),deepcopy(data))
+              let id = addMap(keys.replace(/-[^-]*$/, ""), deepcopy(data));
               addKeys.push(id);
-              if(Array.isArray(data.children)){
-                mainData.EditorDataMap.get(id).children = data.children.map((child:string)=>{
-                  return toCopy(child,id,mainData.EditorDataMap.get(child))
-                })
+              if (Array.isArray(data.children)) {
+                mainData.EditorDataMap.get(id).children = data.children.map(
+                  (child: string) => {
+                    return toCopy(child, id, mainData.EditorDataMap.get(child));
+                  }
+                );
               }
               return id;
             }
-            mainData.EditorDataMap.get(parent).children.splice(index+1,0,toCopy(copyData,parent,data));
+            mainData.EditorDataMap.get(parent).children.splice(
+              index + 1,
+              0,
+              toCopy(copyData, parent, data)
+            );
           },
           undo() {
-            mainData.EditorDataMap.get(parent).children.splice(index+1,1);
-            addKeys.forEach((keys:string)=>{
+            mainData.EditorDataMap.get(parent).children.splice(index + 1, 1);
+            addKeys.forEach((keys: string) => {
               mainData.EditorDataMap.delete(keys);
-            })
+            });
           },
         };
       },
@@ -126,7 +132,7 @@ export function useCommand() {
       execute() {
         mainData.copyData = dragData.selectKey;
         let key = dragData.selectKey;
-        let parent = mainData.EditorDataMap.get(key)?.parent || 'page';
+        let parent = mainData.EditorDataMap.get(key)?.parent || "page";
         let index = mainData.EditorDataMap.get(parent).children.findIndex(
           (item: string) => item == key
         );
@@ -186,7 +192,7 @@ export function useCommand() {
       pushQueue: true,
       execute() {
         let key = dragData.selectKey;
-        let parent = mainData.EditorDataMap.get(key).parent || 'page';
+        let parent = mainData.EditorDataMap.get(key).parent || "page";
         let index = mainData.EditorDataMap.get(parent).children.findIndex(
           (item: string) => item == key
         );
@@ -278,7 +284,7 @@ export function useCommand() {
         let parent = dragData.selectParent;
         let selectedMaterial = dragData.selectedMaterial;
         let defaultData = deepcopy(dragData.selectedMaterial.defaultData);
-        let index = mainData.EditorDataMap.get(parent).children.length;
+        let index = mainData.EditorDataMap.get(parent)?.children.length;
         let id = null;
         return {
           redo() {
@@ -286,10 +292,10 @@ export function useCommand() {
               ...defaultData,
               parent: parent,
             });
-            mainData.EditorDataMap.get(parent).children.push(id); //修改数据并重新渲染编辑区域
+            mainData.EditorDataMap.get(parent)?.children.push(id); //修改数据并重新渲染编辑区域
           },
           undo() {
-            mainData.EditorDataMap.get(parent).children.splice(index, 1);
+            mainData.EditorDataMap.get(parent)?.children.splice(index, 1);
             mainData.EditorDataMap.delete(id);
           },
         };

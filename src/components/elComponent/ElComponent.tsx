@@ -25,7 +25,6 @@ export default defineComponent({
       { label: "自定义组件", active: false },
     ]);
 
-
     const onClickBtn = (index: number) => {
       buttons.forEach((item, i) => {
         if (i === index) {
