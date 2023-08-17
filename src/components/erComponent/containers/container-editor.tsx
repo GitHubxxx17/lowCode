@@ -63,6 +63,7 @@ export const ContainerProperty = defineComponent({
 
 
     watchEffect(() => {
+      props.option.title = state.pageTitle.value;
       props.option.subtitle = state.subtitle.value;
     });
 

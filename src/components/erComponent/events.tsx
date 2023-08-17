@@ -1,74 +1,75 @@
 import "@/sass/erComponent/events.scss";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, watch, watchEffect } from "vue";
+import pinia from "../../stores/index.ts";
+import dragStore from "../../stores/dragStore.ts";
+import mainStore from "../../stores/mainStore.ts";
+
+import ErEventConfig from "./erConfig/erEvent-config";
+import { eventConfig } from "../../utils/event-config";
+import deepcopy from "deepcopy";
+import { ElMessage } from "element-plus";
 export default defineComponent({
   setup() {
-    const state = reactive({
-      dialogIsShow: true,
-      addListIsShow: false,
-      eventsList: [
-        {
-          title: "鼠标点击",
-          name: "mouseToClick",
-          list: [
-            {
-              title: "消息提醒",
-              content: "内容：啊实打实的发的价格的法国诺曼底帮个忙吗",
-            },
-          ],
-        },
-      ],
-      activeName: [
-        "mouseToClick",
-        "mouseMoving",
-        "mouseMovedOut",
-        "getFocus",
-        "loseFocus",
-        "valuesChange",
-      ],
+    const dragData = dragStore(pinia); //拖拽数据
+    const mainData = mainStore(pinia); //拖拽数据
+
+    let state = reactive({
+      dialogIsShow: false, //对话框显示
+      addListIsShow: false, //事件列表显示
+      //事件列表
+      eventsList:
+        mainData.EditorDataMap.get(dragData.selectKey || "page").events || [],
+      activeName: Array.from(eventConfig.eventMap.keys()), //折叠模板名称
+      addAction: {
+        //新增的执行动作
+        title: "跳转连接",
+        content: "",
+      },
+      selectedEvent: null, //选中事件
+      selectedIndex: 0, //选中事件的动作列表的下标
+      mouseEventsMap: new Map(), //事件列表哈希表
+      isUpdate: false, //是否更新执行动作
     });
 
-    //事件列表
-    const mouseEvents = [
-      {
-        value: "鼠标点击",
-        name: "mouseToClick",
-        exist: false,
-      },
-      {
-        value: "鼠标移入",
-        name: "mouseMoving",
-        exist: false,
-      },
-      {
-        value: "鼠标移出",
-        name: "mouseMovedOut",
-        exist: false,
-      },
-      {
-        value: "获取焦点",
-        name: "getFocus",
-        exist: false,
-      },
-      {
-        value: "失去焦点",
-        name: "loseFocus",
-        exist: false,
-      },
-      {
-        value: "值改变",
-        name: "valuesChange",
-        exist: false,
-      },
-    ];
+    watch(
+      () => dragData.selectKey,
+      (newValue, oldValue) => {
+        if (state.eventsList.length == 0) {
+          delete mainData.EditorDataMap.get(oldValue || "page").events;
+        } else {
+          mainData.EditorDataMap.get(oldValue || "page").events =
+            state.eventsList;
+        }
+        state.eventsList =
+          mainData.EditorDataMap.get(newValue || "page").events || [];
 
-    //事件列表哈希表
-    const mouseEventsMap = new Map();
-    for (let item of mouseEvents) {
-      mouseEventsMap.set(item.value, item);
+        state.selectedEvent = null;
+        for (let item of eventConfig.eventMap) {
+          state.mouseEventsMap.get(item[0]).exist = false;
+        }
+        for (let item of state.eventsList) {
+          state.mouseEventsMap.get(item.type).exist = true;
+        }
+      }
+    );
+
+    watchEffect(() => {
+      if (!mainData.EditorDataMap.get(dragData.selectKey || "page").events && state.eventsList.length == 0) {
+        mainData.EditorDataMap.get(dragData.selectKey || "page").events =
+          state.eventsList;
+      }
+    });
+
+    for (let item of eventConfig.eventMap) {
+      state.mouseEventsMap.set(item[0], {
+        type: item[1].type,
+        name: item[1].name,
+        exist: false,
+      });
     }
 
     for (let item of state.eventsList) {
-      mouseEventsMap.get(item.title).exist = true;
+      state.mouseEventsMap.get(item.type).exist = true;
     }
 
     //隐藏事件列表
@@ -78,25 +79,68 @@ export default defineComponent({
 
     window.addEventListener("click", hiddenList);
 
+    //默认数据
+    const defaultAction = () => {
+      state.addAction = deepcopy({
+        title: "跳转连接",
+        content: "",
+      });
+    };
+
     //添加事件
     const addEvents = (item: any) => {
       state.eventsList.push({
-        title: item.value,
+        type: item.type,
         name: item.name,
-        list: [
-          {
-            title: "消息提醒",
-            content: "内容：啊实打实的发的价格的法国诺曼底帮个忙吗",
-          },
-        ],
+        list: [],
       });
       item.exist = true;
     };
 
     //删除事件
     const delEvents = (index: number) => {
-      mouseEventsMap.get(state.eventsList[index].title).exist = false;
+      state.mouseEventsMap.get(state.eventsList[index].type).exist = false;
       state.eventsList.splice(index, 1);
+    };
+
+    //将事件添加到待添加执行动作中
+    const addToPerformAction = (event: any) => {
+      state.isUpdate = false;
+      defaultAction();
+      state.dialogIsShow = true;
+      state.selectedEvent = event;
+    };
+
+    //确认提交事件并将执行动作添加到待添加执行动作的事件中
+    const confirmToAdd = () => {
+      if (state.addAction.content.trim() == "") {
+        ElMessage.warning("内容不能为空");
+        return;
+      }
+      state.dialogIsShow = false;
+      if (state.isUpdate) {
+        //更新执行动作
+        state.selectedEvent.list[state.selectedIndex] = deepcopy(
+          state.addAction
+        );
+      } else {
+        //新增执行动作
+        state.selectedEvent.list.push(deepcopy(state.addAction));
+      }
+      defaultAction();
+    };
+
+    const changeAction = (event: any, index: number) => {
+      state.isUpdate = true;
+      state.addAction = deepcopy(event.list[index]);
+      state.dialogIsShow = true;
+      state.selectedEvent = event;
+      state.selectedIndex = index;
+    };
+
+    //删除执行动作
+    const delAction = (item: any, index: number) => {
+      item.list.splice(index, 1);
     };
 
     return () => {
@@ -115,7 +159,7 @@ export default defineComponent({
             {state.addListIsShow && (
               <div class="events-addEvents-list">
                 <ul>
-                  {Array.from(mouseEventsMap.values()).map((item) => {
+                  {Array.from(state.mouseEventsMap.values()).map((item) => {
                     return (
                       <li
                         onClick={(e) => {
@@ -126,7 +170,7 @@ export default defineComponent({
                         }}
                         class={item.exist ? "disabled" : ""}
                       >
-                        {item.value}
+                        {item.name}
                       </li>
                     );
                   })}
@@ -134,15 +178,13 @@ export default defineComponent({
               </div>
             )}
             <elCollapse v-model={state.activeName}>
-              {state.eventsList.map((item, i) => {
+              {state.eventsList.map((item: any, i: number) => {
                 return (
                   <div class="events-elCollapseItem">
                     <div class="events-nav">
                       <i
                         class="icon iconfont icon-tianjia"
-                        onClick={(_) => {
-                          state.dialogIsShow = true;
-                        }}
+                        onClick={(_) => addToPerformAction(item)}
                       ></i>
                       <i
                         class="icon iconfont icon-shanchu"
@@ -150,20 +192,28 @@ export default defineComponent({
                       ></i>
                     </div>
 
-                    <elCollapseItem title={item.title} name={item.name}>
+                    <elCollapseItem title={item.name} name={item.type}>
                       <div class="events-list">
-                        {item.list.map((v) => {
+                        {item.list.map((v: any, j: number) => {
                           return (
                             <div class="events-list-item">
                               <div class="events-list-item-header">
                                 <span>{v.title}</span>
                                 <span>
-                                  <i class="icon iconfont icon-xiugai"></i>
-                                  <i class="icon iconfont icon-shanchu"></i>
+                                  <i
+                                    class="icon iconfont icon-xiugai"
+                                    onClick={(_) => changeAction(item, j)}
+                                  ></i>
+                                  <i
+                                    class="icon iconfont icon-shanchu"
+                                    onClick={(_) => delAction(item, j)}
+                                  ></i>
                                 </span>
                               </div>
                               <div class="events-list-item-content">
-                                <span>{v.content}</span>
+                                {eventConfig.handlerMap
+                                  .get(v.title)
+                                  .selectedRender(v)}
                               </div>
                             </div>
                           );
@@ -180,48 +230,15 @@ export default defineComponent({
             v-model={state.dialogIsShow}
             width="60%"
             fullscreen
+            append-to-body
           >
             {{
               default: () => {
                 return (
-                  <div class="events-config">
-                    <div class="events-config-menu">
-                      <el-menu class="el-menu-vertical-demo">
-                        <el-sub-menu index="1">
-                          {{
-                            default:()=>{
-                              return <span>页面</span>;
-                            },
-                            footer: () => {
-                              return <span>页面</span>;
-                            },
-                          }}
-                          <el-menu-item-group>
-                            {{
-                              default: () => {
-                                return (
-                                  <>
-                                    <el-menu-item index="1-1">
-                                      选项1
-                                    </el-menu-item>
-                                    <el-menu-item index="1-2">
-                                      选项2
-                                    </el-menu-item>
-                                  </>
-                                );
-                              },
-                              footer: () => {
-                                return <span>分组一</span>;
-                              },
-                            }}
-                          </el-menu-item-group>
-                          <el-menu-item-group title="分组2">
-                            <el-menu-item index="1-3">选项3</el-menu-item>
-                          </el-menu-item-group>
-                        </el-sub-menu>
-                      </el-menu>
-                    </div>
-                  </div>
+                  <ErEventConfig
+                    option={state.addAction}
+                    isShow={state.dialogIsShow}
+                  ></ErEventConfig>
                 );
               },
               footer: () => {
@@ -230,10 +247,7 @@ export default defineComponent({
                     <el-button onClick={(_) => (state.dialogIsShow = false)}>
                       取 消
                     </el-button>
-                    <el-button
-                      type="primary"
-                      onClick={(_) => (state.dialogIsShow = false)}
-                    >
+                    <el-button type="primary" onClick={(_) => confirmToAdd()}>
                       确 定
                     </el-button>
                   </span>

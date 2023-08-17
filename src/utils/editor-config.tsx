@@ -9,8 +9,11 @@ import {
   RdtextBox,
   RdmultilineText,
 } from "../components/renderer/index";
+import { eventConfig } from "./event-config.tsx";
 import IconConfig from "./IconConfig";
-
+import pinia from "../stores/index.ts";
+import mainStore from "../stores/mainStore.ts";
+const mainData = mainStore(pinia);
 const componentsConfig = [
   {
     label: "容器",
@@ -23,6 +26,10 @@ const componentsConfig = [
         text: "容器",
         class: "container-ordinary",
         "data-id": props.id,
+        events:
+          props.events && mainData.isPreview
+            ? eventConfig.getRenderEvents(props.events)
+            : {},
       };
       return <Container {...props}></Container>;
     },
@@ -47,6 +54,10 @@ const componentsConfig = [
         text: "自由容器",
         class: "container-free",
         "data-id": props.id,
+        events:
+          props.events && mainData.isPreview
+            ? eventConfig.getRenderEvents(props.events)
+            : {},
       };
       return <Container {...props}></Container>;
     },
@@ -66,9 +77,13 @@ const componentsConfig = [
     type: "text",
     category: "common",
     render(props: any) {
+      let events =
+        props.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.events)
+          : {};
       return (
         <div class="cannotPreview" data-id={props.id}>
-          <span style={props.style} datatype="text">
+          <span style={props.style} {...events} datatype="text">
             {props.children ? props.children : "渲染文字"}
           </span>
         </div>
@@ -91,6 +106,10 @@ const componentsConfig = [
     type: "button",
     category: "common",
     render(props: any) {
+      let events =
+        props.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.events)
+          : {};
       return (
         <div class="cannotPreview" data-id={props.id}>
           <ElButton
@@ -99,6 +118,7 @@ const componentsConfig = [
             type={props.buttonstyle}
             size={props.size}
             disabled={props.isDisable}
+            {...events}
           >
             <i
               class={["icon iconfont leftIcon", props.icon.leftIcon]}
@@ -126,7 +146,7 @@ const componentsConfig = [
       icon: {}, // 左右侧图标
       twiceComfire: {}, // 二次确认
       bubblePrompt: {}, // 气泡提示
-      isDisable: true, // 是否禁用
+      isDisable: false, // 是否禁用
       children: "渲染按钮",
     },
   },
@@ -136,9 +156,14 @@ const componentsConfig = [
     type: "input",
     category: "common",
     render(props: any) {
+      let events =
+        props.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.events)
+          : {};
+
       return (
         <div class="cannotPreview" data-id={props.id}>
-          <RdInput option={props}></RdInput>
+          <RdInput option={props} events={events}></RdInput>
         </div>
       );
     },
@@ -167,9 +192,13 @@ const componentsConfig = [
     type: "select",
     category: "common",
     render(props: any) {
+      let events =
+        props.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.events)
+          : {};
       return (
         <div class="cannotPreview" data-id={props.id}>
-          <RdSelect option={props}></RdSelect>
+          <RdSelect option={props} events={events}></RdSelect>
         </div>
       );
     },
@@ -189,9 +218,13 @@ const componentsConfig = [
     type: "textBox",
     category: "form",
     render(props: any) {
+      let events =
+      props.events && mainData.isPreview
+        ? eventConfig.getRenderEvents(props.events)
+        : {};
       return (
         <div class="cannotPreview" style={props.style.box} data-id={props.id}>
-          <RdtextBox option={props}></RdtextBox>
+          <RdtextBox option={props} events={events}></RdtextBox>
         </div>
       );
     },
@@ -215,9 +248,13 @@ const componentsConfig = [
     type: "multilineText",
     category: "form",
     render(props: any) {
+      let events =
+        props.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.events)
+          : {};
       return (
         <div class="cannotPreview" style={props.style.box} data-id={props.id}>
-          <RdmultilineText option={props}></RdmultilineText>
+          <RdmultilineText option={props} events={events}></RdmultilineText>
         </div>
       );
     },

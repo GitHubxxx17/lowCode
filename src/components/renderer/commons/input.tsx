@@ -3,6 +3,7 @@ import { ElInput } from "element-plus";
 export default defineComponent({
   props: {
     option: { type: Object },
+    events: { type: Object },
   },
   setup(props) {
     return () => {
@@ -22,6 +23,7 @@ export default defineComponent({
           autofocus={props.option.autofocus}
           maxlength={props.option.maxlength}
           minlength={props.option.minlength}
+          {...props.events}
         ></ElInput>
       );
     };

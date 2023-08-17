@@ -6,7 +6,7 @@ export default defineComponent({
   setup(props) {
     return () => {
       return (
-        <div class="elCollapseItem base-settings">
+        <div class="elCollapseItem base-settings base-events">
           <p>{props.option.label}</p>
           <el-input-number
             v-model={props.option.value}
