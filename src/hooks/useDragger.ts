@@ -62,7 +62,6 @@ function useDragger(): any {
    * @param {*} e 鼠标事件
    */
   const cloneMousedown = (component: any, e: any) => {
-    mouseup(e);
     const span = findSpan(e.target);
     events.emit("cloneStart");
     dragData.isClone = true;
@@ -77,7 +76,10 @@ function useDragger(): any {
    */
   const mouseup = (e: any): void => {
     // 如果不是编辑区域
-    if (!judgeIsMidContainer(e.target) && !dragData.isClone) return;
+    if (!judgeIsMidContainer(e.target)) {
+      init();
+      return;
+    }
     //当处于克隆节点时
     if (dragData.isClone) {
       if (container) {
