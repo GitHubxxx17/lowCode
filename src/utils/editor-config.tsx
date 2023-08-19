@@ -25,7 +25,7 @@ const componentsConfig = [
         ...props,
         text: "容器",
         class: "container-ordinary",
-        "data-id": props.id,
+        "data-key": props.id,
         events:
           props.events && mainData.isPreview
             ? eventConfig.getRenderEvents(props.events)
@@ -53,7 +53,7 @@ const componentsConfig = [
         ...props,
         text: "自由容器",
         class: "container-free",
-        "data-id": props.id,
+        "data-key": props.id,
         events:
           props.events && mainData.isPreview
             ? eventConfig.getRenderEvents(props.events)
@@ -82,7 +82,7 @@ const componentsConfig = [
           ? eventConfig.getRenderEvents(props.events)
           : {};
       return (
-        <div class="cannotPreview" data-id={props.id}>
+        <div class="cannotPreview" data-key={props.id}>
           <span style={props.style} {...events} datatype="text">
             {props.children ? props.children : "渲染文字"}
           </span>
@@ -111,7 +111,7 @@ const componentsConfig = [
           ? eventConfig.getRenderEvents(props.events)
           : {};
       return (
-        <div class="cannotPreview" data-id={props.id}>
+        <div class="cannotPreview" data-key={props.id}>
           <ElButton
             style={props.style}
             class="baseButton"
@@ -162,7 +162,7 @@ const componentsConfig = [
           : {};
 
       return (
-        <div class="cannotPreview" data-id={props.id}>
+        <div class="cannotPreview" data-key={props.id}>
           <RdInput option={props} events={events}></RdInput>
         </div>
       );
@@ -197,7 +197,7 @@ const componentsConfig = [
           ? eventConfig.getRenderEvents(props.events)
           : {};
       return (
-        <div class="cannotPreview" data-id={props.id}>
+        <div class="cannotPreview" data-key={props.id}>
           <RdSelect option={props} events={events}></RdSelect>
         </div>
       );
@@ -219,11 +219,11 @@ const componentsConfig = [
     category: "form",
     render(props: any) {
       let events =
-      props.events && mainData.isPreview
-        ? eventConfig.getRenderEvents(props.events)
-        : {};
+        props.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.events)
+          : {};
       return (
-        <div class="cannotPreview" style={props.style.box} data-id={props.id}>
+        <div class="cannotPreview" style={props.style.box} data-key={props.id}>
           <RdtextBox option={props} events={events}></RdtextBox>
         </div>
       );
@@ -253,7 +253,7 @@ const componentsConfig = [
           ? eventConfig.getRenderEvents(props.events)
           : {};
       return (
-        <div class="cannotPreview" style={props.style.box} data-id={props.id}>
+        <div class="cannotPreview" style={props.style.box} data-key={props.id}>
           <RdmultilineText option={props} events={events}></RdmultilineText>
         </div>
       );
@@ -357,7 +357,7 @@ for (let item of IconConfig) {
       },
       render: (props: any) => {
         return (
-          <div class="cannotPreview" data-id={props.id}>
+          <div class="cannotPreview" data-key={props.id}>
             <i class={props.icon} style={props.style}></i>
           </div>
         );

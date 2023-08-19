@@ -4,11 +4,25 @@ import data from "../data.json";
 import EditorLeft from "../components/editor/EditorLeft.vue";
 import EditorRight from "../components/editor/EditorRight.vue";
 import EditorContainer from "../components/editor/EditorContainer";
+import Menu from "../components/editor/Menu";
 import PopUp from "../components/Popover/popUp";
 import { editorConfig } from "../utils/editor-config";
 import { erConfig } from "../utils/ErComponent-config";
 import EditorPreview from "../components/editor/EditorPreview.tsx";
 import { useCommand } from "../hooks/useCommand";
+import {
+  selectComponent,
+  unselectComponent,
+  makeACopy,
+  copycomponents,
+  shearComponents,
+  pasteComponents,
+  delComponents,
+  moveForward,
+  moveBack,
+  undo,
+  redo,
+} from "../hooks/useMenu";
 import mainStore from "../stores/mainStore.ts";
 import pinia from "../stores/index.ts";
 import { ElMessage, ElPopover } from "element-plus";
@@ -68,7 +82,6 @@ const shortcuts = [
 
 // 获取面包屑数据
 const getBreadcrumbData = (nodes: any) => {
-  console.log(nodes);
   let isFind = false;
   const traverseNodes = (key) => {
     let temp = mainData.EditorDataMap.get(key);
@@ -111,6 +124,8 @@ const getBreadcrumbData = (nodes: any) => {
 watch(
   () => dragData.selectKey,
   () => {
+    mainData.wantDel = dragData.selectKey;
+    mainData.wantCopy = dragData.selectKey;
     if (dragData.selectKey != "page")
       getBreadcrumbData(mainData.EditorDataMap.get("page").children);
     else {
@@ -129,11 +144,13 @@ watch(
   () => mainData.isSucessSave,
   (newVal) => {
     if (newVal) {
+      console.log("保存成功");
       saveData.icon = "icon-duigouzhong";
       saveData.context = "已保存";
     }
   }
 );
+
 watch(
   () => mainData.isNeedSave,
   (newVal) => {
@@ -143,6 +160,7 @@ watch(
     }
   }
 );
+
 watch(
   () => mainData.isLoading,
   (newVal) => {
@@ -152,6 +170,66 @@ watch(
     }
   }
 );
+
+watch(
+  () => mainData.menuConfig.selectKey,
+  (newVal) => {
+    // 控制如果是根节点配置显示
+    if (newVal === "page") {
+      console.log("根节点");
+      mainData.menuConfig.isShow.makeACopy = true;
+      mainData.menuConfig.isShow.copycomponents = false;
+      mainData.menuConfig.isShow.shearComponents = true;
+      mainData.menuConfig.isShow.pasteComponents = true;
+      mainData.menuConfig.isShow.delComponents = true;
+      mainData.menuConfig.isShow.moveForward = true;
+      mainData.menuConfig.isShow.moveBack = true;
+    } else {
+      mainData.menuConfig.isShow.makeACopy = false;
+      mainData.menuConfig.isShow.copycomponents = false;
+      mainData.menuConfig.isShow.shearComponents = false;
+      mainData.menuConfig.isShow.pasteComponents = false;
+      mainData.menuConfig.isShow.delComponents = false;
+      // if (newVal == dragData.selectKey) {
+      //   mainData.menuConfig.isShow.moveForward = false;
+      //   mainData.menuConfig.isShow.moveBack = false;
+      // } else {
+      //   mainData.menuConfig.isShow.moveForward = true;
+      //   mainData.menuConfig.isShow.moveBack = true;
+      // }
+      if (mainData.queue.length <= 0) {
+        mainData.menuConfig.isShow.undo = true;
+        mainData.menuConfig.isShow.redo = true;
+      } else {
+        mainData.menuConfig.isShow.undo = false;
+        mainData.menuConfig.isShow.redo = false;
+      }
+    }
+  }
+);
+
+document.addEventListener("click", () => {
+  console.log("document click 关闭菜单");
+  mainData.menuConfig.isShowMenu = false;
+});
+
+// 监听鼠标右键是否被按下方法 1， oncontextmenu事件
+document.oncontextmenu = function () {
+  console.log("全局右击事件");
+  mainData.menuConfig.isShowMenu = false;
+};
+
+// 给 document 挂一个 右击事件
+(function () {
+  //严谨模式 检查所有错误
+  "use strict";
+  // 鼠标右键
+  Object.defineProperty(document, "oncontextmenu", {
+    set: function (evt) {
+      return evt;
+    },
+  });
+})();
 </script>
 
 <template>
@@ -228,7 +306,7 @@ watch(
     </header>
     <section class="editor-body">
       <div class="editor-body-left">
-        <EditorLeft :EditorData="mainData.EditorDataMap"></EditorLeft>
+        <EditorLeft></EditorLeft>
       </div>
       <div class="editor-body-container">
         <div class="editor-body-container-top">
@@ -263,7 +341,6 @@ watch(
     v-if="mainData.isPreview"
     :EditorData="mainData.EditorData"
   ></EditorPreview>
-
   <el-dialog title="快捷键" v-model="state.dialogIsShow" width="30%">
     <ul class="shortcuts">
       <li v-for="item in shortcuts" :key="item.key">
@@ -272,6 +349,20 @@ watch(
       </li>
     </ul>
   </el-dialog>
+  <Menu
+    :selectComponent="selectComponent"
+    :unselectComponent="unselectComponent"
+    :makeACopy="makeACopy"
+    :copycomponents="copycomponents"
+    :shearComponents="shearComponents"
+    :delComponents="delComponents"
+    :pasteComponents="pasteComponents"
+    :moveForward="moveForward"
+    :moveBack="moveBack"
+    :undo="undo"
+    :redo="redo"
+    :commands="commands"
+  ></Menu>
 </template>
 
 <style lang="scss" scoped>

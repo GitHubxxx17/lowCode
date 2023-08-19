@@ -83,7 +83,7 @@ function useDragger(): any {
     //当处于克隆节点时
     if (dragData.isClone) {
       if (container) {
-        dragData.selectParent = container.attributes["data-id"].nodeValue;
+        dragData.selectParent = container.attributes["data-key"].nodeValue;
       }
       mainData.isNeedSave = true;
       console.log("needSave1");
@@ -251,7 +251,7 @@ function useDragger(): any {
     newIndex = oldIndex = [].indexOf.call(container.children, dragData.dragEl); //获取拖拽组件在当前容器的位置
     getDragChildList();
     dragData.isDrag = true;
-    dragData.selectKey = dragData.dragEl.attributes["data-id"].nodeValue;
+    dragData.selectKey = dragData.dragEl.attributes["data-key"].nodeValue;
 
     dragData.dragEl.onmousedown = (e: any) => {
       console.log("正在交换组件中");
