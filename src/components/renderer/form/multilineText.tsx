@@ -4,6 +4,7 @@ import { ElInput } from "element-plus";
 export default defineComponent({
   props: {
     option: { type: Object },
+    events: { type: Object },
   },
   setup(props) {
     return () => {
@@ -24,6 +25,7 @@ export default defineComponent({
             clearable={props.option.clearable ? props.option.clearable : false}
             // @ts-ignore
             rows={props.option.autosize.minRows}
+            {...props.events}
           ></ElInput>
         </>
       );

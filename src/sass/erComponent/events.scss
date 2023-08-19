@@ -41,7 +41,6 @@
         height: 28px;
         line-height: 28px;
         text-align: center;
-        
 
         &:hover {
           background-color: #f4f4f4;
@@ -67,7 +66,7 @@
     right: 30px;
 
     .icon-tianjia {
-        margin-right: 8px;
+      margin-right: 8px;
     }
   }
 
@@ -81,7 +80,6 @@
       width: 100%;
       display: flex;
       flex-direction: column;
-      align-items: center;
       margin-bottom: 10px;
 
       &-header {
@@ -98,11 +96,10 @@
         }
 
         .icon-xiugai {
-            font-size: 15px;
-            margin-right: 8px;
+          font-size: 15px;
+          margin-right: 8px;
         }
       }
-
 
       &-content {
         line-height: 25px;
@@ -120,9 +117,90 @@
     height: 700px;
     border: 1px solid #e3e3e3;
     border-radius: 5px;
+    display: flex;
 
     &-menu {
-        width: 20%;
+      width: 15%;
+      min-width: 200px;
+      height: 100%;
+      overflow-y: scroll;
+      border-right: 1px solid #e3e3e3;
+
+      .el-menu {
+        border: none;
+      }
+
+      &::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border: 1px solid #fff;
+        border-radius: 6px;
+        background: #c9c9c9;
+      }
     }
+
+    &-content {
+      width: 100%;
+      padding: 10px 20px;
+      overflow-y: scroll;
+
+      &-item {
+        width: 100%;
+        margin-bottom: 20px;
+        &-title {
+          width: 100%;
+          margin: 15px 0;
+        }
+      }
+
+      &::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border: 1px solid #fff;
+        border-radius: 6px;
+        background: #c9c9c9;
+      }
+    }
+
+    .base-events {
+      justify-content: start;
+      p {
+        margin-right: 30px;
+      }
+    }
+  }
+
+  &-url {
+    color: #5786fb;
+  }
+
+  &-none {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+
+    img {
+      width: 300px;
+      height: 300px;
+    }
+    
+  }
+}
+
+.disabled-el-button {
+  &:hover {
+    background-color: var(--el-button-bg-color);
+  }
+  &:focus {
+    background-color: var(--el-button-bg-color);
   }
 }
