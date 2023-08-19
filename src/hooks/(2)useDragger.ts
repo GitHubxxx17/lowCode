@@ -237,7 +237,7 @@ function useDragger(): any {
     newIndex = oldIndex = dragChildList.indexOf(dragEl); //获取拖拽组件在当前容器的位置
 
     dragData.isDrag = true;
-    dragData.selectKey = dragEl.attributes["data-id"].nodeValue;
+    dragData.selectKey = dragEl.attributes["data-key"].nodeValue;
     dragData.containerData = findVnodeProps(container); //获取json子数据
     dragData.selectedComponent = reactive(dragData.containerData[oldIndex]);
     dragData.selectedIndex = oldIndex;

@@ -22,7 +22,7 @@ const componentsConfig = [
         ...props,
         text: "容器",
         class: "container-ordinary",
-        "data-id": props.id,
+        "data-key": props.id,
       };
       return <Container {...props}></Container>;
     },
@@ -46,7 +46,7 @@ const componentsConfig = [
         ...props,
         text: "自由容器",
         class: "container-free",
-        "data-id": props.id,
+        "data-key": props.id,
       };
       return <Container {...props}></Container>;
     },
@@ -67,7 +67,7 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       return (
-        <div class="cannotPreview" data-id={props.id}>
+        <div class="cannotPreview" data-key={props.id}>
           <span style={props.style} datatype="text">
             {props.children ? props.children : "渲染文字"}
           </span>
@@ -92,7 +92,7 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       return (
-        <div class="cannotPreview" data-id={props.id}>
+        <div class="cannotPreview" data-key={props.id}>
           <ElButton
             style={props.style}
             class="baseButton"
@@ -137,7 +137,7 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       return (
-        <div class="cannotPreview" data-id={props.id}>
+        <div class="cannotPreview" data-key={props.id}>
           <RdInput option={props}></RdInput>
         </div>
       );
@@ -168,7 +168,7 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       return (
-        <div class="cannotPreview" data-id={props.id}>
+        <div class="cannotPreview" data-key={props.id}>
           <RdSelect option={props}></RdSelect>
         </div>
       );
@@ -190,7 +190,7 @@ const componentsConfig = [
     category: "form",
     render(props: any) {
       return (
-        <div class="cannotPreview" style={props.style.box} data-id={props.id}>
+        <div class="cannotPreview" style={props.style.box} data-key={props.id}>
           <RdtextBox option={props}></RdtextBox>
         </div>
       );
@@ -216,7 +216,7 @@ const componentsConfig = [
     category: "form",
     render(props: any) {
       return (
-        <div class="cannotPreview" style={props.style.box} data-id={props.id}>
+        <div class="cannotPreview" style={props.style.box} data-key={props.id}>
           <RdmultilineText option={props}></RdmultilineText>
         </div>
       );
@@ -320,7 +320,7 @@ for (let item of IconConfig) {
       },
       render: (props: any) => {
         return (
-          <div class="cannotPreview" data-id={props.id}>
+          <div class="cannotPreview" data-key={props.id}>
             <i class={props.icon} style={props.style}></i>
           </div>
         );

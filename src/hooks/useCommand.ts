@@ -19,8 +19,6 @@ interface command {
 }
 
 export function useCommand() {
-  let cur: number = -1; //前进后退的指针
-  let queue = []; //存放所有操作命令
   let commands = {}; //命令和执行功能的映射表
   let destroyArray = []; //销毁命令
   let mainData = mainStore(pinia);
@@ -33,6 +31,7 @@ export function useCommand() {
       name: "copy",
       keyboard: "ctrl+c",
       execute() {
+        console.log("复制");
         return {
           redo() {
             mainData.copyData = dragData.selectKey;
@@ -46,8 +45,10 @@ export function useCommand() {
       keyboard: "ctrl+v",
       pushQueue: true,
       execute() {
+        mainData.menuConfig.key++;
         let copyData = mainData.copyData; //复制的keys
-        let key = dragData.selectKey; //当前选中的keys
+        let key = mainData.wantCopy; //当前选中的keys
+
         let parent = mainData.EditorDataMap.get(key)?.parent || "page"; //当前选中的keys的父容器key
         let index = mainData.EditorDataMap.get(parent).children.findIndex(
           (item: string) => item == key
@@ -81,12 +82,14 @@ export function useCommand() {
               0,
               toCopy(copyData, parent, data)
             );
+            mainData.menuConfig.key++;
           },
           undo() {
             mainData.EditorDataMap.get(parent).children.splice(index + 1, 1);
             addKeys.forEach((keys: string) => {
               mainData.EditorDataMap.delete(keys);
             });
+            mainData.menuConfig.key--;
           },
         };
       },
@@ -98,10 +101,13 @@ export function useCommand() {
       execute() {
         return {
           redo() {
-            let item = queue[cur + 1];
+            let item = mainData.queue[mainData.curPointerTo + 1];
             if (item) {
               item.redo && item.redo();
-              cur++;
+              mainData.curPointerTo++;
+              return true;
+            } else {
+              return false;
             }
           },
         };
@@ -114,11 +120,14 @@ export function useCommand() {
       execute() {
         return {
           redo() {
-            if (cur == -1) return;
-            let item = queue[cur];
+            if (mainData.curPointerTo == -1) return;
+            let item = mainData.queue[mainData.curPointerTo];
             if (item) {
               item.undo && item.undo();
-              cur--;
+              mainData.curPointerTo--;
+              return true;
+            } else {
+              return false;
             }
           },
         };
@@ -142,9 +151,11 @@ export function useCommand() {
         return {
           redo() {
             mainData.EditorDataMap.get(parent).children.splice(index, 1);
+            mainData.menuConfig.key++;
           },
           undo() {
             mainData.EditorDataMap.get(parent).children.splice(index, 0, key);
+            mainData.menuConfig.key--;
           },
         };
       },
@@ -195,22 +206,28 @@ export function useCommand() {
       keyboard: "delete",
       pushQueue: true,
       execute() {
-        let key = dragData.selectKey;
-        let parent = mainData.EditorDataMap.get(key).parent || "page";
-        let index = mainData.EditorDataMap.get(parent).children.findIndex(
-          (item: string) => item == key
-        );
-        if (dragData.isDrag) {
-          dragData.destructionOfDrag();
+        let key = mainData.wantDel;
+        if (key) {
+          let parent = mainData.EditorDataMap.get(key)?.parent || "page";
+          let index = mainData.EditorDataMap.get(parent).children.findIndex(
+            (item: string) => item == key
+          );
+          if (dragData.isDrag) {
+            dragData.destructionOfDrag();
+          }
+          return {
+            redo() {
+              mainData.EditorDataMap.get(parent).children.splice(index, 1);
+              mainData.menuConfig.key++;
+            },
+            undo() {
+              mainData.EditorDataMap.get(parent).children.splice(index, 0, key);
+              mainData.menuConfig.key--;
+            },
+          };
+        } else {
+          ElMessage.error("编辑区域根节点不能删除！");
         }
-        return {
-          redo() {
-            mainData.EditorDataMap.get(parent).children.splice(index, 1);
-          },
-          undo() {
-            mainData.EditorDataMap.get(parent).children.splice(index, 0, key);
-          },
-        };
       },
     },
     //预览命令
@@ -297,10 +314,12 @@ export function useCommand() {
               parent: parent,
             });
             mainData.EditorDataMap.get(parent)?.children.push(id); //修改数据并重新渲染编辑区域
+            mainData.menuConfig.key++;
           },
           undo() {
             mainData.EditorDataMap.get(parent)?.children.splice(index, 1);
             mainData.EditorDataMap.delete(id);
+            mainData.menuConfig.key--;
           },
         };
       },
@@ -328,12 +347,12 @@ export function useCommand() {
       const { redo, undo } = command.execute();
       redo();
       if (!command.pushQueue) return; //不需要放入队列的跳过
-      if (queue.length > 0) {
-        queue = queue.slice(0, cur + 1);
-        queue = queue;
+      if (mainData.queue.length > 0) {
+        mainData.queue = mainData.queue.slice(0, mainData.curPointerTo + 1);
+        mainData.queue = mainData.queue;
       }
-      queue.push({ redo, undo }); //存放命令的前进后退
-      cur += 1;
+      mainData.queue.push({ redo, undo }); //存放命令的前进后退
+      mainData.curPointerTo += 1;
     };
   };
 
@@ -350,9 +369,19 @@ export function useCommand() {
         if (!keyboard) return; //没有键盘事件
         if (keyboard === keyString) {
           //执行相应的命令并阻止默认事件
-          commands[name]();
-          if (keyString != "ctrl+s") {
-            mainData.isNeedSave = true; // 表示还没保存
+          if (keyString == "delete") {
+            // 如果执行删除事件，此时是根节点则不执行
+            mainData.wantDel ? commands[name]() : "";
+          } else {
+            commands[name]();
+          }
+
+          if (keyString == "ctrl+s") {
+            mainData.isNeedSave = false;
+          } else {
+            mainData.isLoading = false;
+            mainData.isSucessSave = false;
+            mainData.isNeedSave = true;
           }
           if (["c", "v", "x"].includes(keyCodes[keyCode]) && !dragData.isDrag)
             return;
