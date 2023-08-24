@@ -86,6 +86,8 @@ const toFindPreNodeInNode = (key: string) => {
       return parent_Children[i];
     }
   }
+  // 如果没有找到，说明其上一个是其父节点
+  return curNode.parent;
 };
 
 // 找当前节点的下一个节点
@@ -97,6 +99,12 @@ const toFindNextNodeOfCurrentNode = (key: string) => {
       return parent_Children[i];
     }
   }
+  // 如果其父节点是 "page" (根节点)，直接返回根节点即可
+  if (curNode.parent == "page") {
+    return "page";
+  }
+  // 如果没有找到，说明其下一个是其父节点的下一个节点
+  return toFindNextNodeOfCurrentNode(curNode.parent);
 };
 
 const showMenu = (event) => {
@@ -118,10 +126,26 @@ const showMenu = (event) => {
   }
   console.log("打开菜单");
   console.log("右击选中节点：" + mainData.menuConfig.selectKey);
+
+  const viewportHeight =
+    window.innerHeight || document.documentElement.clientHeight;
+
   event.preventDefault(); // 阻止浏览器默认右键菜单
+
   mainData.menuConfig.isShowMenu = true;
-  mainData.menuConfig.style.left = event.x + "px";
-  mainData.menuConfig.style.top = event.y + "px";
+
+  if (viewportHeight - event.y < 390) {
+    if (event.x < 100) {
+      mainData.menuConfig.style.left = event.x + "px";
+    } else {
+      mainData.menuConfig.style.left = event.x - 100 + "px";
+    }
+    mainData.menuConfig.style.top = event.y - 390 + "px";
+  } else {
+    mainData.menuConfig.style.left = event.x + "px";
+    mainData.menuConfig.style.top = event.y + "px";
+  }
+
   event.stopPropagation();
 };
 
@@ -336,6 +360,8 @@ const moveForward = (e) => {
   } else {
     console.log("向前移动");
     let preStep = toFindPreNodeInNode(mainData.menuConfig.selectKey);
+    console.log("向前移动" + preStep);
+
     if (mainData.menuConfig.elOutlineTree) {
       mainData.menuConfig.elOutlineTree.setCurrentKey(preStep);
     }

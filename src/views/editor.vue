@@ -145,6 +145,7 @@ watch(
   (newVal) => {
     if (newVal) {
       console.log("保存成功");
+      mainData.isLoading = false;
       saveData.icon = "icon-duigouzhong";
       saveData.context = "已保存";
     }
@@ -155,6 +156,7 @@ watch(
   () => mainData.isNeedSave,
   (newVal) => {
     if (newVal) {
+      mainData.isLoading = false;
       saveData.icon = "icon-weixuanzhong";
       saveData.context = "未保存";
     }
@@ -190,13 +192,6 @@ watch(
       mainData.menuConfig.isShow.shearComponents = false;
       mainData.menuConfig.isShow.pasteComponents = false;
       mainData.menuConfig.isShow.delComponents = false;
-      // if (newVal == dragData.selectKey) {
-      //   mainData.menuConfig.isShow.moveForward = false;
-      //   mainData.menuConfig.isShow.moveBack = false;
-      // } else {
-      //   mainData.menuConfig.isShow.moveForward = true;
-      //   mainData.menuConfig.isShow.moveBack = true;
-      // }
       if (mainData.queue.length <= 0) {
         mainData.menuConfig.isShow.undo = true;
         mainData.menuConfig.isShow.redo = true;
@@ -626,7 +621,8 @@ document.oncontextmenu = function () {
         padding: 66px 16px 16px 24px;
         flex: 1;
         background-color: #efeff1;
-
+        max-width: calc(100vw - 590px);
+        
         &_inner {
           width: 100%;
           height: 100%;
