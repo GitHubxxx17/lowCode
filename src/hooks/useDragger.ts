@@ -3,6 +3,8 @@ import dragStore from "../stores/dragStore.ts";
 import mainStore from "../stores/mainStore.ts";
 import pinia from "../stores/index.ts";
 import { events } from "../utils/events.ts";
+import { findSelectNode } from "./useMenu.ts";
+
 function useDragger(): any {
   const dragData = dragStore(pinia); //拖拽数据
   let mainData = mainStore(pinia);
@@ -17,6 +19,7 @@ function useDragger(): any {
   let isEnter: boolean = false; //是否进入容器
   let enterUpperLevel: boolean = false; //是否进入上一级容器
   let newContainer: HTMLElement = null; //新容器
+  let flag = false;
 
   //监听拖拽节点改变
   watch(
@@ -40,6 +43,19 @@ function useDragger(): any {
         newVal.classList.add("chosenEl");
         container.classList.add("chosen-container");
       }
+    }
+  );
+
+  watch(
+    () => dragData.selectKey,
+    (newVal) => {
+      if(flag){
+        dragData.dragEl = findSelectNode(
+          mainData.rootNode.children[0].children,
+          newVal
+        );
+      }
+      
     }
   );
   /**
@@ -90,8 +106,11 @@ function useDragger(): any {
     // 如果不是编辑区域
     if (!judgeIsMidContainer(e.target)) {
       init();
+      // 监听拖拽key改变
+      flag = true;
       return;
     }
+    flag = false;
     //当处于克隆节点时
     if (dragData.isClone && container) {
       dragData.selectParent = findSelectkey(container);
