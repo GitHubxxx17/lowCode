@@ -4,10 +4,19 @@ import "./style.css";
 import App from "./App.vue";
 import "element-plus/dist/index.css";
 import ElementPlus from "element-plus";
+import * as fundebug from "fundebug-javascript";
+import FundebugVue from "fundebug-vue";
+
+fundebug.init({
+  apikey: "65cf2ce139c5de148d36878d28243875f31eea1d8573c9d04b6166af62ce9e7b",
+});
 // 导入路由模块
 import router from "./router/index.ts";
 
 const app = createApp(App);
+
+// 引入前端监控
+app.use(new FundebugVue(fundebug));
 
 app.use(pinia);
 app.use(ElementPlus);
