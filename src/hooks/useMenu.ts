@@ -31,15 +31,8 @@ const findSelectNode = (nodes: any, selectKey: string): any => {
 
       // 找出该节点（childNode）的 classList，
       // 如果他不是组件则进行不递归，继续遍历剩余节点
-      let childrenList = childNode.children[0]?.classList
-        ? [...childNode.children[0].classList]
-        : "";
-      if (
-        childrenList &&
-        (childrenList.includes("cannotPreview") ||
-          childrenList.includes("container-ordinary"))
-      ) {
-        return traverseNodes(childNode.children);
+      if (childNode.className.includes("container")) {
+        return traverseNodes(childNode.children[0].children);
       } else {
         continue;
       }
@@ -52,7 +45,9 @@ const findSelectNode = (nodes: any, selectKey: string): any => {
       if (nodes[i].getAttribute("data-key") == selectKey) {
         return nodes[i];
       }
-      traverseNodes(nodes[i].children);
+      if (nodes[i].className.includes("container")) {
+        traverseNodes(nodes[i].children[0].children);
+      }
     } else {
       break;
     }

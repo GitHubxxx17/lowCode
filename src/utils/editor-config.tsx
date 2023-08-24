@@ -91,7 +91,7 @@ const componentsConfig = [
           : {};
       return (
         <div class="cannotPreview" data-key={props.id}>
-          <span style={props.style} {...events} datatype="text">
+          <span style={props.node.style} {...events} datatype="text">
             {props.node.children ? props.node.children : "渲染文字"}
           </span>
         </div>

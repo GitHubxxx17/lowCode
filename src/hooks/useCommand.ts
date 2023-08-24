@@ -7,6 +7,7 @@ import pinia from "../stores/index.ts";
 import deepcopy from "deepcopy";
 import { localSaveData, localGetData } from "./useStorage.ts";
 import { updateEditData } from "../request/api/home";
+// import { download } from "../request/api/download.ts";
 import { addMap } from "./useCreateMap.ts";
 
 //命令
@@ -268,17 +269,18 @@ export function useCommand() {
       execute() {
         return {
           redo() {
-            const a = document.createElement("a");
-            a.style.display = "none";
-            //文件的名称
-            a.download = mainData.title + ".json";
-            //生成一个blob二进制数据，内容为json数据
-            var blob = new Blob([JSON.stringify(mainData.EditorData)]);
-            //生成一个指向blob的URL地址，并赋值给a标签的href属性
-            a.href = URL.createObjectURL(blob);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            // const a = document.createElement("a");
+            // a.style.display = "none";
+            // //文件的名称
+            // a.download = mainData.title + ".json";
+            // //生成一个blob二进制数据，内容为json数据
+            // var blob = new Blob([JSON.stringify(mainData.EditorData)]);
+            // //生成一个指向blob的URL地址，并赋值给a标签的href属性
+            // a.href = URL.createObjectURL(blob);
+            // document.body.appendChild(a);
+            // a.click();
+            // document.body.removeChild(a);
+            // download('http://127.0.0.1:8081','')
           },
         };
       },

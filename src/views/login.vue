@@ -199,7 +199,7 @@ const confirm = ($router) => {
           ></ElInput>
         </el-form-item>
         <el-form-item class="login-box-form-btns">
-          <button class="confirm" @click="confirm($router)">
+          <button type="button" class="confirm" @click="confirm($router)">
             立即{{ changeState.confirmName }}
           </button>
           <div class="change" @click="changeModel()">
