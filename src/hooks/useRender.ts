@@ -18,7 +18,7 @@ export const renderer = (nodes: any): any => {
     return nodes.map((node) => {
       let children = renderer(node.children); //利用递归获取子节点
       let nodeprops: nodeProps = reactive({
-        ...node,
+        node:node,
         children: children,
         style: node.style,
       }); //配置
@@ -39,7 +39,7 @@ export const mapRenderer = (key: string): any => {
       let children = mapRenderer(nodekey); //利用递归获取子节点
       let node = mainData.EditorDataMap.get(nodekey)
       let nodeprops: nodeProps = reactive({
-        ...node,
+        node:node,
         id:nodekey,
         style: node.style,
       }); //配置

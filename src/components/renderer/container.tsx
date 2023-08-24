@@ -9,7 +9,8 @@ export default defineComponent({
     childrenList: Array<Object>, //子节点json数据
     text: String, //无组件时显示的文本内容
     class: String, //类名
-    events:Object//事件
+    events:Object,//事件
+    node:Object
   },
   setup(props) {
     let containerRef = ref(null);
@@ -27,11 +28,8 @@ export default defineComponent({
           onMouseleave={(e) => usedragger.mouseleave(e)}
           {...props.events}
         >
-          {props.children.length != 0 ? (
-            props.children
-          ) : (
-            <span class="nochild">{props.text}</span>
-          )}
+          {props?.children.length != 0 && props.children}
+          {props?.node.children.length == 0 && <span class="nochild">{props.text}</span>}
         </div>
       );
     };

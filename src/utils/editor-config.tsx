@@ -21,14 +21,18 @@ const componentsConfig = [
     type: "container-ordinary",
     category: "container",
     render(props: any) {
+      const { children, childrenList } = props;
       props = {
-        ...props,
+        node:props.node,
+        children: children || [],
+        childrenList: childrenList,
+        style: props.node.style,
         text: "容器",
         class: "container-ordinary",
         "data-key": props.id,
         events:
-          props.events && mainData.isPreview
-            ? eventConfig.getRenderEvents(props.events)
+          props.node?.events && mainData.isPreview
+            ? eventConfig.getRenderEvents(props.node.events)
             : {},
       };
       return <Container {...props}></Container>;
@@ -49,14 +53,18 @@ const componentsConfig = [
     type: "container-free",
     category: "container",
     render(props: any) {
+      const { children, childrenList } = props;
       props = {
-        ...props,
+        node:props.node,
+        children: children || [],
+        childrenList: childrenList,
+        style: props.node.style,
         text: "自由容器",
         class: "container-free",
         "data-key": props.id,
         events:
-          props.events && mainData.isPreview
-            ? eventConfig.getRenderEvents(props.events)
+          props.node?.events && mainData.isPreview
+            ? eventConfig.getRenderEvents(props.node.events)
             : {},
       };
       return <Container {...props}></Container>;
@@ -78,13 +86,13 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       let events =
-        props.events && mainData.isPreview
-          ? eventConfig.getRenderEvents(props.events)
+        props.node?.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.node.events)
           : {};
       return (
         <div class="cannotPreview" data-key={props.id}>
           <span style={props.style} {...events} datatype="text">
-            {props.children ? props.children : "渲染文字"}
+            {props.node.children ? props.node.children : "渲染文字"}
           </span>
         </div>
       );
@@ -107,27 +115,27 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       let events =
-        props.events && mainData.isPreview
-          ? eventConfig.getRenderEvents(props.events)
+        props.node?.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.node.events)
           : {};
       return (
         <div class="cannotPreview" data-key={props.id}>
           <ElButton
-            style={props.style}
+            style={props.node.style}
             class="baseButton"
-            type={props.buttonstyle}
-            size={props.size}
-            disabled={props.isDisable}
+            type={props.node.buttonstyle}
+            size={props.node.size}
+            disabled={props.node.isDisable}
             {...events}
           >
             <i
-              class={["icon iconfont leftIcon", props.icon.leftIcon]}
-              style={{ "font-size": props.icon.leftIconSize }}
+              class={["icon iconfont leftIcon", props.node.icon.leftIcon]}
+              style={{ "font-size": props.node.icon.leftIconSize }}
             ></i>
-            {props.children ? props.children : "渲染按钮"}
+            {props.node.children ? props.node.children : "渲染按钮"}
             <i
-              class={["icon iconfont rightIcon", props.icon.rightIcon]}
-              style={{ "font-size": props.icon.rightIconSize }}
+              class={["icon iconfont rightIcon", props.node.icon.rightIcon]}
+              style={{ "font-size": props.node.icon.rightIconSize }}
             ></i>
           </ElButton>
         </div>
@@ -157,13 +165,13 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       let events =
-        props.events && mainData.isPreview
-          ? eventConfig.getRenderEvents(props.events)
+        props.node?.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.node.events)
           : {};
 
       return (
         <div class="cannotPreview" data-key={props.id}>
-          <RdInput option={props} events={events}></RdInput>
+          <RdInput option={props.node} events={events}></RdInput>
         </div>
       );
     },
@@ -193,12 +201,12 @@ const componentsConfig = [
     category: "common",
     render(props: any) {
       let events =
-        props.events && mainData.isPreview
-          ? eventConfig.getRenderEvents(props.events)
+        props.node?.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.node.events)
           : {};
       return (
         <div class="cannotPreview" data-key={props.id}>
-          <RdSelect option={props} events={events}></RdSelect>
+          <RdSelect option={props.node} events={events}></RdSelect>
         </div>
       );
     },
@@ -219,12 +227,16 @@ const componentsConfig = [
     category: "form",
     render(props: any) {
       let events =
-        props.events && mainData.isPreview
-          ? eventConfig.getRenderEvents(props.events)
+        props.node?.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.node.events)
           : {};
       return (
-        <div class="cannotPreview" style={props.style.box} data-key={props.id}>
-          <RdtextBox option={props} events={events}></RdtextBox>
+        <div
+          class="cannotPreview"
+          style={props.node.style.box}
+          data-key={props.id}
+        >
+          <RdtextBox option={props.node} events={events}></RdtextBox>
         </div>
       );
     },
@@ -249,12 +261,19 @@ const componentsConfig = [
     category: "form",
     render(props: any) {
       let events =
-        props.events && mainData.isPreview
-          ? eventConfig.getRenderEvents(props.events)
+        props.node?.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.node.events)
           : {};
       return (
-        <div class="cannotPreview" style={props.style.box} data-key={props.id}>
-          <RdmultilineText option={props} events={events}></RdmultilineText>
+        <div
+          class="cannotPreview"
+          style={props.node.style.box}
+          data-key={props.id}
+        >
+          <RdmultilineText
+            option={props.node}
+            events={events}
+          ></RdmultilineText>
         </div>
       );
     },
@@ -358,7 +377,7 @@ for (let item of IconConfig) {
       render: (props: any) => {
         return (
           <div class="cannotPreview" data-key={props.id}>
-            <i class={props.icon} style={props.style}></i>
+            <i class={props.node.icon} style={props.node.style}></i>
           </div>
         );
       },

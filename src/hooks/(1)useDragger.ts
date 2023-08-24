@@ -299,7 +299,83 @@ function useDragger(): any {
 
 
 
-
+// for (let i = 0; i < dragChildList.length; i++) {
+    //   if (
+    //     i !== newIndex &&
+    //     e.clientX > dragChildList[i].left &&
+    //     e.clientX < dragChildList[i].right &&
+    //     e.clientY > dragChildList[i].top &&
+    //     e.clientY < dragChildList[i].bottom
+    //   ) {
+    //     if (newIndex < i) {
+    //       for (let j = newIndex; j < i; j++) {
+    //         if (j < oldIndex) {
+    //           container.children[j].style.transform =
+    //             "translate3d(0px, 0px, 0)";
+    //         } else {
+    //           // const x = dragChildList[j].left - dragChildList[j + 1].left;
+    //           // const y = dragChildList[j].top - dragChildList[j + 1].top;
+    //           let widthOfAccount =
+    //             cLeft +
+    //             cWidth -
+    //             dragChildList[j].left -
+    //             dragChildList[j].width -
+    //             dragChildList[j + 1].width;
+    //           console.log(widthOfAccount,dragChildList[oldIndex].width);
+    //           if (widthOfAccount >= 0) {
+    //             container.children[j + 1].style.transform =
+    //               "translate3d(" +
+    //               -dragChildList[oldIndex].width +
+    //               "px, " +
+    //               0 +
+    //               "px, 0)";
+    //           }
+    //         }
+    //       }
+    //     } else if (newIndex > i) {
+    //       for (let j = i; j < newIndex; j++) {
+    //         if (oldIndex <= j) {
+    //           container.children[j + 1].style.transform =
+    //             "translate3d(0px, 0px, 0)";
+    //         } else {
+    //           // const x = dragChildList[j + 1].left - dragChildList[j].left;
+    //           // const y = dragChildList[j + 1].top - dragChildList[j].top;
+    //           // container.children[j].style.transform =
+    //           //   "translate3d(" + x + "px, " + y + "px, 0)";
+    //           if (
+    //             Math.abs(dragChildList[j].top - dragChildList[oldIndex].top) <=
+    //             dragChildList[j].height
+    //           ) {
+    //             container.children[j].style.transform =
+    //               "translate3d(" +
+    //               dragChildList[oldIndex].width +
+    //               "px, " +
+    //               0 +
+    //               "px, 0)";
+    //           }
+    //         }
+    //       }
+    //     }
+    //     let left = 0;
+    //     // const x = dragChildList[i].left - dragChildList[oldIndex].left;
+    //     // const y = dragChildList[i].top - dragChildList[oldIndex].top;
+    //     for (let j = oldIndex + 1; j <= i; j++) {
+    //       left += dragChildList[j].width;
+    //     }
+    //     dragData.dragEl.style.transform =
+    //       "translate3d(" + left + "px, " + 0 + "px, 0)";
+    //     newIndex = i;
+    //     //节流重新渲染
+    //     // if (!timer) {
+    //     //   timer = setTimeout(() => {
+    //     //     refreshDragEl();
+    //     //     getDragChildList();
+    //     //     timer = null;
+    //     //   }, 200);
+    //     // }
+    //     break;
+    //   }
+    // }
 
 
 
