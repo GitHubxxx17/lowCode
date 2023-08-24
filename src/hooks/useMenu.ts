@@ -62,6 +62,9 @@ const findSelectNode = (nodes: any, selectKey: string): any => {
 
 // 找到当前右击对象的最外层父盒子
 const findTreeNode = (target: any): any => {
+  if (!target.classList) {
+    return null;
+  }
   let classList = [...target.classList];
   if (
     classList.includes("is-expanded") ||
@@ -97,7 +100,7 @@ const toFindNextNodeOfCurrentNode = (key: string) => {
 };
 
 const showMenu = (event) => {
-  mainData.menuConfig.selectKey = findTreeNode(event.target).getAttribute(
+  mainData.menuConfig.selectKey = findTreeNode(event.target)?.getAttribute(
     "data-key"
   );
   // 如果右击节点是已经选中的节点
