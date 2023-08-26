@@ -12,7 +12,6 @@ const errorFun = () => {
 };
 let service = axios.create({
   baseURL: "http://47.115.228.27:8081",
-  timeout: 3000,
 });
 
 // 添加请求拦截器

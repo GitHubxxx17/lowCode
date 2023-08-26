@@ -11,29 +11,34 @@ import service from "..";
 export function download(
   url: string,
   fileName: string,
-  fileFormat: string = "xlsx",
-  params?: object
+  fileFormat: string = "zip",
+  loadingInstance:any,
+  params?: object,
 ) {
-  return service
-    .post(url, params, {
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      responseType: "blob",
-    })
+  return service({
+    method: "post",
+    url: url,
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    responseType: "blob",
+    data:params,
+  })
     .then(async (res: any) => {
-      let uploadExcel = (fileName: any) => {
-        const blob = new Blob([res.data], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8",
-        }) as any;
-        const url = URL.createObjectURL(blob);
-        const aLink = document.createElement("a");
-        aLink.setAttribute("download", fileName);
-        aLink.setAttribute("href", url);
-        document.body.appendChild(aLink);
-        aLink.click();
-        document.body.removeChild(aLink);
-        URL.revokeObjectURL(blob);
-      };
-      uploadExcel(`${fileName}_${new Date().valueOf()}.${fileFormat}`);
+      const blob = new Blob([res.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8",
+      }) as any;
+      const url = URL.createObjectURL(blob);
+      const aLink = document.createElement("a");
+      aLink.setAttribute(
+        "download",
+        `${fileName}_${new Date().valueOf()}.${fileFormat}`
+      );
+      aLink.setAttribute("href", url);
+      document.body.appendChild(aLink);
+      aLink.click();
+      document.body.removeChild(aLink);
+      URL.revokeObjectURL(blob);
+      loadingInstance.close()
+      ElMessage.success("下载文件成功");
     })
     .catch((r) => {
       console.error(r);

@@ -19,7 +19,7 @@ function useDragger(): any {
   let isEnter: boolean = false; //是否进入容器
   let enterUpperLevel: boolean = false; //是否进入上一级容器
   let newContainer: HTMLElement = null; //新容器
-  let flag = false;
+  let isEditingArea: boolean = true;
 
   //监听拖拽节点改变
   watch(
@@ -39,23 +39,26 @@ function useDragger(): any {
       }
       //为新选中节点和父容器添加选中类
       if (newVal) {
+        mainData.rootNode.classList.remove("chosen-container");
         container = findParentContainer(newVal.parentNode); //获取当前正在拖拽的容器
         newVal.classList.add("chosenEl");
         container.classList.add("chosen-container");
+      } else {
+        mainData.rootNode.classList.add("chosen-container");
       }
     }
   );
 
+  //监听节点的键
   watch(
     () => dragData.selectKey,
     (newVal) => {
-      if(flag){
+      if (!isEditingArea) {
         dragData.dragEl = findSelectNode(
           mainData.rootNode.children[0].children,
           newVal
         );
       }
-      
     }
   );
   /**
@@ -107,10 +110,10 @@ function useDragger(): any {
     if (!judgeIsMidContainer(e.target)) {
       init();
       // 监听拖拽key改变
-      flag = true;
+      isEditingArea = false;
       return;
     }
-    flag = false;
+    isEditingArea = true;
     //当处于克隆节点时
     if (dragData.isClone && container) {
       dragData.selectParent = findSelectkey(container);
@@ -174,29 +177,28 @@ function useDragger(): any {
     if (dragData.isClone) {
       if (container) container.classList.remove("chosen-container"); //移除上一个容器的选中
       container.removeChild(renderEl);
-      if (container == findParentContainer(e.target)) {
-        //鼠标移出后如果获取的容器与上一个相同则获取它的父节点容器
-        container = findParentContainer(e.target.parentNode);
-        container.classList.add("chosen-container");
-        renderEl = document.createElement("div");
-        renderEl.classList.add("renderEl");
-        container.appendChild(
-          (render(
-            dragData.selectedMaterial.render({
-              node: dragData.selectedMaterial.defaultData,
-            }),
-            renderEl
-          ),
-          renderEl)
-        );
-      }
+      //鼠标移出后如果获取的容器与上一个相同则获取它的父节点容器
+      container = findParentContainer(e.target.parentNode);
+      container.classList.add("chosen-container");
+      renderEl = document.createElement("div");
+      renderEl.classList.add("renderEl");
+      container.appendChild(
+        (render(
+          dragData.selectedMaterial.render({
+            node: dragData.selectedMaterial.defaultData,
+          }),
+          renderEl
+        ),
+        renderEl)
+      );
     }
     //正在拖拽时离开容器
     if (dragData.isDraging) {
       //获取当前容器的上一级容器，因为离开的当前容器肯定进入了当前容器的上一级容器
+      isEnter = false;
+      if(e.target != container)return;
       newContainer = findParentContainer(e.target.parentNode);
       enterUpperLevel = true;
-      isEnter = false;
       //调用定时器
       toEnter = setTimeout(enterContainer, 300);
     }
