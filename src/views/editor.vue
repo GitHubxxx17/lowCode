@@ -621,6 +621,7 @@ onBeforeUnmount(() => {
         flex: 1;
         background-color: #efeff1;
         max-width: calc(100vw - 590px);
+        min-width: 500px;
 
         &_inner {
           width: 100%;
