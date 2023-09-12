@@ -45,10 +45,10 @@ const mainStore = defineStore("mainStore", {
   },
   actions: {
     setMap() {
-      this.EditorDataMap = useCreateMap(this.EditorData);
+      this.EditorDataMap = useCreateMap();
     },
     setEditorData() {
-      this.EditorData = parseMapToJson(this.EditorDataMap);
+      return parseMapToJson(this.EditorDataMap);
     },
   },
 });

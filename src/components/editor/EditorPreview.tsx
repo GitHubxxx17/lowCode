@@ -11,7 +11,7 @@ export default defineComponent({
     return () => {
       return (
         <div class="EditorPreview">
-          <div id="body" style={props.EditorData.style}>
+          <div id="body" style={props.EditorData.get('page').style}>
           {mapRenderer('page')}
           </div>
           <div class="EditorPreview-leftMessage">按ESC可退出预览</div>

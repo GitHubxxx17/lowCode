@@ -169,11 +169,10 @@ export function useCommand() {
         return {
           async redo() {
             mainData.isLoading = true;
-            mainData.setEditorData();
             localSaveData("title", mainData.title);
-            localSaveData("data", mainData.EditorData);
+            localSaveData("data", mainData.setEditorData());
             let res = await updateEditData({
-              jsonData: JSON.stringify(mainData.EditorData),
+              jsonData: mainData.setEditorData(),
               id: localGetData("id"),
               title: mainData.title,
             });
@@ -239,7 +238,6 @@ export function useCommand() {
         return {
           redo() {
             if (!mainData.isPreview) {
-              mainData.setEditorData();
               mainData.isPreview = true;
               ElMessage.success({ message: "已进入预览模式", duration: 2000 });
             }
@@ -283,13 +281,10 @@ export function useCommand() {
         //初始化操作
         this.before = null;
         //监控拖拽开始事件，保存状态
-        const start = () => (this.before = deepcopy(mainData.EditorData));
         //拖拽之后需要触发对应的指令
         const end = () => commands["clone"]();
-        events.on("cloneStart", start);
         events.on("cloneEnd", end);
         return () => {
-          events.off("cloneStart", start);
           events.off("cloneEnd", end);
         };
       },

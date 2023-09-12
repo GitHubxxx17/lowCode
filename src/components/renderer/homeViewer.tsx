@@ -1,14 +1,11 @@
 import "@/sass/editor/EditorContainer.scss";
 import { defineComponent } from "vue";
-import { renderer } from "../../hooks/useRender.ts";
+import { mapRenderer } from "../../hooks/useRender.ts";
 
 export default defineComponent({
-  props: {
-    EditorData: Object,
-  },
-  setup(props) {
+  setup() {
     return () => {
-      return renderer(props.EditorData?.body);
+      return mapRenderer('page');
     };
   },
 });

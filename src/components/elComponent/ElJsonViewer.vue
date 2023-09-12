@@ -8,11 +8,10 @@ import { ElMessage } from "element-plus";
 
 const dragData = dragStore(pinia);
 const mainData = mainStore(pinia);
-mainData.setEditorData();
 //复制数据到剪切板
 const copyData = () => {
   const textArea = document.createElement("textarea");
-  textArea.value = JSON.stringify(dragData.selectedComponent || mainData.EditorData);
+  textArea.value = JSON.stringify(mainData.EditorDataMap.get(dragData.selectKey || 'page'));
   document.body.appendChild(textArea);
   textArea.focus();
   textArea.select();
@@ -34,7 +33,7 @@ const copyData = () => {
       showIcon
       showSelectController
       :height="820"
-      :data="dragData.selectedComponent || mainData.EditorData"
+      :data="mainData.EditorDataMap.get(dragData.selectKey || 'page')"
     ></vue-json-pretty>
   </div>
 </template>

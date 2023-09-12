@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { provide, reactive, ref, watch } from "vue";
-import data from "../data.json";
+import { provide, reactive, ref, watch, onBeforeUnmount } from "vue";
+// import data from "../data.json";
 import EditorLeft from "../components/editor/EditorLeft.vue";
 import EditorRight from "../components/editor/EditorRight.vue";
 import EditorContainer from "../components/editor/EditorContainer";
@@ -34,9 +34,6 @@ provide("erConfig", erConfig);
 const mainData = mainStore(pinia);
 const dragData = dragStore(pinia);
 mainData.title = localGetData("title") ? localGetData("title") : "新项目";
-mainData.EditorData = localGetData("data")
-  ? localGetData("data")
-  : reactive(data);
 mainData.setMap();
 //挂载命令
 const { commands } = useCommand();
@@ -203,10 +200,12 @@ watch(
   }
 );
 
-document.addEventListener("click", () => {
+const closeContextmenu = () => {
   console.log("document click 关闭菜单");
   mainData.menuConfig.isShowMenu = false;
-});
+};
+
+document.addEventListener("click", closeContextmenu);
 
 // 监听鼠标右键是否被按下方法 1， oncontextmenu事件
 document.oncontextmenu = function () {
@@ -215,16 +214,21 @@ document.oncontextmenu = function () {
 };
 
 // 给 document 挂一个 右击事件
-(function () {
-  //严谨模式 检查所有错误
-  "use strict";
-  // 鼠标右键
-  Object.defineProperty(document, "oncontextmenu", {
-    set: function (evt) {
-      return evt;
-    },
-  });
-})();
+// (function () {
+//   //严谨模式 检查所有错误
+//   "use strict";
+//   // 鼠标右键
+//   Object.defineProperty(document, "oncontextmenu", {
+//     set: function (evt) {
+//       return evt;
+//     },
+//   });
+// })();
+
+onBeforeUnmount(() => {
+  document.oncontextmenu = null;
+  document.removeEventListener("click", closeContextmenu);
+});
 </script>
 
 <template>
@@ -308,11 +312,6 @@ document.oncontextmenu = function () {
           <el-breadcrumb separator=">">
             <el-breadcrumb-item
               v-for="item in mainData.Breadcrumb"
-              @click="
-                () => {
-                  console.log(1);
-                }
-              "
               ><span class="el-breadcrumb-button">
                 {{ item }}</span
               ></el-breadcrumb-item
@@ -334,7 +333,7 @@ document.oncontextmenu = function () {
   </div>
   <EditorPreview
     v-if="mainData.isPreview"
-    :EditorData="mainData.EditorData"
+    :EditorData="mainData.EditorDataMap"
   ></EditorPreview>
   <el-dialog title="快捷键" v-model="state.dialogIsShow" width="30%">
     <ul class="shortcuts">
@@ -622,7 +621,7 @@ document.oncontextmenu = function () {
         flex: 1;
         background-color: #efeff1;
         max-width: calc(100vw - 590px);
-        
+
         &_inner {
           width: 100%;
           height: 100%;

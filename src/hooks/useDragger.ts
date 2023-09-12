@@ -94,7 +94,6 @@ function useDragger(): any {
    */
   const cloneMousedown = (component: any, e: any) => {
     const span = findSpan(e.target);
-    events.emit("cloneStart");
     dragData.isClone = true;
     dragData.selectedMaterial = component;
     createDragGhost("ghostClone", span, e); //创建拖拽的影子节点
