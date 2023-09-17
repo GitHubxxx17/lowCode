@@ -1,11 +1,14 @@
-import mainStore from "../stores/mainStore.ts";
-import pinia from "../stores/index.ts";
-import { reactive } from "vue";
+import { reactive, watch } from "vue";
 import { localGetData } from "./useStorage.ts";
+import useDebouce from "./useDebounce.ts";
+import { events } from "../utils/events.ts";
 
 const EditorDataMap = new Map();
 
-export const useCreateMap = () => {
+let modifys = null;
+
+export const useCreateMap = (modify: any) => {
+  modifys = modify;
   EditorDataMap.clear();
   buildMap();
   return EditorDataMap;
@@ -18,12 +21,10 @@ export const useCreateMap = () => {
  * @return {*}  {string} 返回节点id
  */
 export const addMap = (key: string, data: any): string => {
-  const mainData = mainStore(pinia);
   let id: string = key + "-" + getUUID();
-  mainData.EditorDataMap.set(id, reactive(data));
+  watchHandler(id, data);
   return id;
-}; 
-
+};
 
 const buildMap = () => {
   // let id: string = data.type + "-" + getUUID();
@@ -44,13 +45,38 @@ const buildMap = () => {
   //   }
   // }
   // return id;
-  let data = JSON.parse(localGetData('data'));
-  for(let [key,value] of Object.entries(data)){
-    EditorDataMap.set(key,reactive(value as object));
+  let data = JSON.parse(localGetData("data"));
+  for (let [key, value] of Object.entries(data)) {
+    watchHandler(key, value);
   }
 };
 
-export const parseMapToJson = (EditorDataMap:any):any => {
+/**
+ *  监听处理
+ * @param {string} key 节点key
+ * @param {*} value 节点数据
+ */
+const watchHandler = (key: string, value: any) => {
+  //数据响应式处理
+  let valRef = reactive(value as object);
+  //防抖处理函数
+  let debouceFun = useDebouce(() => {
+    events.emit("changeEnd");
+  }, 700);
+  // 防抖监听数据修改
+  watch(
+    () => valRef,
+    () => {
+      if (modifys.disabled) return;   
+      console.log(1111,modifys);
+      debouceFun();
+    },
+    { deep: true }
+  );
+  EditorDataMap.set(key, valRef);
+};
+
+export const parseMapToJson = (EditorDataMap: any): any => {
   // let EditorData = {};
   // const parseMap = (key:string):any => {
   //     let data = deepcopy(EditorDataMap.get(key));
@@ -72,8 +98,20 @@ export const parseMapToJson = (EditorDataMap:any):any => {
   // EditorData = parseMap('page');
   // console.log(EditorData);
   // return EditorData;
-  return JSON.stringify(Object.fromEntries(EditorDataMap));
-}
+  let newEditorDataMap = new Map();
+  //深度搜索重构哈希树，剔除已被删除的数据
+  const DFSMap = (key: string) => {
+    newEditorDataMap.set(key, EditorDataMap.get(key));
+    let children = EditorDataMap.get(key).children;
+    if (Array.isArray(children)) {
+      children.map((id: string) => {
+        DFSMap(id);
+      });
+    }
+  };
+  DFSMap("page");
+  return JSON.stringify(Object.fromEntries(newEditorDataMap));
+};
 
 /**
  *  生成唯一的uuid

@@ -25,8 +25,8 @@ function useDragger(): any {
   watch(
     () => dragData.dragEl,
     (newVal, oldVal) => {
-      console.log("newVal:", newVal);
-      console.log("oldVal:", oldVal);
+      // console.log("newVal:", newVal);
+      // console.log("oldVal:", oldVal);
       if (newVal && typeof findSelectkey(newVal) == "undefined") {
         dragData.dragEl = oldVal;
       }
@@ -53,12 +53,20 @@ function useDragger(): any {
   watch(
     () => dragData.selectKey,
     (newVal) => {
+      mainData.modify.curData = JSON.stringify(mainData.EditorDataMap.get(newVal || 'page'));
       if (!isEditingArea) {
         dragData.dragEl = findSelectNode(
           mainData.rootNode.children[0].children,
           newVal
         );
       }
+    }
+  );
+  //监听拖拽结束
+  watch(
+    () => dragData.isDraging,
+    (newVal) => {
+      if (!newVal) events.emit("dragEnd");
     }
   );
   /**
@@ -96,6 +104,7 @@ function useDragger(): any {
     const span = findSpan(e.target);
     dragData.isClone = true;
     dragData.selectedMaterial = component;
+    mainData.modify.disabled = true;
     createDragGhost("ghostClone", span, e); //创建拖拽的影子节点
     document.body.addEventListener("mousemove", DragGhostMove);
   };
@@ -104,7 +113,7 @@ function useDragger(): any {
    *绑定页面鼠标松开事件
    * @param {*} e 鼠标事件
    */
-  document.body.onmouseup = (e: any): void => {
+  document.body.onmouseup = (e: any) => {
     // 如果不是编辑区域
     if (!judgeIsMidContainer(e.target)) {
       init();
@@ -120,6 +129,12 @@ function useDragger(): any {
     }
     if (dragData.isClone || dragData.isDrag) mainData.isNeedSave = true;
     init();
+    
+    //将该语句执行放进宏任务中，在watch监听后执行
+    let timer = setTimeout(()=>{
+      mainData.modify.disabled = false;
+      clearTimeout(timer)
+    },0);
   };
 
   /**
@@ -195,7 +210,7 @@ function useDragger(): any {
     if (dragData.isDraging) {
       //获取当前容器的上一级容器，因为离开的当前容器肯定进入了当前容器的上一级容器
       isEnter = false;
-      if(e.target != container)return;
+      if (e.target != container) return;
       newContainer = findParentContainer(e.target.parentNode);
       enterUpperLevel = true;
       //调用定时器
@@ -285,7 +300,7 @@ function useDragger(): any {
    * @param {*} e 鼠标事件
    */
   const onclickToDrag = (e: any) => {
-    console.log("选中：", e.target, "寻找", findDragEl(e.target));
+    // console.log("选中：", e.target, "寻找", findDragEl(e.target));
     //如果点击的区域是整个编辑区域的话
     if (e.target.classList.contains("Editorcontainer")) {
       container = e.target;
@@ -303,7 +318,7 @@ function useDragger(): any {
     dragData.isDrag = true;
     dragData.dragEl = findDragEl(e.target) || e.target; //获取拖拽节点
     dragData.selectKey = findSelectkey(dragData.dragEl);
-    console.log("dragData.dragEl:", dragData.dragEl);
+    // console.log("dragData.dragEl:", dragData.dragEl);
 
     dragData.dragEl.onmousedown = dragMousedown;
     //销毁拖拽组件相关数据
@@ -329,6 +344,8 @@ function useDragger(): any {
    * @param {*} e 鼠标事件
    */
   const dragMousedown = (e: any) => {
+    mainData.modify.disabled = true;
+    events.emit("dragStart");
     console.log("正在交换组件中");
     oldIndex = [].indexOf.call(container.children[0].children, dragData.dragEl); //获取拖拽组件在当前容器的位置
     getDragChildList();

@@ -35,6 +35,7 @@ const mainData = mainStore(pinia);
 const dragData = dragStore(pinia);
 mainData.title = localGetData("title") ? localGetData("title") : "新项目";
 mainData.setMap();
+mainData.modify.curData = JSON.stringify(mainData.EditorDataMap.get('page'))
 //挂载命令
 const { commands } = useCommand();
 

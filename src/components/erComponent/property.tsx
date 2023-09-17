@@ -15,15 +15,20 @@ export default defineComponent({
 
     return () => {
       return (
-        
-        <div class="property" key={dragData.selectKey}>
-          {erConfig.componentMap.get(dragData.selectKey?.replace(/-[^-]*$/, '')) ? (
-            erConfig.componentMap
-              .get(dragData.selectKey?.replace(/-[^-]*$/, ''))
-              .Properties(mainData.EditorDataMap.get(dragData.selectKey))
-          ) : (
-            <ContainerProperty option={mainData.EditorDataMap.get('page')}></ContainerProperty>
-          )}
+        <div key={mainData.modify.modifying}>
+          <div class="property" key={dragData.selectKey}>
+            {erConfig.componentMap.get(
+              dragData.selectKey?.replace(/-[^-]*$/, "")
+            ) ? (
+              erConfig.componentMap
+                .get(dragData.selectKey?.replace(/-[^-]*$/, ""))
+                .Properties(mainData.EditorDataMap.get(dragData.selectKey))
+            ) : (
+              <ContainerProperty
+                option={mainData.EditorDataMap.get("page")}
+              ></ContainerProperty>
+            )}
+          </div>
         </div>
       );
     };

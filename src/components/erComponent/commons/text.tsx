@@ -55,27 +55,35 @@ export const TextProperty = defineComponent({
       options: [
         {
           value: "普通文字",
+          label:'span',
         },
         {
           value: "段落",
+          label:'p',
         },
         {
           value: "一级标题",
+          label:"h1"
         },
         {
           value: "二级标题",
+          label:"h2"
         },
         {
           value: "三级标题",
+          label:"h3"
         },
         {
           value: "四级标题",
+          label:"h4"
         },
         {
           value: "五级标题",
+          label:"h5"
         },
         {
           value: "六级标题",
+          label:"h6"
         },
       ],
     });
@@ -93,12 +101,27 @@ export const TextProperty = defineComponent({
 
     if (props.option.style.display) state.whetherInline.value = false;
 
+    for(let item of textFormat.options){
+      if(item.label == props.option.label){
+        textFormat.value = item.value
+        break;
+      }
+    }
+
     watchEffect(() => {
       props.option.children = state.textContent.value;
       if (state.whetherInline.value) {
         delete props.option.style.display;
       } else {
         props.option.style.display = "block";
+      }
+      if(textFormat.value){
+        for(let item of textFormat.options){
+          if(item.value == textFormat.value){
+            props.option.label = item.label;
+            break;
+          }
+        }
       }
     });
 
