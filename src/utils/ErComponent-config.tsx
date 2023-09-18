@@ -40,6 +40,15 @@ import {
   IconProperty
 }from "../components/erComponent/erIcon/icon";
 
+import {
+  RadioAppearance,
+  RadioProperty
+}from "../components/erComponent/form/radio";
+
+import {
+  CheckboxesAppearance,
+  CheckboxesProperty
+}from "../components/erComponent/form/checkboxes";
 
 interface ErcomponentConfig {
   type: string; //类型
@@ -128,6 +137,24 @@ const ErcomponentConfigList = [
     },
     appearances(selectedComponent:Object) {
       return <IconAppearance option={selectedComponent}></IconAppearance>;
+    },
+  },
+  {
+    type: "radio",
+    Properties(selectedComponent:Object) {
+      return <RadioProperty option={selectedComponent}></RadioProperty>;
+    },
+    appearances(selectedComponent:Object) {
+      return <RadioAppearance option={selectedComponent}></RadioAppearance>;
+    },
+  },
+  {
+    type: "checkboxes",
+    Properties(selectedComponent:Object) {
+      return <CheckboxesProperty option={selectedComponent}></CheckboxesProperty>;
+    },
+    appearances(selectedComponent:Object) {
+      return <CheckboxesAppearance option={selectedComponent}></CheckboxesAppearance>;
     },
   },
 ];

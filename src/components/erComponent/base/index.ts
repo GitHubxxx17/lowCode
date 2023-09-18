@@ -9,6 +9,7 @@ import BaseIconSelect from "./baseIconSelect";
 import BaseContainerProperty from "./baseContainerProperty";
 import BasicPopup from "./basicPopup";
 import BaseButtonGroup from "./baseButtonGroup";
+import BaseSelectDataList from "./baseSelectDataList";
 
 export {
   BaseInput,
@@ -21,5 +22,6 @@ export {
   BaseIconSelect,
   BaseContainerProperty,
   BasicPopup,
-  BaseButtonGroup
+  BaseButtonGroup,
+  BaseSelectDataList
 };

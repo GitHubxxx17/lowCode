@@ -4,9 +4,11 @@ import { createVNode, defineComponent } from "vue";
 import { ElButton } from "element-plus";
 import Container from "../components/renderer/container";
 import {
+  RdRadio,
   RdInput,
   RdSelect,
   RdtextBox,
+  RdCheckboxes,
   RdmultilineText,
 } from "../components/renderer/index";
 import { eventConfig } from "./event-config.tsx";
@@ -298,6 +300,85 @@ const componentsConfig = [
         minRows: 2,
         maxRows: 6,
       },
+    },
+  },
+  {
+    label: "单选框",
+    icon: "icon iconfont icon-danxuankuang",
+    type: "radio",
+    category: "form",
+    render(props: any) {
+      let events =
+        props.node?.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.node.events)
+          : {};
+      return (
+        <div
+          class="cannotPreview"
+          style={props.node.style.box}
+          data-key={props.id}
+        >
+          <RdRadio option={props.node} events={events}></RdRadio>
+        </div>
+      );
+    },
+    defaultData: {
+      value: "",
+      type: "radio",
+      title: "单选框",
+      style: {
+        box: {
+          display: "block",
+        },
+        title: {},
+        radio: {},
+      },
+      children: "",
+      radioData: [
+        { value: "选项1", radio: false },
+        { value: "选项2", radio: false },
+        { value: "选项3", radio: false },
+      ],
+    },
+  },
+  {
+    label: "复选框",
+    icon: "icon iconfont icon-duoxuankuang",
+    type: "checkboxes",
+    category: "form",
+    render(props: any) {
+      let events =
+        props.node?.events && mainData.isPreview
+          ? eventConfig.getRenderEvents(props.node.events)
+          : {};
+      return (
+        <div
+          class="cannotPreview"
+          style={props.node.style.box}
+          data-key={props.id}
+        >
+          <RdCheckboxes option={props.node} events={events}></RdCheckboxes>
+        </div>
+      );
+    },
+    defaultData: {
+      value: "",
+      type: "checkboxes",
+      title: "复选框",
+      style: {
+        box: {
+          display: "block",
+        },
+        title: {},
+        checkboxes: {},
+      },
+      children: "",
+      checkboxesData: [
+        { value: "选项1", radio: false },
+        { value: "选项2", radio: false },
+        { value: "选项3", radio: false },
+      ],
+      border:false
     },
   },
 ];

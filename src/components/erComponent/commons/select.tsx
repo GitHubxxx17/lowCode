@@ -2,18 +2,15 @@ import {
   defineComponent,
   reactive,
   watchEffect,
-  ref,
-  onMounted,
-  onUnmounted,
 } from "vue";
 import {
   BaseInput,
   BaseSelect,
   BaseSwitch,
   BaseAppearance,
+  BaseSelectDataList,
 } from "../base/index";
-import { ElInput, ElButton, ElMessage } from "element-plus";
-import Draggable from "../../../hooks/draggable.ts";
+
 export const SelectAppearance = defineComponent({
   props: {
     option: { type: Object },
@@ -175,26 +172,6 @@ export const SelectProperty = defineComponent({
       }
     })();
 
-    let selectDataList = ref(null);
-    onMounted(() => {
-      new Draggable({
-        el: selectDataList.value,
-        handle: "selectDataDrag",
-        dragData: state.selectData,
-        dragClassName: "active",
-        cloneClassName: "drag-ghost",
-      });
-    });
-    //添加选项
-    const addSelectData = () => {
-      state.selectData.push({
-        ...{
-          radio: false,
-          value: "",
-          isShow: false,
-        },
-      });
-    };
 
     watchEffect(() => {
       if (state.bindingField.value != "")
@@ -228,18 +205,8 @@ export const SelectProperty = defineComponent({
       }).then((v: any) => {
         state.defaultValue.options = v;
       });
+    });
 
-      
-      
-    });
-    //点击隐藏菜单
-    const windowClick = () => {
-      state.selectData.map((item) => (item.isShow = false));
-    };
-    window.addEventListener("click", windowClick);
-    onUnmounted(() => {
-      window.removeEventListener("click", windowClick);
-    });
     return () => {
       return (
         <>
@@ -261,86 +228,12 @@ export const SelectProperty = defineComponent({
               <BaseInput option={state.inputBoxPlaceholder}></BaseInput>
             </elCollapseItem>
             <elCollapseItem title="选项" name="options">
-              <div class="elCollapseItem">数据</div>
-              <div class="selectDataList" ref={selectDataList}>
-                {state.selectData.map((item, i) => {
-                  return (
-                    <div class="elCollapseItem">
-                      <div class="selectData">
-                        <i class="icon iconfont icon-drag selectDataDrag"></i>
-                        <input
-                          class="selectData-radio"
-                          type="radio"
-                          value="true"
-                          name="defaultValue"
-                          title="默认选中"
-                          checked={item.radio}
-                          onChange={(_) => {
-                            state.selectData.forEach(
-                              (item) => (item.radio = false)
-                            );
-                            item.radio = true;
-                            state.defaultValue.value = item.value;
-                          }}
-                        />
-                        <ElInput
-                          v-model={item.value}
-                          placeholder="请输入选项的值"
-                        ></ElInput>
-                        <div
-                          class="selectData-menu"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            state.selectData.forEach(
-                              (item) => (item.isShow = false)
-                            );
-                            item.isShow = true;
-                          }}
-                        >
-                          <i class="icon iconfont icon-caidan"></i>
-                          <div
-                            class="selectData-menu-dropdown"
-                            v-show={item.isShow}
-                          >
-                            <span
-                              v-show={item.radio}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                item.isShow = false;
-                                item.radio = false;
-                              }}
-                            >
-                              取消勾选
-                            </span>
-                            <span
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                item.isShow = false;
-                                if (state.selectData.length > 1)
-                                  state.selectData.splice(i, 1);
-                                else {
-                                  ElMessage.warning({
-                                    message: "最后一项不可删除",
-                                    duration: 2000,
-                                  });
-                                }
-                              }}
-                            >
-                              删除
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div class="elCollapseItem selectDataList-footer">
-                <ElButton plain onClick={addSelectData}>
-                  添加选项
-                </ElButton>
-                <ElButton plain>批量添加</ElButton>
-              </div>
+              <BaseSelectDataList
+                option={{
+                  selectData: state.selectData,
+                  defaultValue: state.defaultValue,
+                }}
+              ></BaseSelectDataList>
             </elCollapseItem>
           </elCollapse>
         </>
