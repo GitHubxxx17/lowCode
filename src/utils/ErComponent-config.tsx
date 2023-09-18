@@ -45,6 +45,11 @@ import {
   RadioProperty
 }from "../components/erComponent/form/radio";
 
+import {
+  CheckboxesAppearance,
+  CheckboxesProperty
+}from "../components/erComponent/form/checkboxes";
+
 interface ErcomponentConfig {
   type: string; //类型
   Properties?: (selectedComponent:Object) => any; //属性
@@ -141,6 +146,15 @@ const ErcomponentConfigList = [
     },
     appearances(selectedComponent:Object) {
       return <RadioAppearance option={selectedComponent}></RadioAppearance>;
+    },
+  },
+  {
+    type: "checkboxes",
+    Properties(selectedComponent:Object) {
+      return <CheckboxesProperty option={selectedComponent}></CheckboxesProperty>;
+    },
+    appearances(selectedComponent:Object) {
+      return <CheckboxesAppearance option={selectedComponent}></CheckboxesAppearance>;
     },
   },
 ];

@@ -4,6 +4,7 @@ import Draggable from "../../../hooks/draggable";
 export default defineComponent({
   props: {
     option: { type: Object },
+    check: { type: Boolean },
   },
   setup(props) {
     const selectDataList = ref(null);
@@ -59,7 +60,23 @@ export default defineComponent({
                 <div class="elCollapseItem">
                   <div class="selectData">
                     <i class="icon iconfont icon-drag selectDataDrag"></i>
-                    <input
+                    {
+                      props.check && <input
+                      class="selectData-radio"
+                      type="checkbox"
+                      value="true"
+                      name="defaultValue"
+                      title="默认选中"
+                      checked={item.radio}
+                      onChange={(_) => {
+                        if (props.check) {
+                          item.radio = !item.radio;
+                        }
+                      }}
+                    />
+                    }
+                    {
+                      !props.check && <input
                       class="selectData-radio"
                       type="radio"
                       value="true"
@@ -74,6 +91,8 @@ export default defineComponent({
                         props.option.defaultValue.value = item.value;
                       }}
                     />
+                    }
+
                     <ElInput
                       v-model={item.value}
                       placeholder="请输入选项的值"
@@ -127,7 +146,12 @@ export default defineComponent({
             })}
           </div>
           <div class="elCollapseItem selectDataList-footer">
-            <ElButton plain onClick={()=>addSelectData(`选项${props.option.selectData.length+1}`)}>
+            <ElButton
+              plain
+              onClick={() =>
+                addSelectData(`选项${props.option.selectData.length + 1}`)
+              }
+            >
               添加选项
             </ElButton>
             <ElButton plain onClick={() => (state.isShow = true)}>
@@ -135,7 +159,12 @@ export default defineComponent({
             </ElButton>
           </div>
 
-          <el-dialog title="批量添加" v-model={state.isShow} width="500px">
+          <el-dialog
+            append-to-body
+            title="批量添加"
+            v-model={state.isShow}
+            width="500px"
+          >
             {{
               default: () => {
                 return (
