@@ -35,7 +35,7 @@ const mainData = mainStore(pinia);
 const dragData = dragStore(pinia);
 mainData.title = localGetData("title") ? localGetData("title") : "新项目";
 mainData.setMap();
-mainData.modify.curData = JSON.stringify(mainData.EditorDataMap.get('page'))
+mainData.modify.curData = JSON.stringify(mainData.EditorDataMap.get("page"));
 //挂载命令
 const { commands } = useCommand();
 
@@ -79,44 +79,6 @@ const shortcuts = [
 ];
 
 // 获取面包屑数据
-const getBreadcrumbData = (nodes: any) => {
-  let isFind = false;
-  const traverseNodes = (key) => {
-    let temp = mainData.EditorDataMap.get(key);
-    let label: any = editorConfig.componentMap.get(temp.type).label;
-    mainData.Breadcrumb.push(label);
-    let childrens = mainData.EditorDataMap.get(key).children;
-    // 如果获取当前节点的children是数组才需要进行递归
-    if (Array.isArray(childrens)) {
-      for (let i = 0; i < childrens.length; i++) {
-        if (!isFind) {
-          traverseNodes(childrens[i]);
-        } else {
-          break;
-        }
-      }
-    } else {
-      // 当前的 key 等于 dragData.selectKey 说明找到了
-      if (key == dragData.selectKey) {
-        isFind = true;
-        return;
-      } else {
-        mainData.Breadcrumb.pop();
-        return;
-      }
-    }
-  };
-  if (Array.isArray(nodes)) {
-    for (let i = 0; i < nodes.length; i++) {
-      if (!isFind) {
-        mainData.Breadcrumb = ["页面"];
-        traverseNodes(nodes[i]);
-      } else {
-        break;
-      }
-    }
-  }
-};
 
 // 监听 dragData.selectKey 的实时变化实现面包屑的实时变化
 watch(
@@ -125,7 +87,11 @@ watch(
     mainData.wantDel = dragData.selectKey;
     mainData.wantCopy = dragData.selectKey;
     if (dragData.selectKey != "page")
-      getBreadcrumbData(mainData.EditorDataMap.get("page").children);
+      mainData.getBreadcrumbData(
+        mainData.EditorDataMap.get("page").children,
+        editorConfig,
+        dragData.selectKey
+      );
     else {
       mainData.Breadcrumb = ["页面"];
     }
@@ -214,17 +180,37 @@ document.oncontextmenu = function () {
   mainData.menuConfig.isShowMenu = false;
 };
 
-// 给 document 挂一个 右击事件
-// (function () {
-//   //严谨模式 检查所有错误
-//   "use strict";
-//   // 鼠标右键
-//   Object.defineProperty(document, "oncontextmenu", {
-//     set: function (evt) {
-//       return evt;
-//     },
-//   });
-// })();
+// 获取树节点数据
+const getOutlineData = (key: any, id: number = 2) => {
+  let newId = id || 2;
+  let parent = mainData.EditorDataMap.get(key).children;
+  if (Array.isArray(parent)) {
+    let children = [];
+    parent.forEach((item, i) => {
+      let temp = mainData.EditorDataMap.get(item);
+      let label = editorConfig.componentMap.get(temp.type).label;
+      children.push({
+        id: newId + i,
+        "node-key": item,
+        label: label,
+        children: getOutlineData(item, id + parent.length),
+      });
+    });
+    return children;
+  } else {
+    return [];
+  }
+};
+
+// 检测 mainData.menuConfig.key 的变化实时更新大纲节点数据
+watch(
+  () => mainData.menuConfig.key,
+  () => {
+    mainData.OutlineData = getOutlineData("page");
+    console.log("重新获取");
+  },
+  { immediate: true }
+);
 
 onBeforeUnmount(() => {
   document.oncontextmenu = null;
@@ -311,8 +297,7 @@ onBeforeUnmount(() => {
       <div class="editor-body-container">
         <div class="editor-body-container-top">
           <el-breadcrumb separator=">">
-            <el-breadcrumb-item
-              v-for="item in mainData.Breadcrumb"
+            <el-breadcrumb-item v-for="item in mainData.Breadcrumb"
               ><span class="el-breadcrumb-button">
                 {{ item }}</span
               ></el-breadcrumb-item

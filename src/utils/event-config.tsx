@@ -5,6 +5,11 @@ import {
 } from "../components/erComponent/base";
 import noneData from "../assets/image/noneData3.png";
 import { ElMessage } from "element-plus";
+import TargetComponent from "../components/erComponent/erConfig/targetComponent.vue";
+import mainStore from "../stores/mainStore";
+import pinia from "../stores";
+
+const mainData = mainStore(pinia);
 interface handlerConfig {
   type: string; //动作类型
   instructions: string; //动作描述
@@ -152,23 +157,23 @@ const handlerConfigList: handlerConfig[] = [
         </>
       );
     },
-    selectedRender: function(props: any) {
-      let label = '成功'
-      this.defaultData.messageType.list.map((item:any)=>{
-        if(item.value == props.messageType)label = item.label;
-      })
+    selectedRender: function (props: any) {
+      let label = "成功";
+      this.defaultData.messageType.list.map((item: any) => {
+        if (item.value == props.messageType) label = item.label;
+      });
       return (
         <p>
           {label}消息：<span>{props.messageContent}</span>
         </p>
       );
     },
-    handler: (item:any) => {
+    handler: (item: any) => {
       return () => {
         ElMessage({
-          type:item.messageType,
-          message:item.messageContent,
-          duration:item.duration
+          type: item.messageType,
+          message: item.messageContent,
+          duration: item.duration,
         });
       };
     },
@@ -276,6 +281,57 @@ const handlerConfigList: handlerConfig[] = [
     },
     defaultData: {
       label: "页面地址",
+      value: "",
+    },
+  },
+  {
+    type: "组件可见性",
+    instructions: "控制所选的组件的显示与隐藏",
+    configRender: (props: any) => {
+      return <TargetComponent option={props}></TargetComponent>;
+    },
+    selectedRender: (props: any) => {
+      return (
+        <p>
+          使得该组件 <span style="font-weight: 700">{props.content}</span>
+          {props.otherOption.isHidden ? " 隐藏" : " 显示"}
+        </p>
+      );
+    },
+    handler: (item: any) => {
+      return () => {
+        console.log("组件可见性");
+        // 获取target的类
+        console.log(mainData.EditorDataMap.get(item.otherOption.target));
+
+        mainData.EditorDataMap.get(item.otherOption.target).classList
+          ? (mainData.EditorDataMap.get(item.otherOption.target).classList = [])
+          : "";
+        console.log(item.otherOption.isHidden);
+        console.log(mainData.EditorDataMap.get(item.otherOption.target));
+
+        if (
+          !mainData.EditorDataMap.get(
+            item.otherOption.target
+          ).classList?.includes("hidden")
+        ) {
+          item.otherOption.isHidden
+            ? mainData.EditorDataMap.get(
+                item.otherOption.target
+              ).classList.push("hidden")
+            : "";
+        }
+
+        // if (
+        //   mainData.EditorDataMap.get(item.otherOption.target).classList?.length
+        // ) {
+        //   delete mainData.EditorDataMap.get(item.otherOption.target).classList;
+        // }
+      };
+    },
+    defaultData: {
+      target: "",
+      isHidden: false,
       value: "",
     },
   },

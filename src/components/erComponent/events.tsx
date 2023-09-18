@@ -20,7 +20,7 @@ export default defineComponent({
     const mainData = mainStore(pinia); //拖拽数据
 
     let state = reactive({
-      dialogIsShow: false, //对话框显示
+      dialogIsShow: true, //对话框显示
       addListIsShow: false, //事件列表显示
       //事件列表
       eventsList:
@@ -30,6 +30,7 @@ export default defineComponent({
         //新增的执行动作
         title: "跳转连接",
         content: "",
+        otherOption: {}, // 其他配置项
       },
       selectedEvent: null, //选中事件
       selectedIndex: 0, //选中事件的动作列表的下标
@@ -40,9 +41,11 @@ export default defineComponent({
     watch(
       () => dragData.selectKey,
       (newValue, oldValue) => {
+        // 如果没有事件绑定上去就剔除
         if (state.eventsList.length == 0) {
           delete mainData.EditorDataMap.get(oldValue || "page").events;
         } else {
+          // 如果有的话就将当前的所有事件赋值
           mainData.EditorDataMap.get(oldValue || "page").events =
             state.eventsList;
         }
@@ -99,6 +102,7 @@ export default defineComponent({
       state.addAction = deepcopy({
         title: "跳转连接",
         content: "",
+        otherOption: {},
       });
     };
 
@@ -166,7 +170,11 @@ export default defineComponent({
               class="events-addEvents"
               onClick={(e) => {
                 e.stopPropagation();
-                state.addListIsShow = !state.addListIsShow;
+                if (dragData.selectKey) {
+                  state.addListIsShow = !state.addListIsShow;
+                } else {
+                  ElMessage.error("还没有选中节点！");
+                }
               }}
             >
               <span>添加事件</span>
