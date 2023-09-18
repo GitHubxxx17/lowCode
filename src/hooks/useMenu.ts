@@ -240,7 +240,7 @@ const shearComponents = (e, commands) => {
 };
 
 // 粘贴组件
-const pasteComponents = (e,commands) => {
+const pasteComponents = (e, commands) => {
   if (!mainData.copyData) {
     ElMessage.error("还没有复制组件配置哦！");
     return;
@@ -276,8 +276,8 @@ const pasteComponents = (e,commands) => {
     // redo();
     // mainData.queue.push({ redo, undo }); //存放命令的前进后退
     // mainData.curPointerTo += 1;
-    
-    commands['paste']();
+
+    commands["paste"]();
     mainData.menuConfig.isShowMenu = false;
   }
   e.stopPropagation();

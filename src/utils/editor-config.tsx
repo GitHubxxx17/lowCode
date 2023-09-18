@@ -23,7 +23,7 @@ const componentsConfig = [
     render(props: any) {
       const { children, childrenList } = props;
       props = {
-        node:props.node,
+        node: props.node,
         children: children || [],
         childrenList: childrenList,
         style: props.node.style,
@@ -55,7 +55,7 @@ const componentsConfig = [
     render(props: any) {
       const { children, childrenList } = props;
       props = {
-        node:props.node,
+        node: props.node,
         children: children || [],
         childrenList: childrenList,
         style: props.node.style,
@@ -90,7 +90,10 @@ const componentsConfig = [
           ? eventConfig.getRenderEvents(props.node.events)
           : {};
       return (
-        <div class="cannotPreview" data-key={props.id}>
+        <div
+          class={"cannotPreview " + props.node.classList.join(" ")}
+          data-key={props.id}
+        >
           <span style={props.node.style} {...events} datatype="text">
             {props.node.children ? props.node.children : "渲染文字"}
           </span>
@@ -106,6 +109,7 @@ const componentsConfig = [
         zIndex: 1,
       },
       children: "渲染文字",
+      classList: [],
     },
   },
   {
@@ -122,7 +126,7 @@ const componentsConfig = [
         <div class="cannotPreview" data-key={props.id}>
           <ElButton
             style={props.node.style}
-            class="baseButton"
+            class={"baseButton" + props.node.classList.join(" ")}
             type={props.node.buttonstyle}
             size={props.node.size}
             disabled={props.node.isDisable}
@@ -149,6 +153,7 @@ const componentsConfig = [
         height: "32px",
         zIndex: 1,
       },
+      classList: [],
       buttonstyle: "", // 按钮类型
       size: "default", // 按钮大小
       icon: {}, // 左右侧图标

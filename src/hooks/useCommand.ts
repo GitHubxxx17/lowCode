@@ -267,6 +267,7 @@ export function useCommand() {
       keyboard: "esc",
       execute() {
         return {
+          
           redo() {
             if (mainData.isPreview) {
               mainData.isPreview = false;

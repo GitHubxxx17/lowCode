@@ -10,7 +10,7 @@ export default defineComponent({
   setup(props) {
     const state = reactive({
       menuActive: props.option.title, //执行动作类型
-      openeds: ["1", "2", "3", "4"], //折叠模板
+      openeds: ["1", "2", "3", "4", "5"], //折叠模板
       data: deepcopy(
         //执行动作默认数据渲染
         eventConfig.handlerMap.get(props.option.title).defaultData
@@ -79,6 +79,10 @@ export default defineComponent({
           props.option.messageContent = state.data.messageContent.value;
           props.option.content = state.data.messageContent.value;
         }
+      }
+      if (state.menuActive == "组件可见性") {
+        props.option.otherOption.isHidden = state.data.isHidden;
+        props.option.otherOption.target = state.data.target;
       }
     });
 
@@ -153,6 +157,22 @@ export default defineComponent({
                     },
                     title: () => {
                       return <span>表单</span>;
+                    },
+                  }}
+                </el-sub-menu>
+                <el-sub-menu index="5">
+                  {{
+                    default: () => {
+                      return (
+                        <>
+                          <el-menu-item index="组件可见性">
+                            组件可见性
+                          </el-menu-item>
+                        </>
+                      );
+                    },
+                    title: () => {
+                      return <span>组件</span>;
                     },
                   }}
                 </el-sub-menu>
