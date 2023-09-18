@@ -1,4 +1,5 @@
 import { defineComponent } from "vue";
+import { ElCheckbox } from "element-plus";
 export default defineComponent({
   props: {
     option: { type: Object },
@@ -14,11 +15,11 @@ export default defineComponent({
           {props.option.checkboxesData &&
             props.option.checkboxesData.map((item: any) => {
               return (
-                <el-checkbox
+                <ElCheckbox
                   label={item.value}
                   v-model={item.radio}
                   border={props.option.border}
-                ></el-checkbox>
+                ></ElCheckbox>
               );
             })}
         </>
