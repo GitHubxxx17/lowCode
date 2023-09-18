@@ -117,7 +117,7 @@ export const parseMapToJson = (EditorDataMap: any): any => {
  *  生成唯一的uuid
  * @return {*}  {string}
  */
-const getUUID = (): string => {
+export const getUUID = (): string => {
   return "xyxxyxxx".replace(/[xy]/g, function (c) {
     let r = (Math.random() * 16) | 0,
       v = c === "x" ? r : (r & 0x3) | 0x8;

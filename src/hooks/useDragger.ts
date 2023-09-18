@@ -33,7 +33,7 @@ function useDragger(): any {
       // 移出旧选中节点和父容器的选中类
       if (oldVal) {
         oldVal.classList.remove("chosenEl");
-        findParentContainer(oldVal.parentNode).classList.remove(
+        findParentContainer(oldVal.parentNode)?.classList.remove(
           "chosen-container"
         );
       }
@@ -237,6 +237,7 @@ function useDragger(): any {
    * @return {*} 返回最近的父容器节点
    */
   const findParentContainer = (target: any): any => {
+    if(!target)return;
     if (
       target.className.includes("container") ||
       target.className.includes("Editorcontainer")

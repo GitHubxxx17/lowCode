@@ -8,7 +8,7 @@ import deepcopy from "deepcopy";
 import { localSaveData, localGetData } from "./useStorage.ts";
 import { updateEditData } from "../request/api/home";
 import { download } from "../request/api/download.ts";
-import { addMap } from "./useCreateMap.ts";
+import { addMap,getUUID } from "./useCreateMap.ts";
 
 //命令
 interface command {
@@ -69,9 +69,10 @@ export function useCommand() {
          * 复制所有节点
          * @param {string} keys 需要复制的keys
          * @param {string} parent 需要复制的keys的父容器
-         * @param {*} data 需要复制的keys的数据
+         * @param {*} copyData 需要复制的keys的数据
          * @return {*} 返回复制后的keys
          */
+        data.addKeys.length = 0;
         function toCopy(keys: string, parent: string, copyData: any): string {
           copyData.parent = parent;
           let id = addMap(keys.replace(/-[^-]*$/, ""), deepcopy(copyData));
@@ -487,6 +488,75 @@ export function useCommand() {
         mainData.menuConfig.key--;
       },
     },
+    //替换命令
+    {
+      name: "swap",
+      pushQueue: true,
+      execute() {
+        mainData.modify.disabled = true;
+        let copyData = mainData.copyData; //复制的keys
+        let key = mainData.wantCopy; //当前选中的keys
+        let parent = mainData.EditorDataMap.get(key)?.parent || "page"; //当前选中的keys的父容器key
+        let index = mainData.EditorDataMap.get(parent).children.findIndex(
+          (item: string) => item == key
+        ); //当前选中的keys所在容器的位置
+        let addKeys = []; //粘贴后添加上去的key
+        return {
+          name: "swap",
+          parent,
+          index,
+          copyKey: copyData,
+          addKeys,
+          key
+        };
+      },
+      redo(data: any) {
+        /**
+         * 复制所有节点
+         * @param {string} keys 需要复制的keys
+         * @param {string} parent 需要复制的keys的父容器
+         * @param {*} copyData 需要复制的keys的数据
+         * @return {*} 返回复制后的keys
+         */
+        data.addKeys.length = 0;
+        function toCopy(keys: string, parent: string, copyData: any): string {
+          copyData.parent = parent;
+          let id = addMap(keys.replace(/-[^-]*$/, ""), deepcopy(copyData));
+          data.addKeys.push(id);
+          if (Array.isArray(copyData.children)) {
+            mainData.EditorDataMap.get(id).children = copyData.children.map(
+              (child: string) => {
+                return toCopy(child, id, mainData.EditorDataMap.get(child));
+              }
+            );
+          }
+          return id;
+        }
+        mainData.EditorDataMap.get(data.parent).children.splice(
+          data.index,
+          1,
+          toCopy(
+            data.copyKey,
+            data.parent,
+            mainData.EditorDataMap.get(data.copyKey)
+          )
+        );
+        mainData.menuConfig.key++;
+        dragData.dragEl = null;
+        mainData.modify.disabled = false;
+      },
+      undo(data: any) {
+        data.addKeys.forEach((keys: string) => {
+          mainData.EditorDataMap.delete(keys);
+        });
+        mainData.EditorDataMap.get(data.parent).children.splice(
+          data.index,
+          1,
+          data.key
+        );
+        mainData.menuConfig.key--;
+      },
+    }
   ];
 
   //需要使用的键

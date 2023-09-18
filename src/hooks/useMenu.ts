@@ -276,8 +276,8 @@ const pasteComponents = (e,commands) => {
     // redo();
     // mainData.queue.push({ redo, undo }); //存放命令的前进后退
     // mainData.curPointerTo += 1;
-    
-    commands['paste']();
+
+    commands['swap']();
     mainData.menuConfig.isShowMenu = false;
   }
   e.stopPropagation();

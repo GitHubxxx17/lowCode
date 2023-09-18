@@ -40,6 +40,10 @@ import {
   IconProperty
 }from "../components/erComponent/erIcon/icon";
 
+import {
+  RadioAppearance,
+  RadioProperty
+}from "../components/erComponent/form/radio";
 
 interface ErcomponentConfig {
   type: string; //类型
@@ -128,6 +132,15 @@ const ErcomponentConfigList = [
     },
     appearances(selectedComponent:Object) {
       return <IconAppearance option={selectedComponent}></IconAppearance>;
+    },
+  },
+  {
+    type: "radio",
+    Properties(selectedComponent:Object) {
+      return <RadioProperty option={selectedComponent}></RadioProperty>;
+    },
+    appearances(selectedComponent:Object) {
+      return <RadioAppearance option={selectedComponent}></RadioAppearance>;
     },
   },
 ];
