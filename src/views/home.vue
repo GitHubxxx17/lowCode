@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, onMounted  } from "vue";
+import { reactive, onMounted } from "vue";
 import data from "../data.json";
 import HomeViewer from "../components/renderer/homeViewer";
 import PopUp from "../components/Popover/popUp";
@@ -18,14 +18,14 @@ const state = reactive({
   dialogVisible: false,
   delIndex: 0,
   selectIndex: 0,
-}); 
+});
 //获取页面数据
 const GetEditData = async () => {
   let res = await getEditData();
   state.editdata = res.data.editData.map((item: any, i: number) => {
     item.active = false;
     if (i == 0) {
-      item.active = true; 
+      item.active = true;
       localSaveData("data", item.jsonData);
       mainData.title = item.title;
       state.selectIndex = item.id;
@@ -37,7 +37,7 @@ const GetEditData = async () => {
   mainData.setMap();
 };
 
-//切换页面 
+//切换页面
 const changeEditData = (index: number) => {
   state.editdata.forEach((item, i) => {
     item.active = false;
@@ -53,6 +53,7 @@ const changeEditData = (index: number) => {
 
 //点击进入编辑
 const enterEdit = ($router: any) => {
+  if (!state.editdata.length) addPage($router);
   $router.push("/editor");
   localSaveData("title", mainData.title);
   localSaveData("id", state.selectIndex);

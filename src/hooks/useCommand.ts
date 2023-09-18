@@ -525,17 +525,23 @@ export function useCommand() {
           return;
         }
       } else if (command.name == "change") {
+        if(data.oldVal == data.newVal)return;
         mainData.modify.curData = JSON.stringify(
           mainData.EditorDataMap.get(dragData.selectKey || "page")
         );
       } else {
         command.redo(data);
       }
+      //最多撤销30步
+      if(mainData.queue.length == 30){
+        mainData.queue.shift();
+        mainData.curPointerTo--;
+      }
       if (mainData.queue.length - 1 != mainData.curPointerTo) {
         mainData.queue.splice(mainData.curPointerTo + 1);
       }
       mainData.queue.push({ ...data }); //存放命令的前进后退
-      mainData.curPointerTo += 1;
+      mainData.curPointerTo++;
     };
   };
 

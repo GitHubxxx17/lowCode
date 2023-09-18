@@ -25,17 +25,18 @@ export default defineComponent({
         if (state.menuActive == "消息提醒") {
           //消息类型
           if (state.action.messageType)
-            state.data.messageType.value = props.option.messageType;
+            state.data.messageType.value = state.action.messageType;
           //持续时间
           if (state.action.duration)
-            state.data.duration.value = props.option.duration;
+            state.data.duration.value = state.action.duration;
           //消息内容
           if (state.action.messageContent)
-            state.data.messageContent.value = props.option.messageContent;
+            state.data.messageContent.value = state.action.messageContent;
         }
       }
     };
 
+    //打开弹窗
     watch(
       () => props.isShow,
       (newValue) => {
@@ -51,6 +52,7 @@ export default defineComponent({
       { immediate: true }
     );
 
+    //切换面板
     watch(
       () => state.menuActive,
       () => {

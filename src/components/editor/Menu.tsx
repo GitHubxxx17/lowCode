@@ -71,7 +71,7 @@ export default defineComponent({
               index="6"
               disabled={mainData.menuConfig.isShow.pasteComponents}
             >
-              <div onClick={(e) => props.pasteComponents(e)}>粘贴组件</div>
+              <div onClick={(e) => props.pasteComponents(e,props.commands)}>粘贴组件</div>
             </el-menu-item>
             <el-menu-item
               index="7"

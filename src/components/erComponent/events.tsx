@@ -1,5 +1,11 @@
 import "@/sass/erComponent/events.scss";
-import { defineComponent, reactive, watch, watchEffect } from "vue";
+import {
+  defineComponent,
+  onUnmounted,
+  reactive,
+  watch,
+  watchEffect,
+} from "vue";
 import pinia from "../../stores/index.ts";
 import dragStore from "../../stores/dragStore.ts";
 import mainStore from "../../stores/mainStore.ts";
@@ -54,12 +60,17 @@ export default defineComponent({
     );
 
     watchEffect(() => {
-      if (!mainData.EditorDataMap.get(dragData.selectKey || "page").events && state.eventsList.length == 0) {
+      //当不存在事件对象时添加空事件对象
+      if (
+        !mainData.EditorDataMap.get(dragData.selectKey || "page").events &&
+        state.eventsList.length == 0
+      ) {
         mainData.EditorDataMap.get(dragData.selectKey || "page").events =
           state.eventsList;
       }
     });
 
+    //事件配置
     for (let item of eventConfig.eventMap) {
       state.mouseEventsMap.set(item[0], {
         type: item[1].type,
@@ -78,6 +89,10 @@ export default defineComponent({
     };
 
     window.addEventListener("click", hiddenList);
+
+    onUnmounted(() => {
+      window.removeEventListener("click", hiddenList);
+    });
 
     //默认数据
     const defaultAction = () => {

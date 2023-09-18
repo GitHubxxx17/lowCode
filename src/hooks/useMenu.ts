@@ -2,8 +2,8 @@ import { ElMessage } from "element-plus";
 import pinia from "../stores";
 import dragStore from "../stores/dragStore";
 import mainStore from "../stores/mainStore";
-import deepcopy from "deepcopy";
-import { addMap } from "./useCreateMap.ts";
+// import deepcopy from "deepcopy";
+// import { addMap } from "./useCreateMap.ts";
 
 const dragData = dragStore(pinia);
 const mainData = mainStore(pinia);
@@ -240,7 +240,7 @@ const shearComponents = (e, commands) => {
 };
 
 // 粘贴组件
-const pasteComponents = (e) => {
+const pasteComponents = (e,commands) => {
   if (!mainData.copyData) {
     ElMessage.error("还没有复制组件配置哦！");
     return;
@@ -249,103 +249,105 @@ const pasteComponents = (e) => {
     ElMessage.info("不可以粘贴到该组件哦！");
   } else {
     console.log("粘贴组件");
-    let pasteNode = mainData.EditorDataMap.get(mainData.menuConfig.selectKey);
-    let oldParent_Children = mainData.EditorDataMap.get(
-      pasteNode.parent
-    )?.children; // 被粘贴的组件的父节点的孩子节点
-    let preIndex = -1; // 被替代的下标的前一个下标
-    for (let i = 0; i < oldParent_Children.length; i++) {
-      if (oldParent_Children[i + 1] == mainData.menuConfig.selectKey) {
-        preIndex = i;
-        break;
-      }
-    }
-    // 粘贴配置的操作以及回退撤销
-    let { delUndo, delRedo } = delPasteNode(); // 删除被粘贴的节点
-    let { copyUndo, copyRedo } = copyNode(preIndex, pasteNode.parent); // 复制组件
-    function redo() {
-      delRedo();
-      copyRedo();
-      mainData.menuConfig.key++;
-    }
-    function undo() {
-      copyUndo();
-      delUndo();
-      mainData.menuConfig.key--;
-    }
-    redo();
-    mainData.queue.push({ redo, undo }); //存放命令的前进后退
-    mainData.curPointerTo += 1;
+    // let pasteNode = mainData.EditorDataMap.get(mainData.menuConfig.selectKey);
+    // let oldParent_Children = mainData.EditorDataMap.get(
+    //   pasteNode.parent
+    // )?.children; // 被粘贴的组件的父节点的孩子节点
+    // let preIndex = -1; // 被替代的下标的前一个下标
+    // for (let i = 0; i < oldParent_Children.length; i++) {
+    //   if (oldParent_Children[i + 1] == mainData.menuConfig.selectKey) {
+    //     preIndex = i;
+    //     break;
+    //   }
+    // }
+    // // 粘贴配置的操作以及回退撤销
+    // let { delUndo, delRedo } = delPasteNode(); // 删除被粘贴的节点
+    // let { copyUndo, copyRedo } = copyNode(preIndex, pasteNode.parent); // 复制组件
+    // function redo() {
+    //   delRedo();
+    //   copyRedo();
+    //   mainData.menuConfig.key++;
+    // }
+    // function undo() {
+    //   copyUndo();
+    //   delUndo();
+    //   mainData.menuConfig.key--;
+    // }
+    // redo();
+    // mainData.queue.push({ redo, undo }); //存放命令的前进后退
+    // mainData.curPointerTo += 1;
+    
+    commands['paste']();
     mainData.menuConfig.isShowMenu = false;
   }
   e.stopPropagation();
 };
 
-// 删除被粘贴节点
-const delPasteNode = () => {
-  let key = mainData.menuConfig.selectKey;
-  if (key) {
-    console.log("删除被粘贴的节点");
-    let parent = mainData.EditorDataMap.get(key)?.parent || "page";
-    let index = mainData.EditorDataMap.get(parent).children.findIndex(
-      (item: string) => item == key
-    );
-    return {
-      delRedo() {
-        mainData.EditorDataMap.get(parent).children.splice(index, 1);
-        console.log(mainData.EditorDataMap.get(parent));
-      },
-      delUndo() {
-        mainData.EditorDataMap.get(parent).children.splice(index, 0, key);
-        console.log(mainData.EditorDataMap.get(parent));
-      },
-    };
-  } else {
-    ElMessage.error("编辑区域根节点不能被粘贴配置！");
-  }
-};
+// // 删除被粘贴节点
+// const delPasteNode = () => {
+//   let key = mainData.menuConfig.selectKey;
+//   if (key) {
+//     console.log("删除被粘贴的节点");
+//     let parent = mainData.EditorDataMap.get(key)?.parent || "page";
+//     let index = mainData.EditorDataMap.get(parent).children.findIndex(
+//       (item: string) => item == key
+//     );
+//     return {
+//       delRedo() {
+//         mainData.EditorDataMap.get(parent).children.splice(index, 1);
+//         console.log(mainData.EditorDataMap.get(parent));
+//       },
+//       delUndo() {
+//         mainData.EditorDataMap.get(parent).children.splice(index, 0, key);
+//         console.log(mainData.EditorDataMap.get(parent));
+//       },
+//     };
+//   } else {
+//     ElMessage.error("编辑区域根节点不能被粘贴配置！");
+//   }
+// };
 
-// 粘贴被复制的节点
-const copyNode = (index: number, parent: string) => {
-  let copyData = mainData.copyData; //复制的keys
-  let data = mainData.EditorDataMap.get(copyData); //复制的key的数据
-  let addKeys = []; //粘贴后添加上去的key
-  return {
-    copyRedo() {
-      /**
-       * 复制所有节点
-       * @param {string} keys 需要复制的keys
-       * @param {string} parent 需要复制的keys的父容器
-       * @param {*} data 需要复制的keys的数据
-       * @return {*} 返回复制后的keys
-       */
-      function toCopy(keys: string, parent: string, data: any): string {
-        data.parent = parent;
-        let id = addMap(keys.replace(/-[^-]*$/, ""), deepcopy(data));
-        addKeys.push(id);
-        if (Array.isArray(data.children)) {
-          mainData.EditorDataMap.get(id).children = data.children.map(
-            (child: string) => {
-              return toCopy(child, id, mainData.EditorDataMap.get(child));
-            }
-          );
-        }
-        return id;
-      }
-      mainData.EditorDataMap.get(parent).children.splice(
-        index + 1,
-        0,
-        toCopy(copyData, parent, data)
-      );
-    },
-    copyUndo() {
-      mainData.EditorDataMap.get(parent).children.splice(index + 1, 1);
-      addKeys.forEach((keys: string) => {
-        mainData.EditorDataMap.delete(keys);
-      });
-    },
-  };
-};
+// // 粘贴被复制的节点
+// const copyNode = (index: number, parent: string) => {
+//   let copyData = mainData.copyData; //复制的keys
+//   let data = mainData.EditorDataMap.get(copyData); //复制的key的数据
+//   let addKeys = []; //粘贴后添加上去的key
+//   return {
+//     copyRedo() {
+//       /**
+//        * 复制所有节点
+//        * @param {string} keys 需要复制的keys
+//        * @param {string} parent 需要复制的keys的父容器
+//        * @param {*} data 需要复制的keys的数据
+//        * @return {*} 返回复制后的keys
+//        */
+//       function toCopy(keys: string, parent: string, data: any): string {
+//         data.parent = parent;
+//         let id = addMap(keys.replace(/-[^-]*$/, ""), deepcopy(data));
+//         addKeys.push(id);
+//         if (Array.isArray(data.children)) {
+//           mainData.EditorDataMap.get(id).children = data.children.map(
+//             (child: string) => {
+//               return toCopy(child, id, mainData.EditorDataMap.get(child));
+//             }
+//           );
+//         }
+//         return id;
+//       }
+//       mainData.EditorDataMap.get(parent).children.splice(
+//         index + 1,
+//         0,
+//         toCopy(copyData, parent, data)
+//       );
+//     },
+//     copyUndo() {
+//       mainData.EditorDataMap.get(parent).children.splice(index + 1, 1);
+//       addKeys.forEach((keys: string) => {
+//         mainData.EditorDataMap.delete(keys);
+//       });
+//     },
+//   };
+// };
 
 // 向前一步
 const moveForward = (e) => {
@@ -395,7 +397,6 @@ const undo = (e, commands) => {
   } else {
     console.log("撤销");
     commands["undo"]();
-    mainData.menuConfig.isShowMenu = false;
   }
   e.stopPropagation();
 };
@@ -407,7 +408,6 @@ const redo = (e, commands) => {
   } else {
     console.log("还原");
     commands["redo"]();
-    mainData.menuConfig.isShowMenu = false;
   }
   e.stopPropagation();
 };
