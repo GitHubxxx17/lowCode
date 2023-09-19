@@ -15,6 +15,7 @@
       "color": "black",
       "zIndex": 1
     },
-    "parent":"page"
+    "parent":"page",
+    "classList":[]
   }
 }

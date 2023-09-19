@@ -30,7 +30,7 @@ const componentsConfig = [
         childrenList: childrenList,
         style: props.node.style,
         text: "容器",
-        class: "container-ordinary " + props.classList.join(" "),
+        class: "container-ordinary " + props.node.classList.join(" "),
         "data-key": props.id,
         events:
           props.node?.events && mainData.isPreview
@@ -127,10 +127,10 @@ const componentsConfig = [
           ? eventConfig.getRenderEvents(props.node.events)
           : {};
       return (
-        <div class="cannotPreview" data-key={props.id}>
+        <div class={"cannotPreview " + props.node.classList.join(" ")} data-key={props.id}>
           <ElButton
             style={props.node.style}
-            class={"baseButton " + props.node.classList.join(" ")}
+            class="baseButton"
             type={props.node.buttonstyle}
             size={props.node.size}
             disabled={props.node.isDisable}
@@ -385,6 +385,7 @@ const componentsConfig = [
         title: {},
         checkboxes: {},
       },
+      checkboxGroup:[],
       children: "",
       checkboxesData: [
         { value: "选项1", radio: false },

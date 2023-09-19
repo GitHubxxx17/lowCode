@@ -60,38 +60,41 @@ export default defineComponent({
                 <div class="elCollapseItem">
                   <div class="selectData">
                     <i class="icon iconfont icon-drag selectDataDrag"></i>
-                    {
-                      props.check && <input
-                      class="selectData-radio"
-                      type="checkbox"
-                      value="true"
-                      name="defaultValue"
-                      title="默认选中"
-                      checked={item.radio}
-                      onChange={(_) => {
-                        if (props.check) {
+                    {props.check && (
+                      <input
+                        class="selectData-radio"
+                        type="checkbox"
+                        value="true"
+                        name="defaultValue"
+                        title="默认选中"
+                        checked={item.radio}
+                        onChange={(_) => {
                           item.radio = !item.radio;
-                        }
-                      }}
-                    />
-                    }
-                    {
-                      !props.check && <input
-                      class="selectData-radio"
-                      type="radio"
-                      value="true"
-                      name="defaultValue"
-                      title="默认选中"
-                      checked={item.radio}
-                      onChange={(_) => {
-                        props.option.selectData.forEach(
-                          (item) => (item.radio = false)
-                        );
-                        item.radio = true;
-                        props.option.defaultValue.value = item.value;
-                      }}
-                    />
-                    }
+                          props.option.checkGroup.length = 0;
+                          props.option.selectData.map((v) => {
+                            if (v.radio) props.option.checkGroup.push(v.value);
+                          });
+                          console.log(props.option.checkGroup);
+                        }}
+                      />
+                    )}
+                    {!props.check && (
+                      <input
+                        class="selectData-radio"
+                        type="radio"
+                        value="true"
+                        name="defaultValue"
+                        title="默认选中"
+                        checked={item.radio}
+                        onChange={(_) => {
+                          props.option.selectData.forEach(
+                            (item) => (item.radio = false)
+                          );
+                          item.radio = true;
+                          props.option.defaultValue.value = item.value;
+                        }}
+                      />
+                    )}
 
                     <ElInput
                       v-model={item.value}

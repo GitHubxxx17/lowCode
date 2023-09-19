@@ -1,5 +1,5 @@
 import { defineComponent } from "vue";
-import { ElCheckbox } from "element-plus";
+import { ElCheckbox, ElCheckboxGroup } from "element-plus";
 export default defineComponent({
   props: {
     option: { type: Object },
@@ -12,16 +12,23 @@ export default defineComponent({
           <div style={props.option.style.title}>
             {props.option.title ? props.option.title : "文本"}
           </div>
-          {props.option.checkboxesData &&
-            props.option.checkboxesData.map((item: any) => {
-              return (
-                <ElCheckbox
-                  label={item.value}
-                  v-model={item.radio}
-                  border={props.option.border}
-                ></ElCheckbox>
-              );
-            })}
+          <ElCheckboxGroup
+            {...props.events}
+            v-model={props.option.checkboxGroup}
+            style={props.option.style.checkboxes}
+          >
+            {props.option.checkboxesData &&
+              props.option.checkboxesData.map((item: any) => {
+                return (
+                  <ElCheckbox
+                    label={item.value}
+                    key={item.value}
+                    checked={item.radio}
+                    border={props.option.border}
+                  ></ElCheckbox>
+                );
+              })}
+          </ElCheckboxGroup>
         </>
       );
     };

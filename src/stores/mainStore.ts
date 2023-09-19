@@ -48,13 +48,16 @@ const mainStore = defineStore("mainStore", {
           redo: false,
         },
       },
+      linkageList: [],//组件联动处理数组
     };
   },
   actions: {
+    //将json数据转换为map
     setMap() {
       this.EditorDataMap = useCreateMap(this.modify);
       this.curData = JSON.stringify(this.EditorDataMap.get("page"));
     },
+    //将map转换为json数据
     setEditorData() {
       return parseMapToJson(this.EditorDataMap);
     },
@@ -115,6 +118,20 @@ const mainStore = defineStore("mainStore", {
         }
       }
     },
+    //处理预览的时候触发的组件联动状态，还原会默认状态
+    handlerLinkage(linkage:any){
+      switch (linkage.type) {
+        case 'class':
+          this.EditorDataMap.get(linkage.target).classList.length = 0;
+          break;
+        default:
+          break;
+      }
+    },
+    //添加联动数据
+    addLinkage(linkage:any){
+      this.linkageList.push(linkage);
+    }
   },
 });
 export default mainStore;

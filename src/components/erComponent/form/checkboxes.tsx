@@ -186,6 +186,7 @@ export const CheckboxesProperty = defineComponent({
                 option={{
                   selectData: state.selectData,
                   defaultValue: state.defaultValue,
+                  checkGroup: props.option.checkboxGroup
                 }}
                 check={true}
               ></BaseSelectDataList>

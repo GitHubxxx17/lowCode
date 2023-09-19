@@ -9,6 +9,7 @@ export default defineComponent({
     return () => {
       return (
         <ElInput
+        class={props.option.class}
           v-model={props.option.value}
           style={props.option.style}
           size={props.option.size}

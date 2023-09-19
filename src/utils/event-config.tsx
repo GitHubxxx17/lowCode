@@ -302,31 +302,23 @@ const handlerConfigList: handlerConfig[] = [
       return () => {
         console.log("组件可见性");
         // 获取target的类
-        console.log(mainData.EditorDataMap.get(item.otherOption.target));
+        let targetData = mainData.EditorDataMap.get(item.otherOption.target);
 
-        mainData.EditorDataMap.get(item.otherOption.target).classList
-          ? (mainData.EditorDataMap.get(item.otherOption.target).classList = [])
-          : "";
+        targetData.classList ? (targetData.classList = []) : "";
         console.log(item.otherOption.isHidden);
-        console.log(mainData.EditorDataMap.get(item.otherOption.target));
-
+        console.log(targetData);
         if (
           !mainData.EditorDataMap.get(
             item.otherOption.target
-          ).classList?.includes("hidden")
-        ) {
+          ).classList?.includes("hidden") &&
           item.otherOption.isHidden
-            ? mainData.EditorDataMap.get(
-                item.otherOption.target
-              ).classList.push("hidden")
-            : "";
+        ) {
+          targetData.classList.push("hidden");
+          mainData.addLinkage({
+            type:'class',
+            target:item.otherOption.target
+          })
         }
-
-        // if (
-        //   mainData.EditorDataMap.get(item.otherOption.target).classList?.length
-        // ) {
-        //   delete mainData.EditorDataMap.get(item.otherOption.target).classList;
-        // }
       };
     },
     defaultData: {

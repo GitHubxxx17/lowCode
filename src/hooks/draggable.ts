@@ -126,8 +126,7 @@ export default class Draggable {
       this.clone.element.remove();
 
       for (const item of this.containerElement.children) {
-        item.style.transition = "none";
-        item.style.transform = "translate3d(0px, 0px, 0px)";
+        item.style = ''
       }
       let data = this.dragData[this.drag.firstIndex];
       this.dragData.splice(this.drag.firstIndex, 1);

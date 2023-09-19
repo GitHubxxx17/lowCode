@@ -255,6 +255,7 @@ export function useCommand() {
         return {
           redo() {
             if (!mainData.isPreview) {
+              mainData.modify.disabled = true;
               mainData.isPreview = true;
               ElMessage.success({ message: "已进入预览模式", duration: 2000 });
             }
@@ -271,6 +272,11 @@ export function useCommand() {
           
           redo() {
             if (mainData.isPreview) {
+              mainData.linkageList.forEach((linkage)=>{
+                mainData.handlerLinkage(linkage)
+              })
+              mainData.linkageList.length = 0;
+              mainData.modify.disabled = false;
               mainData.isPreview = false;
               ElMessage.success({ message: "已退出预览模式", duration: 1000 });
             }
