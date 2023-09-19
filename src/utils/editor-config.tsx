@@ -30,7 +30,7 @@ const componentsConfig = [
         childrenList: childrenList,
         style: props.node.style,
         text: "容器",
-        class: "container-ordinary",
+        class: "container-ordinary " + props.classList.join(" "),
         "data-key": props.id,
         events:
           props.node?.events && mainData.isPreview
@@ -47,6 +47,7 @@ const componentsConfig = [
         zIndex: 1,
       },
       children: [],
+      classList: [],
     },
   },
   {
@@ -62,7 +63,7 @@ const componentsConfig = [
         childrenList: childrenList,
         style: props.node.style,
         text: "自由容器",
-        class: "container-free",
+        class: "container-free " + props.node.classList.join(" "),
         "data-key": props.id,
         events:
           props.node?.events && mainData.isPreview
@@ -79,6 +80,7 @@ const componentsConfig = [
         zIndex: 1,
       },
       children: [],
+      classList: [],
     },
   },
   {
@@ -128,7 +130,7 @@ const componentsConfig = [
         <div class="cannotPreview" data-key={props.id}>
           <ElButton
             style={props.node.style}
-            class={"baseButton" + props.node.classList.join(" ")}
+            class={"baseButton " + props.node.classList.join(" ")}
             type={props.node.buttonstyle}
             size={props.node.size}
             disabled={props.node.isDisable}
@@ -177,7 +179,10 @@ const componentsConfig = [
           : {};
 
       return (
-        <div class="cannotPreview" data-key={props.id}>
+        <div
+          class={"cannotPreview " + props.node.classList.join(" ")}
+          data-key={props.id}
+        >
           <RdInput option={props.node} events={events}></RdInput>
         </div>
       );
@@ -199,6 +204,7 @@ const componentsConfig = [
         zIndex: 1,
       },
       children: "",
+      classList: [],
     },
   },
   {
@@ -212,7 +218,10 @@ const componentsConfig = [
           ? eventConfig.getRenderEvents(props.node.events)
           : {};
       return (
-        <div class="cannotPreview" data-key={props.id}>
+        <div
+          class={"cannotPreview " + props.node.classList.join(" ")}
+          data-key={props.id}
+        >
           <RdSelect option={props.node} events={events}></RdSelect>
         </div>
       );
@@ -225,6 +234,7 @@ const componentsConfig = [
       },
       children: "",
       defaultValue: "",
+      classList: [],
     },
   },
   {
@@ -239,7 +249,7 @@ const componentsConfig = [
           : {};
       return (
         <div
-          class="cannotPreview"
+          class={"cannotPreview " + props.node.classList.join(" ")}
           style={props.node.style.box}
           data-key={props.id}
         >
@@ -259,6 +269,7 @@ const componentsConfig = [
         input: {},
       },
       children: "",
+      classList: [],
     },
   },
   {
@@ -273,7 +284,7 @@ const componentsConfig = [
           : {};
       return (
         <div
-          class="cannotPreview"
+          class={"cannotPreview " + props.node.classList.join(" ")}
           style={props.node.style.box}
           data-key={props.id}
         >
@@ -300,6 +311,7 @@ const componentsConfig = [
         minRows: 2,
         maxRows: 6,
       },
+      classList: [],
     },
   },
   {
@@ -314,7 +326,7 @@ const componentsConfig = [
           : {};
       return (
         <div
-          class="cannotPreview"
+          class={"cannotPreview " + props.node.classList.join(" ")}
           style={props.node.style.box}
           data-key={props.id}
         >
@@ -339,6 +351,7 @@ const componentsConfig = [
         { value: "选项2", radio: false },
         { value: "选项3", radio: false },
       ],
+      classList: [],
     },
   },
   {
@@ -353,7 +366,7 @@ const componentsConfig = [
           : {};
       return (
         <div
-          class="cannotPreview"
+          class={"cannotPreview " + props.node.classList.join(" ")}
           style={props.node.style.box}
           data-key={props.id}
         >
@@ -378,7 +391,8 @@ const componentsConfig = [
         { value: "选项2", radio: false },
         { value: "选项3", radio: false },
       ],
-      border:false
+      border: false,
+      classList: [],
     },
   },
 ];
