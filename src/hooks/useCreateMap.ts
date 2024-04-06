@@ -2,53 +2,21 @@ import { reactive, watch } from "vue";
 import { localGetData } from "./useStorage.ts";
 import useDebouce from "./useDebounce.ts";
 import { events } from "../utils/events.ts";
-
+// 组件哈希树
 const EditorDataMap = new Map();
-
+// 正在修改的组件数据
 let modifys = null;
 
-export const useCreateMap = (modify: any) => {
-  modifys = modify;
-  EditorDataMap.clear();
-  buildMap();
-  return EditorDataMap;
-};
-
 /**
- *  添加节点
- * @param {string} key 节点key
- * @param {*} data 节点数据
- * @return {*}  {string} 返回节点id
+ *  生成唯一的uuid
+ * @return {*}  {string}
  */
-export const addMap = (key: string, data: any): string => {
-  let id: string = key + "-" + getUUID();
-  watchHandler(id, data);
-  return id;
-};
-
-const buildMap = () => {
-  // let id: string = data.type + "-" + getUUID();
-  // let children: string[] = [];
-  // if (data.body) {
-  //   data.body.forEach((item: any) => {
-  //     children.push(buildMap(item, parent));
-  //   });
-  //   EditorDataMap.set(parent, reactive({ ...data, children: children, body: "" }));
-  // } else {
-  //   if (Array.isArray(data.children)) {
-  //     data.children.forEach((item: any) => {
-  //       children.push(buildMap(item, id));
-  //     });
-  //     EditorDataMap.set(id, reactive({ parent: parent, ...data, children }));
-  //   } else {
-  //     EditorDataMap.set(id, reactive({ parent: parent, ...data }));
-  //   }
-  // }
-  // return id;
-  let data = JSON.parse(localGetData("data"));
-  for (let [key, value] of Object.entries(data)) {
-    watchHandler(key, value);
-  }
+const getUUID = (): string => {
+  return "xyxxyxxx".replace(/[xy]/g, function (c) {
+    let r = (Math.random() * 16) | 0,
+      v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 };
 
 /**
@@ -67,8 +35,7 @@ const watchHandler = (key: string, value: any) => {
   watch(
     () => valRef,
     () => {
-      if (modifys.disabled) return;   
-      console.log(1111,modifys);
+      if (modifys.disabled) return;
       debouceFun();
     },
     { deep: true }
@@ -76,30 +43,30 @@ const watchHandler = (key: string, value: any) => {
   EditorDataMap.set(key, valRef);
 };
 
+/**
+ * 构建哈希树
+ * @param modify
+ * @returns
+ */
+export const useCreateMap = (modify: any) => {
+  modifys = modify;
+  EditorDataMap.clear();
+  let data = JSON.parse(localGetData("data"));
+  for (let [key, value] of Object.entries(data)) {
+    watchHandler(key, value);
+  }
+  return EditorDataMap;
+};
+
+/**
+ * 将哈希树解析成json
+ * @param EditorDataMap
+ * @returns
+ */
 export const parseMapToJson = (EditorDataMap: any): any => {
-  // let EditorData = {};
-  // const parseMap = (key:string):any => {
-  //     let data = deepcopy(EditorDataMap.get(key));
-  //     let children = [];
-  //     if(Array.isArray(data.children)){
-  //       data.children.map((child:string)=>{
-  //         children.push(parseMap(child));
-  //       })
-  //       if(key == 'page'){
-  //         data.body = children;
-  //         delete data.children;
-  //       }else{
-  //         data.children = children;
-  //       }
-  //     }
-  //     delete data.parent;
-  //     return data;
-  // }
-  // EditorData = parseMap('page');
-  // console.log(EditorData);
-  // return EditorData;
   let newEditorDataMap = new Map();
-  //深度搜索重构哈希树，剔除已被删除的数据
+  // 深度搜索重构哈希树，剔除已被删除的数据
+  //ps: 删除操作只删除哈希树中对应组件的数据，并没有将其所有的子组件都删除掉
   const DFSMap = (key: string) => {
     newEditorDataMap.set(key, EditorDataMap.get(key));
     let children = EditorDataMap.get(key).children;
@@ -114,13 +81,13 @@ export const parseMapToJson = (EditorDataMap: any): any => {
 };
 
 /**
- *  生成唯一的uuid
- * @return {*}  {string}
+ *  添加节点
+ * @param {string} key 节点key
+ * @param {*} data 节点数据
+ * @return {*}  {string} 返回节点id
  */
-export const getUUID = (): string => {
-  return "xyxxyxxx".replace(/[xy]/g, function (c) {
-    let r = (Math.random() * 16) | 0,
-      v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
+export const addMap = (key: string, data: any): string => {
+  let id: string = key + "-" + getUUID();
+  watchHandler(id, data);
+  return id;
 };

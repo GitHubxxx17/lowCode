@@ -15,7 +15,6 @@ export default defineComponent({
     EditorDataMap: Object, //编辑数据
   },
   setup(props) {
-    let children = null;
     let node = props.EditorDataMap.get(props.dataKey);
     let nodeprops: nodeProps = {
       node: node,
@@ -23,8 +22,9 @@ export default defineComponent({
     }; //配置
     if (node.type.includes("container")) {
       //递归拖拽动画组件
-      children = <TransitionDrag dataKey={props.dataKey}></TransitionDrag>;
-      nodeprops.children = children;
+      nodeprops.children = (
+        <TransitionDrag dataKey={props.dataKey}></TransitionDrag>
+      );
       nodeprops.childrenList = node.children; //如果为容器就将子组件的数据添加进去
     }
     return () => {

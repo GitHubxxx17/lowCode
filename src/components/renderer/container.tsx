@@ -9,8 +9,8 @@ export default defineComponent({
     childrenList: Array<Object>, //子节点json数据
     text: String, //无组件时显示的文本内容
     class: String, //类名
-    events:Object,//事件
-    node:Object
+    events: Object, //事件
+    node: Object,
   },
   setup(props) {
     let containerRef = ref(null);
@@ -29,7 +29,9 @@ export default defineComponent({
           {...props.events}
         >
           {props?.children.length != 0 && props.children}
-          {props?.node.children.length == 0 && <span class="nochild">{props.text}</span>}
+          {props?.node.children.length == 0 && (
+            <span class="nochild">{props.text}</span>
+          )}
         </div>
       );
     };

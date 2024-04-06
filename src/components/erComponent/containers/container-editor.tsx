@@ -1,10 +1,6 @@
 import { defineComponent, reactive, watchEffect } from "vue";
 
-import {
-  BaseInput,
-  BaseTextArea,
-  BaseAppearance,
-} from "../base/index";
+import { BaseInput, BaseTextArea, BaseAppearance } from "../base/index";
 export const ContainerAppearance = defineComponent({
   props: {
     option: { type: Object },
@@ -53,14 +49,13 @@ export const ContainerProperty = defineComponent({
     const state = reactive({
       pageTitle: {
         label: "页面标题",
-        value: props.option.title ? props.option.title : "",
+        value: props.option.title ?? "",
       },
       subtitle: {
         label: "副标题",
-        value: props.option.subtitle ? props.option.subtitle : '',
+        value: props.option.subtitle ?? "",
       },
     });
-
 
     watchEffect(() => {
       props.option.title = state.pageTitle.value;

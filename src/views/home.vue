@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { reactive, onMounted } from "vue";
 import data from "../data.json";
-import HomeViewer from "../components/renderer/homeViewer";
 import PopUp from "../components/Popover/popUp";
 import mainStore from "../stores/mainStore.ts";
 import userStore from "../stores/userStore.ts";
@@ -9,6 +8,7 @@ import pinia from "../stores/index.ts";
 import { localSaveData, sessionGetData } from "../hooks/useStorage.ts";
 import { getEditData, delEditData, addEditData } from "../request/api/home";
 import { ElMessage, ElPopover } from "element-plus";
+import EditorPreview from "../components/editor/EditorPreview";
 
 const mainData = mainStore(pinia);
 const userData = userStore(pinia); // 用户数据
@@ -145,7 +145,7 @@ onMounted(() => {
       </div>
       <div class="home-body-right" :key="state.selectIndex">
         <div v-if="state.editdata.length" class="home-body-right-viewer">
-          <HomeViewer></HomeViewer>
+          <EditorPreview />
         </div>
         <div v-else class="home-body-right-none">
           <img src="@/assets/image/noneData1.png" alt="没有页面捏" />

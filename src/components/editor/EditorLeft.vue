@@ -1,29 +1,36 @@
 <script setup lang="ts">
-import { reactive } from "vue";
-import ElComponent from "../elComponent/ElComponent.tsx";
-import ElIcon from "../elComponent/ElIcon.tsx";
-import ElJsonViewer from "../elComponent/ElJsonViewer.vue";
-import ElOutline from "../elComponent/ElOutline.vue";
-interface btn {
-  label: String;
-  icon: String;
-  active: boolean;
-}
-const bottons: Array<btn> = reactive([
-  { label: "组件", icon: "icon iconfont icon-zujian", active: true },
-  { label: "图标", icon: "icon iconfont icon-xiaolian", active: false },
-  { label: "大纲", icon: "icon iconfont icon-list-outline", active: false },
-  { label: "代码", icon: "icon iconfont icon-daima", active: false },
-]);
-const onClickBtn = (index: number) => {
-  bottons.forEach((item, i) => {
-    if (i == index) {
-      item.active = true;
-      return;
-    }
-    item.active = false;
-  });
-};
+import { ref, defineAsyncComponent } from "vue";
+
+const buttons = [
+  {
+    label: "组件",
+    icon: "icon iconfont icon-zujian",
+    component: defineAsyncComponent(
+      () => import("../elComponent/ElComponent.tsx")
+    ),
+  },
+  {
+    label: "图标",
+    icon: "icon iconfont icon-xiaolian",
+    component: defineAsyncComponent(() => import("../elComponent/ElIcon.tsx")),
+  },
+  {
+    label: "大纲",
+    icon: "icon iconfont icon-list-outline",
+    component: defineAsyncComponent(
+      () => import("../elComponent/ElOutline.vue")
+    ),
+  },
+  {
+    label: "代码",
+    icon: "icon iconfont icon-daima",
+    component: defineAsyncComponent(
+      () => import("../elComponent/ElJsonViewer.vue")
+    ),
+  },
+];
+
+const activeIndex = ref(0);
 </script>
 
 <template>
@@ -31,10 +38,10 @@ const onClickBtn = (index: number) => {
     <div class="EditorLeft-nav">
       <ul>
         <li
-          v-for="(item, index) of bottons"
+          v-for="(item, index) of buttons"
           :key="index"
-          :class="{ active: item.active }"
-          @click="onClickBtn(index)"
+          :class="{ active: index == activeIndex }"
+          @click="activeIndex = index"
         >
           <i :class="item.icon"></i>
           <span>{{ item.label }}</span>
@@ -42,10 +49,9 @@ const onClickBtn = (index: number) => {
       </ul>
     </div>
     <div class="EditorLeft-content">
-      <ElComponent v-if="bottons[0].active"></ElComponent>
-      <ElIcon v-if="bottons[1].active"></ElIcon>
-      <ElOutline v-if="bottons[2].active"></ElOutline>
-      <ElJsonViewer v-if="bottons[3].active"></ElJsonViewer>
+      <keep-alive>
+        <component :is="buttons[activeIndex].component"></component>
+      </keep-alive>
     </div>
   </div>
 </template>

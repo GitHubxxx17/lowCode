@@ -13,7 +13,7 @@ const mainData = mainStore(pinia);
 interface handlerConfig {
   type: string; //动作类型
   instructions: string; //动作描述
-  defaultData: any;
+  defaultData: any; // 默认数据
   configRender: (porps: any) => any; //配置渲染
   selectedRender: (porps: any) => any; //选中渲染
   handler?: (val: any) => any; //执行事件
@@ -315,9 +315,9 @@ const handlerConfigList: handlerConfig[] = [
         ) {
           targetData.classList.push("hidden");
           mainData.addLinkage({
-            type:'class',
-            target:item.otherOption.target
-          })
+            type: "class",
+            target: item.otherOption.target,
+          });
         }
       };
     },

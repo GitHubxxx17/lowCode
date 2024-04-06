@@ -28,13 +28,19 @@ import pinia from "../stores/index.ts";
 import { ElMessage, ElPopover } from "element-plus";
 import { localGetData } from "../hooks/useStorage.ts";
 import dragStore from "../stores/dragStore";
-
+// 编辑器组件配置
 provide("editorConfig", editorConfig);
+// 右边配置栏配置
 provide("erConfig", erConfig);
+// 主要数据
 const mainData = mainStore(pinia);
+// 拖拽数据
 const dragData = dragStore(pinia);
+// 项目页面标题
 mainData.title = localGetData("title") ? localGetData("title") : "新项目";
+// 将json数据转换为map
 mainData.setMap();
+
 mainData.modify.curData = JSON.stringify(mainData.EditorDataMap.get("page"));
 //挂载命令
 const { commands } = useCommand();
@@ -46,7 +52,7 @@ const state = reactive({
 const editorTitle = ref(null);
 const isFocus = ref(false);
 // 如果项目名为空的话不失焦
-const keepFocus = (value) => {
+const keepFocus = (value: string) => {
   isFocus.value = false;
   if (value.trim() == "") {
     editorTitle.value.focus();
@@ -168,7 +174,6 @@ watch(
 );
 
 const closeContextmenu = () => {
-  console.log("document click 关闭菜单");
   mainData.menuConfig.isShowMenu = false;
 };
 

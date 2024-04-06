@@ -14,11 +14,11 @@ export default defineComponent({
       search: {
         value: "",
         searchKey: "componentSearch",
-        searchDefault:{
-          label:'组件分类',
-          list:["布局容器", "常用组件", "表单"]
+        searchDefault: {
+          label: "组件分类",
+          list: ["布局容器", "常用组件", "表单"],
         },
-        placeholder:'查找组件',
+        placeholder: "查找组件",
       },
       componentList: {
         container: {
@@ -62,6 +62,7 @@ export default defineComponent({
     watch(
       () => state.search.value,
       (newValue) => {
+        // 如果搜索关键字为空则全部展开
         if (newValue == "") {
           for (let key of Object.keys(state.componentList)) {
             state.componentList[key].list.filter((item: any) => {
@@ -71,11 +72,13 @@ export default defineComponent({
           }
         } else {
           for (let key of Object.keys(state.componentList)) {
+            // 组件类别被关键字命中则该类别的组件全部展示
             if (state.componentList[key].label.indexOf(newValue) >= 0) {
               state.componentList[key].list.filter((item: any) => {
                 item.display = true;
               });
             } else {
+              // 否则遍历该类别的所有组件
               let len = state.componentList[key].list.length;
               state.componentList[key].list.map((item: any) => {
                 if (item.label.indexOf(newValue) >= 0) {

@@ -25,8 +25,6 @@ function useDragger(): any {
   watch(
     () => dragData.dragEl,
     (newVal, oldVal) => {
-      // console.log("newVal:", newVal);
-      // console.log("oldVal:", oldVal);
       if (newVal && typeof findSelectkey(newVal) == "undefined") {
         dragData.dragEl = oldVal;
       }
@@ -53,7 +51,9 @@ function useDragger(): any {
   watch(
     () => dragData.selectKey,
     (newVal) => {
-      mainData.modify.curData = JSON.stringify(mainData.EditorDataMap.get(newVal || 'page'));
+      mainData.modify.curData = JSON.stringify(
+        mainData.EditorDataMap.get(newVal || "page")
+      );
       if (!isEditingArea) {
         dragData.dragEl = findSelectNode(
           mainData.rootNode.children[0].children,
@@ -62,13 +62,15 @@ function useDragger(): any {
       }
     }
   );
-  //监听拖拽结束
+
+  //监听拖拽结束，触发拖拽结束操作命令
   watch(
     () => dragData.isDraging,
     (newVal) => {
       if (!newVal) events.emit("dragEnd");
     }
   );
+
   /**
    *初始化函数
    */
@@ -101,7 +103,7 @@ function useDragger(): any {
    * @param {*} e 鼠标事件
    */
   const cloneMousedown = (component: any, e: any) => {
-    const span = findSpan(e.target);
+    const span = e.currentTarget;
     dragData.isClone = true;
     dragData.selectedMaterial = component;
     mainData.modify.disabled = true;
@@ -129,12 +131,12 @@ function useDragger(): any {
     }
     if (dragData.isClone || dragData.isDrag) mainData.isNeedSave = true;
     init();
-    
+
     //将该语句执行放进宏任务中，在watch监听后执行
-    let timer = setTimeout(()=>{
+    let timer = setTimeout(() => {
       mainData.modify.disabled = false;
-      clearTimeout(timer)
-    },0);
+      clearTimeout(timer);
+    }, 0);
   };
 
   /**
@@ -167,7 +169,7 @@ function useDragger(): any {
     //正在拖拽时进入容器
     if (dragData.isDraging) {
       clearTimeout(toEnter);
-      //当前拖拽节点为容器时不触发进入容器事件
+      //当前拖拽节点为容器时且鼠标移入拖拽节点时不触发进入容器事件
       if (
         dragData.dragEl == e.target ||
         e.target.classList.contains("Editorcontainer")
@@ -220,24 +222,10 @@ function useDragger(): any {
 
   /**
    * @param {*} target 目标节点
-   * @return {*} 返回标签为span的父组件
-   */
-  const findSpan = (target: any): any => {
-    //如果点到父节点就直接返回子节点
-    if (target.tagName == "DIV") return target.children[0];
-    if (target.tagName == "SPAN") {
-      return target;
-    } else {
-      return findSpan(target.parentNode);
-    }
-  };
-
-  /**
-   * @param {*} target 目标节点
    * @return {*} 返回最近的父容器节点
    */
   const findParentContainer = (target: any): any => {
-    if(!target)return;
+    if (!target) return;
     if (
       target.className.includes("container") ||
       target.className.includes("Editorcontainer")
@@ -278,7 +266,7 @@ function useDragger(): any {
       //先对数据进行修改，并等视图重新刷新
       let newKey = findSelectkey(newContainer);
       let childrenData = mainData.EditorDataMap.get(newKey).children;
-      let parent = mainData.EditorDataMap.get(dragData.selectKey).parent; //获取json子数据
+      let parent = mainData.EditorDataMap.get(dragData.selectKey).parent;
       mainData.EditorDataMap.get(parent).children.splice(oldIndex, 1);
       childrenData.push(dragData.selectKey);
       mainData.EditorDataMap.get(dragData.selectKey).parent = newKey;
@@ -301,25 +289,25 @@ function useDragger(): any {
    * @param {*} e 鼠标事件
    */
   const onclickToDrag = (e: any) => {
-    // console.log("选中：", e.target, "寻找", findDragEl(e.target));
+    // 当前选中的拖拽节点
+    const currDragEl = findDragEl(e.target) || e.target;
     //如果点击的区域是整个编辑区域的话
-    if (e.target.classList.contains("Editorcontainer")) {
-      container = e.target;
-      e.target.classList.add("chosen-container");
+    if (currDragEl.classList.contains("Editorcontainer")) {
+      container = currDragEl;
+      currDragEl.classList.add("chosen-container");
       dragData.selectKey = null;
       if (dragData.dragEl) dragData.dragEl.onmousedown = null;
       dragData.dragEl = null;
       return;
     }
-    if (findDragEl(e.target).classList.contains("Editorcontainer")) {
-      return;
-    }
-    if (e.target == dragData.dragEl) return;
+    // 如果是原来的节点则结束
+    if (currDragEl == dragData.dragEl) return;
+    // 解绑原来拖拽节点的鼠标按下事件
     if (dragData.dragEl) dragData.dragEl.onmousedown = null;
     dragData.isDrag = true;
-    dragData.dragEl = findDragEl(e.target) || e.target; //获取拖拽节点
+    dragData.dragEl = currDragEl;
+    // 获取拖拽节点选中的key
     dragData.selectKey = findSelectkey(dragData.dragEl);
-    // console.log("dragData.dragEl:", dragData.dragEl);
 
     dragData.dragEl.onmousedown = dragMousedown;
     //销毁拖拽组件相关数据
@@ -375,7 +363,7 @@ function useDragger(): any {
         e.clientY > dragChildList[i].top &&
         e.clientY < dragChildList[i].bottom
       ) {
-        // 与选中节点的数据交换位置重新渲染视图
+        // 与非选中节点交换位置重新渲染视图
         let parent = mainData.EditorDataMap.get(dragData.selectKey).parent; //获取json子数据
         let childrenData = mainData.EditorDataMap.get(parent).children;
         childrenData.splice(oldIndex, 1);
@@ -443,17 +431,11 @@ function useDragger(): any {
     ghostEl.style.left = `${clientX - startX}px`;
   };
 
-  const deterWhetherToMoveUp = (fun: any): boolean => {
-    let res: boolean = fun();
-    return res;
-  };
-
   return {
     cloneMousedown,
     mouseenter,
     mouseleave,
     onclickToDrag,
-    deterWhetherToMoveUp,
   };
 }
 

@@ -1,11 +1,5 @@
 import "@/sass/erComponent/events.scss";
-import {
-  defineComponent,
-  onUnmounted,
-  reactive,
-  watch,
-  watchEffect,
-} from "vue";
+import { defineComponent, onMounted, onUnmounted, reactive, watch } from "vue";
 import pinia from "../../stores/index.ts";
 import dragStore from "../../stores/dragStore.ts";
 import mainStore from "../../stores/mainStore.ts";
@@ -15,12 +9,15 @@ import { eventConfig } from "../../utils/event-config";
 import deepcopy from "deepcopy";
 import { ElMessage } from "element-plus";
 export default defineComponent({
+  props: {
+    EditorData: Object,
+  },
   setup() {
     const dragData = dragStore(pinia); //拖拽数据
     const mainData = mainStore(pinia); //拖拽数据
 
     let state = reactive({
-      dialogIsShow: true, //对话框显示
+      dialogIsShow: false, //对话框显示
       addListIsShow: false, //事件列表显示
       //事件列表
       eventsList:
@@ -62,7 +59,21 @@ export default defineComponent({
       }
     );
 
-    watchEffect(() => {
+    //隐藏事件列表
+    const hiddenList = () => {
+      state.addListIsShow = false;
+    };
+
+    onMounted(() => {
+      //初始化事件配置
+      for (let [key, value] of eventConfig.eventMap) {
+        state.mouseEventsMap.set(key, {
+          type: value.type,
+          name: value.name,
+          exist: state.mouseEventsMap.get(value.type)?.exist,
+        });
+      }
+
       //当不存在事件对象时添加空事件对象
       if (
         !mainData.EditorDataMap.get(dragData.selectKey || "page").events &&
@@ -71,27 +82,8 @@ export default defineComponent({
         mainData.EditorDataMap.get(dragData.selectKey || "page").events =
           state.eventsList;
       }
+      window.addEventListener("click", hiddenList);
     });
-
-    //事件配置
-    for (let item of eventConfig.eventMap) {
-      state.mouseEventsMap.set(item[0], {
-        type: item[1].type,
-        name: item[1].name,
-        exist: false,
-      });
-    }
-
-    for (let item of state.eventsList) {
-      state.mouseEventsMap.get(item.type).exist = true;
-    }
-
-    //隐藏事件列表
-    const hiddenList = () => {
-      state.addListIsShow = false;
-    };
-
-    window.addEventListener("click", hiddenList);
 
     onUnmounted(() => {
       window.removeEventListener("click", hiddenList);
@@ -170,11 +162,7 @@ export default defineComponent({
               class="events-addEvents"
               onClick={(e) => {
                 e.stopPropagation();
-                if (dragData.selectKey) {
-                  state.addListIsShow = !state.addListIsShow;
-                } else {
-                  ElMessage.error("还没有选中节点！");
-                }
+                state.addListIsShow = !state.addListIsShow;
               }}
             >
               <span>添加事件</span>

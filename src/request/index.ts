@@ -11,7 +11,7 @@ const errorFun = () => {
   mainData.isNeedSave = true;
 };
 let service = axios.create({
-  baseURL: "http://47.115.228.27:8081",
+  baseURL: "http://127.0.0.1:8081",
 });
 
 // 添加请求拦截器

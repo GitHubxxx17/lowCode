@@ -94,9 +94,7 @@ export default defineComponent({
 
     //背景颜色
     let bgColor = reactive({
-      value: props.option.style.backgroundColor
-        ? props.option.style.backgroundColor
-        : "rgba(255, 255, 255,0)",
+      value: props.option.style.backgroundColor ?? "rgba(255, 255, 255,0)",
     });
 
     // 边框 border
@@ -107,6 +105,7 @@ export default defineComponent({
       showSelect: false, //是否显示下拉框
       color: "rgba(0,0,0)",
     });
+    // 设置边框位置
     const setBorder = (pos: string): void => {
       border.isBorderActive = pos;
       handleBorder(pos);
@@ -159,7 +158,6 @@ export default defineComponent({
     };
     //处理边框
     const handleBorder = (key: string) => {
-      console.log(props.option.style[key], key);
       if (props.option.style[key]) {
         let borderList = props.option.style[key].match(/^(\d+px) (.*?) (.*?)$/);
         border.borderValue = parseInt(borderList[1].match(/^\d+/)[0]);
@@ -170,38 +168,23 @@ export default defineComponent({
       }
     };
     handleBorder("border");
+
     // 边距 margin
     const marginAndPadding = reactive([
       {
         label: "外边距(margin)",
-        top: props.option.style.marginTop
-          ? props.option.style.marginTop
-          : "0px",
-        bottom: props.option.style.marginBottom
-          ? props.option.style.marginBottom
-          : "0px",
-        left: props.option.style.marginLeft
-          ? props.option.style.marginLeft
-          : "0px",
-        right: props.option.style.marginRight
-          ? props.option.style.marginRight
-          : "0px",
+        top: props.option.style.marginTop ?? "0px",
+        bottom: props.option.style.marginBottom ?? "0px",
+        left: props.option.style.marginLeft ?? "0px",
+        right: props.option.style.marginRight ?? "0px",
         oldValue: "",
       },
       {
         label: "内边距(padding)",
-        top: props.option.style.paddingTop
-          ? props.option.style.paddingTop
-          : "0px",
-        bottom: props.option.style.paddingBottom
-          ? props.option.style.paddingBottom
-          : "0px",
-        left: props.option.style.paddingLeft
-          ? props.option.style.paddingLeft
-          : "0px",
-        right: props.option.style.paddingRight
-          ? props.option.style.paddingRight
-          : "0px",
+        top: props.option.style.paddingTop ?? "0px",
+        bottom: props.option.style.paddingBottom ?? "0px",
+        left: props.option.style.paddingLeft ?? "0px",
+        right: props.option.style.paddingRight ?? "0px",
         oldValue: "",
       },
     ]);
@@ -226,8 +209,8 @@ export default defineComponent({
         radiusBLValue: bl,
         radiusBRValue: br,
       } = radius;
-      radius.tip = `${tl ? tl : "0px"} ${tr ? tr : "0px"} ${bl ? bl : "0px"} ${
-        br ? br : "0px"
+      radius.tip = `${tl ?? "0px"} ${tr ?? "0px"} ${bl ?? "0px"} ${
+        br ?? "0px"
       }`;
     };
 
@@ -250,9 +233,9 @@ export default defineComponent({
         radius.tipIsshow = false;
       }
       if (tl || tr || bl || br) {
-        let borderRadiusStr = `${tl ? tl : "0px"} ${tr ? tr : "0px"} ${
-          bl ? bl : "0px"
-        } ${br ? br : "0px"}`;
+        let borderRadiusStr = `${tl ?? "0px"} ${tr ?? "0px"} ${bl ?? "0px"} ${
+          br ?? "0px"
+        }`;
         radius.tip = borderRadiusStr;
         radius.tipIsshow = true;
         if (tl) radius.radiusTLValue = tl;
@@ -262,6 +245,7 @@ export default defineComponent({
       }
     };
     handleBorderRadius();
+
     //阴影
     const shadow = reactive([
       {

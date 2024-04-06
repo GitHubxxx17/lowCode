@@ -127,7 +127,10 @@ const componentsConfig = [
           ? eventConfig.getRenderEvents(props.node.events)
           : {};
       return (
-        <div class={"cannotPreview " + props.node.classList.join(" ")} data-key={props.id}>
+        <div
+          class={"cannotPreview " + props.node.classList.join(" ")}
+          data-key={props.id}
+        >
           <ElButton
             style={props.node.style}
             class="baseButton"
@@ -385,7 +388,7 @@ const componentsConfig = [
         title: {},
         checkboxes: {},
       },
-      checkboxGroup:[],
+      checkboxGroup: [],
       children: "",
       checkboxesData: [
         { value: "选项1", radio: false },

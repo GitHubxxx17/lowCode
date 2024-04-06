@@ -10,13 +10,15 @@ export default defineComponent({
   },
   setup(props) {
     return () => {
-      return (
+      return props.EditorData ? (
         <div class="EditorPreview">
           <div id="body" style={props.EditorData.get("page").style}>
             {mapRenderer("page")}
           </div>
           <div class="EditorPreview-leftMessage">按ESC可退出预览</div>
         </div>
+      ) : (
+        <>{mapRenderer("page")}</>
       );
     };
   },

@@ -1,32 +1,25 @@
 <script setup lang="ts">
-import { reactive } from "vue";
-import Property from "../erComponent/property";
-import Appearance from "../erComponent/appearance";
-import Events from "../erComponent/events";
+import { defineAsyncComponent, ref } from "vue";
+
 const props = defineProps(["EditorData"]);
 
-interface btn {
-  label: String; // 标签
-  active: boolean; // 是否被选择了
-  isShow: boolean; // 是否显示
-}
 // 切换菜单的按钮
-const buttons: btn[] = reactive([
-  { label: "属性", active: true, isShow: true },
-  { label: "外观", active: false, isShow: true },
-  { label: "事件", active: false, isShow: true },
-]);
+const buttons = [
+  {
+    label: "属性",
+    component: defineAsyncComponent(() => import("../erComponent/property")),
+  },
+  {
+    label: "外观",
+    component: defineAsyncComponent(() => import("../erComponent/appearance")),
+  },
+  {
+    label: "事件",
+    component: defineAsyncComponent(() => import("../erComponent/events")),
+  },
+];
 
-// 选择按钮的点击事件selectBtn
-const selectBtn = (index: number) => {
-  buttons.forEach((button, i) => {
-    if (i == index) {
-      button.active = true;
-      return;
-    }
-    button.active = false;
-  });
-};
+const activeIndex = ref(0);
 </script>
 
 <template>
@@ -34,24 +27,18 @@ const selectBtn = (index: number) => {
     <div class="ErComponent-nav">
       <label
         v-for="(button, index) in buttons"
-        v-show="button.isShow"
-        @click="selectBtn(index)"
+        @click="activeIndex = index"
         class="ErComponent-nav-btn"
-        :class="{ active: button.active }"
+        :class="{ active: activeIndex == index }"
       >
         {{ button.label }}
       </label>
     </div>
     <div class="ErComponent-content">
-      <Property
-        v-if="buttons[0].active"
+      <component
+        :is="buttons[activeIndex].component"
         :EditorData="props.EditorData"
-      ></Property>
-      <Appearance
-        v-if="buttons[1].active"
-        :EditorData="props.EditorData"
-      ></Appearance>
-      <Events v-if="buttons[2].active"></Events>
+      ></component>
     </div>
   </div>
 </template>

@@ -8,7 +8,7 @@ import deepcopy from "deepcopy";
 import { localSaveData, localGetData } from "./useStorage.ts";
 import { updateEditData } from "../request/api/home";
 import { download } from "../request/api/download.ts";
-import { addMap,getUUID } from "./useCreateMap.ts";
+import { addMap } from "./useCreateMap.ts";
 
 //命令
 interface command {
@@ -269,12 +269,11 @@ export function useCommand() {
       keyboard: "esc",
       execute() {
         return {
-          
           redo() {
             if (mainData.isPreview) {
-              mainData.linkageList.forEach((linkage)=>{
-                mainData.handlerLinkage(linkage)
-              })
+              mainData.linkageList.forEach((linkage) => {
+                mainData.handlerLinkage(linkage);
+              });
               mainData.linkageList.length = 0;
               mainData.modify.disabled = false;
               mainData.isPreview = false;
@@ -323,22 +322,12 @@ export function useCommand() {
         };
       },
       redo(data: any) {
-        if (!data.id)
-          //如果没有id则创建
-          data.id = addMap(data.type, {
-            ...data.defaultData,
-            parent: data.parent,
-          });
-        //如果没有数据则创建
-        if (!mainData.EditorDataMap.has(data.id))
-          mainData.EditorDataMap.set(data.id, {
-            ...data.defaultData,
-            parent: data.parent,
-          });
-        mainData.EditorDataMap.get(data.parent)?.children.push(data.id); //修改数据并重新渲染编辑区域
+        const id = addMap(data.type, {
+          ...data.defaultData,
+          parent: data.parent,
+        });
+        mainData.EditorDataMap.get(data.parent)?.children.push(id); //修改数据并重新渲染编辑区域
         mainData.menuConfig.key++;
-        console.log(456);
-        
       },
       undo(data: any) {
         let id = mainData.EditorDataMap.get(data.parent)?.children.at(-1);
@@ -387,8 +376,10 @@ export function useCommand() {
         };
       },
       redo(data: any) {
+        // 将拖拽节点的父容器指向改成新容器
         let dragElData = mainData.EditorDataMap.get(data.key);
         dragElData.parent = data.parent;
+        // 将拖拽节点从旧容器中移除并添加到新容器中
         mainData.EditorDataMap.get(data.oldParent).children.splice(
           data.oldIndex,
           1
@@ -400,8 +391,10 @@ export function useCommand() {
         );
       },
       undo(data: any) {
+        // 将拖拽节点的父容器指向改成旧容器
         let dragElData = mainData.EditorDataMap.get(data.key);
         dragElData.parent = data.oldParent;
+        // 将拖拽节点从旧容器中移除并添加到新容器中
         mainData.EditorDataMap.get(data.parent).children.splice(data.index, 1);
         mainData.EditorDataMap.get(data.oldParent).children.splice(
           data.oldIndex,
@@ -454,10 +447,8 @@ export function useCommand() {
                 !curVal.hasOwnProperty(key) ||
                 curVal[key] != newVal[key]
               ) {
-                
-                
                 curVal[key] = newVal[key];
-                console.log(key,curVal[key],newVal[key],curVal);
+                console.log(key, curVal[key], newVal[key], curVal);
               }
             } catch (err) {
               ElMessage.error("重做失败！", err);
@@ -478,7 +469,7 @@ export function useCommand() {
         const setOldData = (oldVal: any, curVal: any) => {
           for (let [key, val] of Object.entries(curVal)) {
             try {
-            if (!oldVal.hasOwnProperty(key)) delete curVal[key]; //不存在的属性直接删掉
+              if (!oldVal.hasOwnProperty(key)) delete curVal[key]; //不存在的属性直接删掉
               if (Array.isArray(val)) {
                 console.log("有数组发生修改");
               } else if (typeof val == "object") {
@@ -514,7 +505,7 @@ export function useCommand() {
           index,
           copyKey: copyData,
           addKeys,
-          key
+          key,
         };
       },
       redo(data: any) {
@@ -563,7 +554,7 @@ export function useCommand() {
         );
         mainData.menuConfig.key--;
       },
-    }
+    },
   ];
 
   //需要使用的键
@@ -602,7 +593,7 @@ export function useCommand() {
           return;
         }
       } else if (command.name == "change") {
-        if(data.oldVal == data.newVal)return;
+        if (data.oldVal == data.newVal) return;
         mainData.modify.curData = JSON.stringify(
           mainData.EditorDataMap.get(dragData.selectKey || "page")
         );
@@ -610,7 +601,7 @@ export function useCommand() {
         command.redo(data);
       }
       //最多撤销30步
-      if(mainData.queue.length == 30){
+      if (mainData.queue.length == 30) {
         mainData.queue.shift();
         mainData.curPointerTo--;
       }
